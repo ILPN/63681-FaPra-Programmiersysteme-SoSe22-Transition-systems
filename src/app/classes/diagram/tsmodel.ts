@@ -22,7 +22,7 @@ export class TsModel {
     public getNode(id: String): TsNode | undefined {
         // @ts-ignore
         this._nodes.forEach(n =>
-            {if (id == n.id()) {return n}});
+            {if (id == n.id) {return n}});
         return undefined;
     }
 
