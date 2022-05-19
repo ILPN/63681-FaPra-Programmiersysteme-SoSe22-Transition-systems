@@ -55,7 +55,7 @@ export class ParserService {
 
     private parseEdge(line: string): Element {
         let elems = line.split(" ");
-        return new TsEdge(elems[0].trim(), this.getNode(elems[3].trim()), this.getNode(elems[4].trim()));
+        return new TsEdge(elems[0].trim(),elems[1].trim(),+elems[2].trim(), this.getNode(elems[3].trim()), this.getNode(elems[4].trim()));
     }
 
     private getNode(id: string): TsNode {
