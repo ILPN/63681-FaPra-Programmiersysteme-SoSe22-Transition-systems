@@ -3,8 +3,8 @@ import {TsEdge} from "./tsedge";
 
 export class TsModel {
 
-    private _nodes: Array<TsNode>;
-    private _edges: Array<TsEdge>;
+    private readonly _nodes: Array<TsNode>;
+    private readonly _edges: Array<TsEdge>;
 
     constructor() {
         this._nodes = new Array<TsNode>();
