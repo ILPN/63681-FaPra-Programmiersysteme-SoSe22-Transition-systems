@@ -57,4 +57,30 @@ e12 D 1 n9 n10
             this._displayService.display(result);
         }
     }
+
+    async onFileInput(event: Event) {
+        const element = event.currentTarget as HTMLInputElement;
+        let fileList: FileList | null = element.files;
+        if (fileList) {
+            let file = fileList[0];
+            let result = await file.text();
+            //TODO result should be processed later here (validation for .ts files and conversion for .pnml files)
+            this.textareaFc.setValue(result)
+        }
+    }
+
+    saveTSFile() {
+        let data = new Blob([this.textareaFc.value], {type: 'text/plain'});
+        let url = window.URL.createObjectURL(data);
+        let a = document.createElement('a');
+        document.body.appendChild(a);
+
+        a.setAttribute('style', 'display: none');
+        a.href = url;
+        a.download = 'transitionSystem.ts';
+        a.click();
+        window.URL.revokeObjectURL(url);
+        a.remove();
+
+    }
 }

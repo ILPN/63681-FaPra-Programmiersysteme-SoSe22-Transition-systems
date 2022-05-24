@@ -1,14 +1,15 @@
 <div fxLayout="column" fxLayoutAlign="start stretch">
     <!--  Header  -->
     <a href="https://www.fernuni-hagen.de/ilovepetrinets/"><h1>I <span class="red">❤</span> Petri Nets</h1></a>
-    <h2>Subtitle</h2>
+    <h2>Show a transition system</h2>
 
     <!--    Main content    -->
     <app-display class="padding full-size"></app-display>
 
 
     <div fxLayout="row" fxLayoutAlign="space-evenly start">
-        <app-template-button buttonText="Left button" buttonIcon="lightbulb"></app-template-button>
+        <app-upload-button buttonText="Upload File" (click)="fileInput.click()" buttonIcon="upload"></app-upload-button>
+        <input #fileInput type="file" (change)="onFileInput($event)" style="display:none;" />
         <mat-form-field appearance="outline"
                         class="textarea">
             <mat-label>Source file</mat-label>
@@ -18,7 +19,7 @@
                       cdkAutosizeMaxRows="20"
                       [formControl]="textareaFc"></textarea>
         </mat-form-field>
-        <app-template-button buttonText="Right button" buttonIcon="grade"></app-template-button>
+        <app-download-button buttonText="Download File" (click)="saveTSFile()" buttonIcon="download"></app-download-button>
     </div>
 
     <!--  Footer  -->
