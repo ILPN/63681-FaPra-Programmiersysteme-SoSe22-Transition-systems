@@ -29,8 +29,4 @@ export class UploadButtonComponent {
         const target = (e.target as HTMLElement);
         target.classList.remove('mouse-hover');
     }
-
-    processMouseClick(e: MouseEvent) {
-        //console.log(`Template button "${this.buttonText}" clicked`, e);
-    }
 }

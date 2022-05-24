@@ -30,7 +30,4 @@ export class DownloadButtonComponent {
         target.classList.remove('mouse-hover');
     }
 
-    processMouseClick(e: MouseEvent) {
-    }
-
 }
