@@ -1,21 +1,21 @@
 import {Injectable} from '@angular/core';
-import {Diagram} from '../classes/diagram/diagram';
-import {Element} from '../classes/diagram/element';
+import {TsModel} from '../classes/diagram/tsmodel';
+import {TsNode} from '../classes/diagram/tsnode';
 
 @Injectable({
     providedIn: 'root'
 })
 export class SvgService {
 
-    public createSvgElements(diagram: Diagram): Array<SVGElement> {
+    public createSvgElements(diagram: TsModel): Array<SVGElement> {
         const result: Array<SVGElement> = [];
-        diagram.elements.forEach(el => {
+        diagram.nodes.forEach(el => {
             result.push(this.createSvgForElement(el))
         });
         return result;
     }
 
-    private createSvgForElement(element: Element): SVGElement {
+    private createSvgForElement(element: TsNode): SVGElement {
         const svg = this.createSvgElement('circle');
 
         svg.setAttribute('cx', `${element.x}`);

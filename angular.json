@@ -24,7 +24,7 @@
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
-              "deployUrl": "/ilovepetrinets/template/",
+            "deployUrl": "/ilovepetrinets/template/",
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
             "assets": [
@@ -106,9 +106,21 @@
             ],
             "scripts": []
           }
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": [
+              "src/**/*.ts",
+              "src/**/*.html"
+            ]
+          }
         }
       }
     }
   },
-  "defaultProject": "fapra-template"
+  "defaultProject": "fapra-template",
+  "cli": {
+    "defaultCollection": "@angular-eslint/schematics"
+  }
 }

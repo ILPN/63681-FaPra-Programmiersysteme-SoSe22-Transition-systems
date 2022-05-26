@@ -3,8 +3,8 @@ import {TsEdge} from "./tsedge";
 
 export class TsModel {
 
-    private readonly _nodes: Array<TsNode>;
-    private readonly _edges: Array<TsEdge>;
+    private _nodes: Array<TsNode>;
+    private _edges: Array<TsEdge>;
 
     constructor() {
         this._nodes = new Array<TsNode>();
@@ -19,10 +19,20 @@ export class TsModel {
         return this._edges;
     }
 
+    public addNode(aNode: TsNode){
+        this._nodes.push(aNode);
+    }
+    public addEdge(aEdge: TsEdge){
+        this._edges.push(aEdge);
+    }
+
     public getNode(id: String): TsNode | undefined {
         // @ts-ignore
-        this._nodes.forEach(n =>
-            {if (id == n.id) {return n}});
+        for (const n of this._nodes) {
+            if (id === n.id) {
+                return n
+            }
+        }
         return undefined;
     }
 
