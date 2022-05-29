@@ -79,9 +79,19 @@ class BaseSpringEmbedder {
         while (iteration < maxIterations && this.normIsToHigh(forces, eps)) {
             let index = 0;
             for (const position of positions) {
-                // Compute the repuslive forces
+                let force = new Vector(0, 0);
+                for (const p of positions) {
+                    // Compute the repuslive forces
+                    let repulsiveForce = this.computeRepulsiveForce(position, p);
+                    force.add(repulsiveForce);
+                    // Compute the attractive forces
+                    let attractiveForce = this.computeAttractiveForce(position, p);
+                    force.add(attractiveForce);
+                    // Keep the force for later use
+                    forces[index] = force;
+                    index++;
+                }
 
-                // Compute the attractive forces
             }
 
             // Move the positions by the displaxement vectors.
@@ -113,13 +123,13 @@ class BaseSpringEmbedder {
     /**
      * Computes the repulsive force between the two given points.
      */
-    private computeRepulsiveForce(node1: Point, node2: Point): Vector {
-        const repulsiveVector = Vector.byNodes(node1, node2);
+    private computeRepulsiveForce(point1: Point, point2: Point): Vector {
+        const repulsiveVector = Vector.byPoints(point1, point2);
         repulsiveVector.normalize();
         const scalar = Math.pow(this.idealSpringLength, 2) / (
             Math.sqrt(
-                Math.pow(node2.x - node1.x, 2) +
-                Math.pow(node2.y - node1.y, 2)
+                Math.pow(point2.x - point1.x, 2) +
+                Math.pow(point2.y - point1.y, 2)
             )
         )
         repulsiveVector.applyScalar(scalar);
@@ -129,8 +139,11 @@ class BaseSpringEmbedder {
     /**
      * Computes the attractive force, given by the edge.
      */
-    private computeAttractiveForce(): Vector {
-
+    private computeAttractiveForce(point1: Point, point2: Point): Vector {
+        const attractiveVector = Vector.byPoints(point1, point2);
+        const scalar = Math.pow(attractiveVector.norm(), 2) / this.idealSpringLength;
+        attractiveVector.applyScalar(scalar);
+        return attractiveVector;
     }
 
     /**

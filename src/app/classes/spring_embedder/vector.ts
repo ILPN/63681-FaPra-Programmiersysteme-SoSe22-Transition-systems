@@ -1,4 +1,4 @@
-import {Node} from './models';
+import {Node, Point} from './models';
 
 export class Vector {
     x: number;
@@ -34,6 +34,19 @@ export class Vector {
     applyScalar(scalar: number): void {
         this.x = scalar * this.x;
         this.y = scalar * this.y;
+    }
+
+    static byPoints(point1: Point, point2: Point): Vector {
+        const vector = new Vector(
+            point2.x - point1.x,
+            point2.y - point1.y
+        );
+        return vector;
+    }
+
+    add(otherVector: Vector): void {
+        this.x += otherVector.x;
+        this.y += otherVector.y;
     }
 
     /**
