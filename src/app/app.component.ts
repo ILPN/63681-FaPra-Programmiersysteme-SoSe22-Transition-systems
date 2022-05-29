@@ -3,6 +3,7 @@ import {FormControl} from '@angular/forms';
 import {ParserService} from './services/parser.service';
 import {DisplayService} from './services/display.service';
 import {debounceTime, Subscription} from 'rxjs';
+import {TsModel} from "./classes/diagram/tsmodel";
 
 @Component({
     selector: 'app-root',
@@ -12,14 +13,57 @@ import {debounceTime, Subscription} from 'rxjs';
 export class AppComponent implements OnDestroy {
 
     public textareaFc: FormControl;
-
+    private model: TsModel | undefined;
     private _sub: Subscription;
 
     constructor(private _parserService: ParserService,
                 private _displayService: DisplayService) {
         this.textareaFc = new FormControl();
+        this.model = new TsModel();
         this._sub = this.textareaFc.valueChanges.pipe(debounceTime(400)).subscribe(val => this.processSourceChange(val));
-        this.textareaFc.setValue(`.type ts
+        this.textareaFc.setValue(this.defaultText());
+    }
+
+
+    ngOnDestroy(): void {
+        this._sub.unsubscribe();
+    }
+
+    private processSourceChange(newSource: string) {
+        this.model = this._parserService.parse(newSource);
+        if (this.model !== undefined) {
+            this._displayService.display(this.model);
+        }
+    }
+
+    async onFileInput(event: Event) {
+        const element = event.currentTarget as HTMLInputElement;
+        let fileList: FileList | null = element.files;
+        if (fileList) {
+            let file = fileList[0];
+            let result = await file.text();
+            //TODO result should be processed later here (validation for .ts files and conversion for .pnml files)
+            this.textareaFc.setValue(result)
+        }
+    }
+
+    saveTSFile() {
+        let data = new Blob([this.textareaFc.value], {type: 'text/plain'});
+        let url = window.URL.createObjectURL(data);
+        let a = document.createElement('a');
+        document.body.appendChild(a);
+
+        a.setAttribute('style', 'display: none');
+        a.href = url;
+        a.download = 'transitionSystem.ts';
+        a.click();
+        window.URL.revokeObjectURL(url);
+        a.remove();
+
+    }
+
+    private defaultText() {
+        return `.type ts
 .nodes
 n1 11
 n2 12
@@ -44,17 +88,6 @@ e9 D 1 n4 n5
 e10 D 1 n6 n7
 e11 D 1 n8 n9
 e12 D 1 n9 n10
-`);
-    }
-
-    ngOnDestroy(): void {
-        this._sub.unsubscribe();
-    }
-
-    private processSourceChange(newSource: string) {
-        const result = this._parserService.parse(newSource);
-        if (result !== undefined) {
-            this._displayService.display(result);
-        }
+`;
     }
 }

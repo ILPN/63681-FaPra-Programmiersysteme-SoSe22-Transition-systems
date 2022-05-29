@@ -1,0 +1,10 @@
+<div fxLayout="column" fxLayoutAlign="start center">
+    {{buttonText}}
+    <div class="interactive-square" fxLayout="row" fxLayoutAlign="center center"
+         (mouseenter)="hoverStart($event)"
+         (mouseleave)="hoverEnd($event)">
+        <mat-icon class="larger-icon">
+            {{buttonIcon}}
+        </mat-icon>
+    </div>
+</div>

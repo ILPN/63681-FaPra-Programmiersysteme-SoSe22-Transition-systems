@@ -1,21 +1,20 @@
 import {Injectable} from '@angular/core';
-import {Diagram} from '../classes/diagram/diagram';
-import {Element} from '../classes/diagram/element';
 import {TsNode} from "../classes/diagram/tsnode";
 import {TsEdge} from "../classes/diagram/tsedge";
+import {TsModel} from "../classes/diagram/tsmodel";
 
 @Injectable({
     providedIn: 'root'
 })
 export class ParserService {
 
+
     constructor() {
     }
-    nodes: TsNode[] = [];
-    parse(text: string): Diagram | undefined {
+    parse(text: string): TsModel | undefined {
         const lines = text.split('\n');
 
-        const result = new Diagram();
+        const result = new TsModel();
         let sectionMarker = "";
 
         lines.forEach(line => {
@@ -29,11 +28,11 @@ export class ParserService {
                     switch(sectionMarker) {
                         case "nodes": {
                             console.log("node")
-                            result.addElement(this.parseNode(line));
+                            result.addNode(this.parseNode(line));
                             break;
                         }
                         case "edges": {
-                            result.addElement(this.parseEdge(line));
+                            result.addEdge(this.parseEdge(line, result));
                             break;
                         }
                         default: {
@@ -46,24 +45,23 @@ export class ParserService {
         return result;
     }
 
-    private parseNode(line: string): Element {
+    private parseNode(line: string): TsNode {
         let elems = line.split(" ");
-        let node = new TsNode(elems[0].trim(), elems[1].trim());
-        this.nodes.push(node);
-        return node;
+        return new TsNode(elems[0].trim(), elems[1].trim());
     }
 
-    private parseEdge(line: string): Element {
+    private parseEdge(line: string, model: TsModel): TsEdge {
         let elems = line.split(" ");
-        return new TsEdge(elems[0].trim(), this.getNode(elems[3].trim()), this.getNode(elems[4].trim()));
-    }
-
-    private getNode(id: string): TsNode {
-        for (let item of this.nodes) {
-            if (item.id === id) {
-                return item;
-            }
+        const firstNode = model.getNode(elems[3].trim());
+        const secondNode = model.getNode(elems[4].trim());
+        if (!firstNode) {
+            throw new Error("Could not find a node with the ID " + elems[3].trim());
         }
-        throw new Error("Could not find a node with the ID " + id);
+        if (!secondNode) {
+            throw new Error("Could not find a node with the ID " + elems[4].trim());
+        }
+        return new TsEdge(elems[0].trim(), elems[1].trim(), +elems[2].trim(), firstNode, secondNode);
     }
+
+
 }
