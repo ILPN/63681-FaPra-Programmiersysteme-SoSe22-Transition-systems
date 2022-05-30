@@ -11,7 +11,7 @@ export class ParserService {
 
     constructor() {
     }
-    parse(text: string): TsModel | undefined {
+    parse(text: string): TsModel {
         const lines = text.split('\n');
 
         const result = new TsModel();

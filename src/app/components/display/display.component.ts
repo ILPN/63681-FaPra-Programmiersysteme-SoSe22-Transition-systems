@@ -15,15 +15,15 @@ export class DisplayComponent implements OnDestroy {
     @ViewChild('drawingArea') drawingArea: ElementRef<SVGElement> | undefined;
 
     private _sub: Subscription;
-    private _diagram: TsModel | undefined;
+    private _model: TsModel | undefined;
 
     constructor(private _layoutService: LayoutService,
                 private _svgService: SvgService,
                 private _displayService: DisplayService) {
 
-        this._sub  = this._displayService.diagram$.subscribe(diagram => {
-            this._diagram = diagram;
-            this._layoutService.layout(this._diagram);
+        this._sub  = this._displayService.model$.subscribe(diagram => {
+            this._model = diagram;
+            this._layoutService.layout(this._model);
             this.draw();
         });
     }
@@ -39,7 +39,7 @@ export class DisplayComponent implements OnDestroy {
         }
 
         this.clearDrawingArea();
-        const elements = this._svgService.createSvgElements(this._displayService.diagram);
+        const elements = this._svgService.createSvgElements(this._displayService.model);
         for (const element of elements) {
             this.drawingArea.nativeElement.appendChild(element);
         }
