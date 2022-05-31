@@ -53,7 +53,7 @@ export class AppComponent implements OnDestroy {
 
         a.setAttribute('style', 'display: none');
         a.href = url;
-        a.download = 'transitionSystem.ts';
+        a.download = 'transition-system.ts';
         a.click();
         window.URL.revokeObjectURL(url);
         a.remove();
