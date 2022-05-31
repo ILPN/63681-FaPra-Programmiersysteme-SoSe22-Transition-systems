@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<!-- https://www.w3schools.com/graphics/canvas_intro.asp -->
+<canvas id="graphCanvas" width="1000" height="500" style="border:1px solid #000000;"></canvas>
+
+<script>
+
+drawRectNode(80, 220, "V1");
+drawCircleNode(360, 180, "C1");
+// drawArrow(100, 200, 320, 160);
+
+function drawRectNode(xPos, yPos, label){
+    let sideLength = 40;
+    // https://www.w3schools.com/graphics/canvas_drawing.asp
+    let canvas = document.getElementById("graphCanvas");
+    let ctx = canvas.getContext("2d");
+    // https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/strokeRect
+    ctx.strokeRect(xPos, yPos, sideLength, sideLength);
+    // https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/fillText
+    ctx.fillText(label, xPos + 0.3 * sideLength, yPos + 0.6 * sideLength);
+}
+
+function drawCircleNode(xPos, yPos, label){
+    let radius = 20;
+    // https://www.w3schools.com/graphics/canvas_drawing.asp
+    let canvas = document.getElementById("graphCanvas");
+    let ctx = canvas.getContext("2d");
+    // https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/arc
+    ctx.arc(xPos, yPos, radius, 0, 2 * Math.PI);
+    // https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/fillText
+    ctx.fillText(label, xPos - 0.3 * radius, yPos + 0.2 * radius);
+    ctx.stroke();
+}
+
+// https://projects.calebevans.me/jcanvas/docs/arrows/
+// function drawArrow(startXPos, startYPos, endXPos, endYPos){
+//     $('graphCanvas').drawLine({
+//         strokeStyle: '#000',
+//         strokeWidth: 4,
+//         rounded: true,
+//         startArrow: true,
+//         arrowRadius: 15,
+//         x1: startXPos, y1: startYPos,
+//         x2: endXPos, y2: endYPos
+//     });
+// }
+
+</script>
+</body>
+</html>

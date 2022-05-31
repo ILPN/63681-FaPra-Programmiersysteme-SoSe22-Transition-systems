@@ -13,7 +13,7 @@ import {TsModel} from "./classes/diagram/tsmodel";
 export class AppComponent implements OnDestroy {
 
     public textareaFc: FormControl;
-    private model: TsModel | undefined;
+    private model: TsModel;
     private _sub: Subscription;
 
     constructor(private _parserService: ParserService,
@@ -31,9 +31,7 @@ export class AppComponent implements OnDestroy {
 
     private processSourceChange(newSource: string) {
         this.model = this._parserService.parse(newSource);
-        if (this.model !== undefined) {
-            this._displayService.display(this.model);
-        }
+        this._displayService.display(this.model);
     }
 
     async onFileInput(event: Event) {
@@ -55,7 +53,7 @@ export class AppComponent implements OnDestroy {
 
         a.setAttribute('style', 'display: none');
         a.href = url;
-        a.download = 'transitionSystem.ts';
+        a.download = 'transition-system.ts';
         a.click();
         window.URL.revokeObjectURL(url);
         a.remove();

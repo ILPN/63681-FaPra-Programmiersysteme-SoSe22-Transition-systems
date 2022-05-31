@@ -17,11 +17,11 @@ export class DisplayService implements OnDestroy {
         this._model$.complete();
     }
 
-    public get diagram$(): Observable<TsModel> {
+    public get model$(): Observable<TsModel> {
         return this._model$.asObservable();
     }
 
-    public get diagram(): TsModel {
+    public get model(): TsModel {
         return this._model$.getValue();
     }
 
