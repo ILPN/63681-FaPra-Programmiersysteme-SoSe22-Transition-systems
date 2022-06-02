@@ -23,4 +23,16 @@ export class TsEdge extends TsElement {
         return this._nodeTo;
     }
 
+    get x_from(): number {
+        return this._nodeFrom.x;
+    }
+    get x_to(): number {
+        return this._nodeTo.x;
+    }
+    get y_from(): number {
+        return this._nodeFrom.y;
+    }
+    get y_to(): number {
+        return this._nodeTo.y;
+    }
 }

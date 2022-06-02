@@ -7,12 +7,13 @@ import {TsModel} from '../classes/diagram/tsmodel';
 export class LayoutService {
 
     private static readonly OFFSET = 20;
-    private static readonly RANGE = 300;
+    private static readonly RANGE_X = 800;
+    private static readonly RANGE_Y = 300;
 
     public layout(diagram: TsModel): void {
         diagram.nodes.forEach(el => {
-            el.x = Math.floor(Math.random() * LayoutService.RANGE) + LayoutService.OFFSET;
-            el.y = Math.floor(Math.random() * LayoutService.RANGE) + LayoutService.OFFSET;
+            el.x = Math.floor(Math.random() * LayoutService.RANGE_X) + LayoutService.OFFSET;
+            el.y = Math.floor(Math.random() * LayoutService.RANGE_Y) + LayoutService.OFFSET;
         });
     }
 }
