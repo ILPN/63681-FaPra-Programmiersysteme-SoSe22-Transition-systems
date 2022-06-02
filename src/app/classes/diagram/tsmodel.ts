@@ -1,22 +1,17 @@
 import {TsNode} from "./tsnode";
 import {TsEdge} from "./tsedge";
 import {TsElement} from "./tselement";
+import {TsGraphProperties} from "./tsgraphproperties";
 
 export class TsModel {
 
-    private _nodes: Array<TsNode>;
-    private _edges: Array<TsEdge>;
-    private _deadlocks: Array<TsNode> | undefined;
-    private _mortalTransitions: Array<TsEdge> | undefined;
-    private _cycleElements: Array<TsElement>;
-    private _freeOfDeadlocks: boolean | undefined;
-    private _acyclic: boolean | undefined;
-    private _alive: boolean | undefined;
+    private readonly _nodes: Array<TsNode>;
+    private readonly _edges: Array<TsEdge>;
 
     constructor() {
         this._nodes = new Array<TsNode>();
         this._edges = new Array<TsEdge>();
-        this._cycleElements = new Array<TsElement>();
+
     }
 
     get nodes(): Array<TsNode>{
@@ -36,24 +31,24 @@ export class TsModel {
 
     public getNode(id: String): TsNode | undefined {
         // @ts-ignore
-        for (const n of this._nodes) {
-            if (id === n.id) {
-                return n
-            }
-        }
-        return undefined;
+        return this._nodes.find ( n => (id === n.id));
+
     }
 
     /** Searches for Deadlocks in the Model and sets the associated attributes
      * {@link _deadlocks} and {@link _freeOfDeadlocks}.
      */
-    public searchDeadlocksInModel(): void{
+    public searchDeadlocksInModel(): Array<TsElement>{
         // first clear deadlock array to prevent double values (if already prefilled)
-        this._deadlocks = [];
-        this._deadlocks = this.searchDeadlocks(this._nodes, this._edges);
-        this._freeOfDeadlocks = this._deadlocks === [];
+        let deadlocks: TsElement[];
+        deadlocks = this.searchDeadlocks(this._nodes, this._edges);
+        return deadlocks;
     }
 
+    public isFreeOfDeadlocks(): boolean {
+        return this.searchDeadlocksInModel() === [];
+
+    }
     /**
      * Searches for Deadlocks in a given set of nodes and edges.
      * @param nodeArray given set of nodes
@@ -76,7 +71,7 @@ export class TsModel {
      * {@link _acyclic}, {@link _cycleElements} , {@link _mortalTransitions}
      * and {@link _alive}.
      */
-    public searchCyclesInModel(): void{
+    public getGraphProperties(): TsGraphProperties {
         //create copies of nodes and edges of the model
         const tempNodes = [...this._nodes];
         const tempEdges = [...this._edges];
@@ -97,13 +92,16 @@ export class TsModel {
             tempDeadlocks = this.searchDeadlocks(tempNodes, tempEdges)
         }
         // if there are no remaining nodes in the model, the graph is acyclic
-        this._acyclic = tempNodes === [];
+        const acyclic = tempNodes === [];
         // all remaining nodes and edges belong to cycles
-        tempNodes.forEach(n => this._cycleElements.push(n));
-        tempEdges.forEach(e => this._cycleElements.push(e));
+        let cycleElements = new Array<TsElement>();
+        tempNodes.forEach(n => cycleElements.push(n));
+        tempEdges.forEach(e => cycleElements.push(e));
         // removed edges belong to a transition that may die
-        this._mortalTransitions = tempMortalTransitions.filter(t => !tempEdges.includes(t));
-        this._alive = this._mortalTransitions === [];
+        const mortalTransitions = tempMortalTransitions.filter(t => !tempEdges.includes(t));
+        const alive = mortalTransitions === [];
+        const deadlocks = this.searchDeadlocksInModel();
+        return new TsGraphProperties(deadlocks,mortalTransitions,cycleElements,this.isFreeOfDeadlocks(),acyclic,alive);
 
     }
 
