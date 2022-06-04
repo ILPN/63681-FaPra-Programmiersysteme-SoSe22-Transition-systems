@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>jCanvas-Demo</title>
+</head>
+<body>
+<!-- https://www.w3schools.com/graphics/canvas_intro.asp -->
+<canvas id="graphCanvas" width="1000" height="500" style="border:1px solid #000000;"></canvas>
+
+<script src="jquery.js"></script>
+<script src="jcanvas.js"></script>
+<script>
+
+drawRectNode(80, 220, "V1");
+drawCircleNode(360, 180, "C1");
+drawArrow(125, 225, 335, 185, "arr1");
+drawRoundedArrow(350, 205, 130, 260, "arr2");
+
+// Drawing rectangle using canvas-api
+function drawRectNode(xPos, yPos, label){
+    const sideLength = 40;
+    // https://www.w3schools.com/graphics/canvas_drawing.asp
+    const ctx = document.getElementById("graphCanvas").getContext("2d");
+    // https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/strokeRect
+    ctx.strokeRect(xPos, yPos, sideLength, sideLength);
+    // https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/fillText
+    ctx.fillText(label, xPos + 0.3 * sideLength, yPos + 0.6 * sideLength);
+}
+
+// Drawing circle using canvas-api
+function drawCircleNode(xPos, yPos, label){
+    const radius = 20;
+    // https://www.w3schools.com/graphics/canvas_drawing.asp
+    const canvas = document.getElementById("graphCanvas");
+    const ctx = canvas.getContext("2d");
+    // https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/arc
+    ctx.arc(xPos, yPos, radius, 0, 2 * Math.PI);
+    // https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/fillText
+    ctx.fillText(label, xPos - 0.3 * radius, yPos + 0.2 * radius);
+    ctx.stroke();
+}
+
+// Drawing arrow using jcanvas-api
+function drawArrow(startXPos, startYPos, endXPos, endYPos, label){
+    // https://projects.calebevans.me/jcanvas/docs/arrows/
+    $('canvas').drawLine({
+        // Farbe
+        strokeStyle: '#000',
+        // Stärke des Pfeils
+        strokeWidth: 1,
+        // eckige oder abgerundete Ecken
+        rounded: true,
+        // setzt die Pfeilspitze an die Anfangskoordinaten
+        //startArrow: true,
+        // setzt die Pfeilspitze an die Endkoordinaten
+        endArrow: true,
+        // Länge der Pfeilspitze
+        arrowRadius: 13,
+        // Winkel der Pfeilspitze
+        arrowAngle: 40,
+        x1: startXPos, y1: startYPos,
+        x2: endXPos, y2: endYPos
+    })
+    // Label
+    // https://projects.calebevans.me/jcanvas/docs/text/
+    .drawText({
+        fillStyle: '#000',
+        x: startXPos + 0.5 * (endXPos - startXPos),
+        y: startYPos + 0.5 * (endYPos - startYPos),
+        fontSize: 15,
+        fontFamily: 'Verdana, sans-serif',
+        fromCenter: false,
+        text: label,
+    });
+}
+
+// Drawing rounded arrow using jcanvas-api
+function drawRoundedArrow(startXPos, startYPos, endXPos, endYPos, label) {
+    // https://projects.calebevans.me/jcanvas/docs/arrows/
+    $('canvas').drawQuadratic({
+        strokeStyle: '#000',
+        strokeWidth: 1,
+        rounded: true,
+        endArrow: true,
+        arrowRadius: 15,
+        arrowAngle: 40,
+        x1: startXPos, y1: startYPos,
+        cx1: startXPos + 0.3 * (endXPos - startXPos), cy1: startYPos + 1.3 * (endYPos - startYPos),
+        x2: endXPos, y2: endYPos
+    })
+    // Label
+    .drawText({
+        fillStyle: '#000',
+        x: startXPos + 0.5 * (endXPos - startXPos),
+        y: startYPos + 0.5 * (endYPos - startYPos),
+        fontSize: 15,
+        fontFamily: 'Verdana, sans-serif',
+        fromCenter: false,
+        text: label,
+    });
+}
+</script>
+
+</body>
+</html>
