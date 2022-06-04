@@ -12,6 +12,9 @@
 <script src="jcanvas.js"></script>
 <script>
 
+const lineWidth = 1;
+const lineColor = '#000';
+
 drawRectNode(80, 220, "V1");
 drawCircleNode(360, 180, "C1");
 drawArrow(125, 225, 335, 185, "arr1");
@@ -23,6 +26,8 @@ function drawRectNode(xPos, yPos, label){
     // https://www.w3schools.com/graphics/canvas_drawing.asp
     const ctx = document.getElementById("graphCanvas").getContext("2d");
     // https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/strokeRect
+    ctx.strokeStyle = lineColor;
+    ctx.lineWidth = lineWidth;
     ctx.strokeRect(xPos, yPos, sideLength, sideLength);
     // https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/fillText
     ctx.fillText(label, xPos + 0.3 * sideLength, yPos + 0.6 * sideLength);
@@ -46,9 +51,9 @@ function drawArrow(startXPos, startYPos, endXPos, endYPos, label){
     // https://projects.calebevans.me/jcanvas/docs/arrows/
     $('canvas').drawLine({
         // Farbe
-        strokeStyle: '#000',
+        strokeStyle: lineColor,
         // Stärke des Pfeils
-        strokeWidth: 1,
+        strokeWidth: lineWidth,
         // eckige oder abgerundete Ecken
         rounded: true,
         // setzt die Pfeilspitze an die Anfangskoordinaten
@@ -65,7 +70,7 @@ function drawArrow(startXPos, startYPos, endXPos, endYPos, label){
     // Label
     // https://projects.calebevans.me/jcanvas/docs/text/
     .drawText({
-        fillStyle: '#000',
+        fillStyle: lineColor,
         x: startXPos + 0.5 * (endXPos - startXPos),
         y: startYPos + 0.5 * (endYPos - startYPos),
         fontSize: 15,
@@ -79,8 +84,8 @@ function drawArrow(startXPos, startYPos, endXPos, endYPos, label){
 function drawRoundedArrow(startXPos, startYPos, endXPos, endYPos, label) {
     // https://projects.calebevans.me/jcanvas/docs/arrows/
     $('canvas').drawQuadratic({
-        strokeStyle: '#000',
-        strokeWidth: 1,
+        strokeStyle: lineColor,
+        strokeWidth: lineWidth,
         rounded: true,
         endArrow: true,
         arrowRadius: 15,
@@ -91,7 +96,7 @@ function drawRoundedArrow(startXPos, startYPos, endXPos, endYPos, label) {
     })
     // Label
     .drawText({
-        fillStyle: '#000',
+        fillStyle: lineColor,
         x: startXPos + 0.5 * (endXPos - startXPos),
         y: startYPos + 0.5 * (endYPos - startYPos),
         fontSize: 15,
