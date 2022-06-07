@@ -1,4 +1,4 @@
-import { Point } from './models';
+import { Point } from './point';
 import {Vector} from './vector';
 
 describe('Vector', () => {
