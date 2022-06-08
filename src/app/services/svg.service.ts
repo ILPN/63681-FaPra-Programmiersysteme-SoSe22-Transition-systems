@@ -43,7 +43,7 @@ export class SvgService {
         svg.setAttribute('cx', `${element.x}`);
         svg.setAttribute('cy', `${element.y}`);
         svg.setAttribute('r', this.circleRadius().toString());
-        svg.setAttribute('fill', 'black');
+        svg.setAttribute('fill', 'gray');
         element.registerSvg(svg);
         return svg;
     }
@@ -56,7 +56,7 @@ export class SvgService {
         let y1 = element.y_from;
         let y2 = element.y_to;
         //Pfeile beginnen am Kreisrand -> Polarkoordinaten
-        const phi = Math.atan2((x2 - x1), (y2 - y1));
+        const phi = Math.atan2((y2 - y1), (x2 - x1));
         x1 = x1 + this.circleRadius() * Math.cos(phi);
         x2 = x2 - this.circleRadius() * Math.cos(phi);
         y1 = y1 + this.circleRadius() * Math.sin(phi);
