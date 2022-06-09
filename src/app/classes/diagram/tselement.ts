@@ -1,9 +1,12 @@
 export abstract class TsElement {
 
-    private _x: number;
-    private _y: number;
-    private _svgElement: SVGElement | undefined;
-    private _id: string;
+    protected _x: number;
+    protected _y: number;
+    protected _svgElement: SVGElement | undefined;
+    protected _dragged: boolean
+    protected _dragShiftX: number;
+    protected _dragShiftY: number;
+    protected _id: string;
     protected readonly _label: string;
 
     protected constructor(id: string, label: string) {
@@ -11,6 +14,9 @@ export abstract class TsElement {
         this._y = 0;
         this._id = id;
         this._label = label;
+        this._dragged = false;
+        this._dragShiftX = 0;
+        this._dragShiftY = 0;
     }
 
     get x(): number {
@@ -31,26 +37,6 @@ export abstract class TsElement {
 
     public registerSvg(svg: SVGElement) {
         this._svgElement = svg;
-        this._svgElement.onmousedown = (event) => {
-            this.processMouseDown(event);
-        };
-        this._svgElement.onmouseup = (event) => {
-            this.processMouseUp(event);
-        };
-    }
-
-    private processMouseDown(event: MouseEvent) {
-        if (this._svgElement === undefined) {
-            return;
-        }
-        this._svgElement.setAttribute('fill', 'red');
-    }
-
-    private processMouseUp(event: MouseEvent) {
-        if (this._svgElement === undefined) {
-            return;
-        }
-        this._svgElement.setAttribute('fill', 'black');
     }
 
     get id(): string {
@@ -64,5 +50,15 @@ export abstract class TsElement {
     get label(): string {
         return this._label;
     }
+
+    get isDragged(): boolean {
+        return this._dragged;
+    }
+
+    set isDragged(value: boolean) {
+        this._dragged = value;
+    }
+
+
 }
 

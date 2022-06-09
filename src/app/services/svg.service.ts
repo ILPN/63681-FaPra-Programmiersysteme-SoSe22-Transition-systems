@@ -38,40 +38,22 @@ export class SvgService {
        return defs;
     }
 
-    private createSvgForNode(element: TsNode): SVGElement {
+    public createSvgForNode(element: TsNode): SVGElement {
         const svg = this.createSvgElement('circle');
-        svg.setAttribute('cx', `${element.x}`);
-        svg.setAttribute('cy', `${element.y}`);
-        svg.setAttribute('r', this.circleRadius().toString());
+        svg.setAttribute('r', element.circleRadius().toString());
         svg.setAttribute('fill', 'gray');
         element.registerSvg(svg);
+        element.updateSVG();
         return svg;
     }
 
-    private createSvgForEdge(element: TsEdge): SVGElement {
+    public createSvgForEdge(element: TsEdge): SVGElement {
         const svg = this.createSvgElement('line');
-
-        let x1 = element.x_from;
-        let x2 = element.x_to;
-        let y1 = element.y_from;
-        let y2 = element.y_to;
-        //Pfeile beginnen am Kreisrand -> Polarkoordinaten
-        const phi = Math.atan2((y2 - y1), (x2 - x1));
-        x1 = x1 + this.circleRadius() * Math.cos(phi);
-        x2 = x2 - this.circleRadius() * Math.cos(phi);
-        y1 = y1 + this.circleRadius() * Math.sin(phi);
-        y2 = y2 - this.circleRadius() * Math.sin(phi);
-
-        svg.setAttribute('x1', x1.toString());
-        svg.setAttribute('x2', x2.toString());
-        svg.setAttribute('y1', y1.toString());
-        svg.setAttribute('y2', y2.toString());
         svg.setAttribute('stroke', 'black');
         svg.setAttribute('stroke-width', '3');
         svg.setAttribute('marker-end', "url(#arrow)");
-
         element.registerSvg(svg);
-
+        element.updateSVG();
         return svg;
     }
 
@@ -79,7 +61,4 @@ export class SvgService {
         return document.createElementNS('http://www.w3.org/2000/svg', name);
     }
 
-    private circleRadius() {
-        return 25;
-    }
 }

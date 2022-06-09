@@ -38,9 +38,9 @@ export class TsModel {
     /** Searches for Deadlocks in the Model and sets the associated attributes
      * {@link _deadlocks} and {@link _freeOfDeadlocks}.
      */
-    public searchDeadlocksInModel(): Array<TsElement>{
+    public searchDeadlocksInModel(): Array<TsNode>{
         // first clear deadlock array to prevent double values (if already prefilled)
-        let deadlocks: TsElement[];
+        let deadlocks: TsNode[];
         deadlocks = this.searchDeadlocks(this._nodes, this._edges);
         return deadlocks;
     }
