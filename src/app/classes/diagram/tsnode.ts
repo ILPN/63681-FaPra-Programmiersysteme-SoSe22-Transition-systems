@@ -6,7 +6,17 @@ export class TsNode extends TsElement {
     constructor(id: string, label: string, ) {
         super(id, label);
         this._connectedEdges = new Set<TsEdge>();
+        this.initializeSvg();
     }
+
+    private initializeSvg() {
+        const svg = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        svg.setAttribute('r', this.circleRadius().toString());
+        svg.setAttribute('fill', 'gray');
+        this.registerSvg(svg);
+        this.updateSVG();
+    }
+
     public updateSVG() {
         this._svgElement?.setAttribute('cx', `${this._x}`);
         this._svgElement?.setAttribute('cy', `${this._y}`);
@@ -18,19 +28,15 @@ export class TsNode extends TsElement {
 
     public override registerSvg(svg: SVGElement) {
         super.registerSvg(svg);
-        // @ts-ignore
         this._svgElement.onmousedown = (event) => {
             this.processMouseDown(event);
         };
-        // @ts-ignore
         this._svgElement.onmouseup = (event) => {
             this.processMouseUp(event);
         };
-        // @ts-ignore
         this._svgElement.onmousemove = (event) => {
             this.processMouseMoving(event);
         }
-        // @ts-ignore
         this._svgElement.onmouseleave = (event) => {
             this.processMouseLeave(event);
         }

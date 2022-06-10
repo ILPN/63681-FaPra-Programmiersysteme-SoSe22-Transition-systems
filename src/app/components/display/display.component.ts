@@ -15,17 +15,18 @@ export class DisplayComponent implements OnDestroy {
     @ViewChild('drawingArea') drawingArea: ElementRef<SVGElement> | undefined;
 
     private _sub: Subscription;
-    private _model: TsModel | undefined;
+    private _model: TsModel;
 
     constructor(private _layoutService: LayoutService,
-                private _svgService: SvgService,
                 private _displayService: DisplayService) {
-
-        this._sub  = this._displayService.model$.subscribe(diagram => {
+        //um undefined zu vermeiden
+        this._model = new TsModel();
+        this._sub = this._displayService.model$.subscribe(diagram => {
             this._model = diagram;
             this._layoutService.layout(this._model);
             this.draw();
         });
+
     }
 
     ngOnDestroy(): void {
@@ -37,10 +38,10 @@ export class DisplayComponent implements OnDestroy {
             console.debug('drawing area not ready yet')
             return;
         }
-
         this.clearDrawingArea();
-        const elements = this._svgService.createSvgElements(this._displayService.model);
-        for (const element of elements) {
+        //Das Defs Element enthält den Arrowhead, auf den die Edges referenzieren
+        this.drawingArea.nativeElement.appendChild(SvgService.createDefsElement());
+        for (const element of this._model.getSvgElements()) {
             this.drawingArea.nativeElement.appendChild(element);
         }
     }

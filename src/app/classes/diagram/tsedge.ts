@@ -15,6 +15,7 @@ export class TsEdge extends TsElement {
         from._connectedEdges.add(this);
         this._nodeTo = to;
         to._connectedEdges.add(this);
+        this.initializeSvg();
     }
 
     get nodeFrom(): TsNode{
@@ -53,5 +54,13 @@ export class TsEdge extends TsElement {
         this._svgElement?.setAttribute('x2', x2.toString());
         this._svgElement?.setAttribute('y1', y1.toString());
         this._svgElement?.setAttribute('y2', y2.toString());
+    }
+    private initializeSvg(): void {
+        const svg = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        svg.setAttribute('stroke', 'black');
+        svg.setAttribute('stroke-width', '3');
+        svg.setAttribute('marker-end', "url(#arrow)");
+        this.registerSvg(svg);
+        this.updateSVG();
     }
 }

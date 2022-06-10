@@ -1,8 +1,11 @@
 export abstract class TsElement {
+    abstract updateSVG():void;
 
     protected _x: number;
     protected _y: number;
-    protected _svgElement: SVGElement | undefined;
+    //Das SVGElement samt Funktionen könnte in eine eigene Klasse die dann Instanzvariable von TSElement ist.
+    //Momentan sind Logik und Darstellung etwas verschränkt.
+    protected _svgElement!: SVGElement;
     protected _dragged: boolean
     protected _dragShiftX: number;
     protected _dragShiftY: number;
@@ -24,6 +27,8 @@ export abstract class TsElement {
     }
 
     set x(value: number) {
+        //man kann neue Koordinaten setzen ohne das SVG upzudaten. X, Y sollen als Point extrahiert werden.
+        //Außerdem muss bei Verändern der Koordinaten zwingen das SVG ebenfalls upgedatet werden.
         this._x = value;
     }
 
@@ -59,6 +64,8 @@ export abstract class TsElement {
         this._dragged = value;
     }
 
-
+    getSvgElement():SVGElement {
+        return <SVGElement>this._svgElement;
+    }
 }
 

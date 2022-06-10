@@ -14,6 +14,7 @@ export class LayoutService {
         diagram.nodes.forEach(el => {
             el.x = Math.floor(Math.random() * LayoutService.RANGE_X) + LayoutService.OFFSET;
             el.y = Math.floor(Math.random() * LayoutService.RANGE_Y) + LayoutService.OFFSET;
+            el.updateSVG();
         });
     }
 }
