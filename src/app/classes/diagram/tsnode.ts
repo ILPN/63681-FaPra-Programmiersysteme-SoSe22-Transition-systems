@@ -30,20 +30,33 @@ export class TsNode extends TsElement {
         this._svgElement.onmousemove = (event) => {
             this.processMouseMoving(event);
         }
+        // @ts-ignore
+        this._svgElement.onmouseleave = (event) => {
+            this.processMouseLeave(event);
+        }
 
     }
     private processMouseDown(event: MouseEvent): void {
         this._dragged = true;
-        this._dragShiftX = event.clientX - this._x;
-        this._dragShiftY = event.clientY - this._y;
+        this._dragShiftX = event.offsetX - this._x;
+        this._dragShiftY = event.offsetY - this._y;
     }
 
     private processMouseMoving(event: MouseEvent): void {
         if (this._dragged) {
-            this._x = event.clientX - this._dragShiftX;
-            this._y = event.clientY - this._dragShiftY;
+            this._x = event.offsetX - this._dragShiftX;
+            this._y = event.offsetY - this._dragShiftY;
             this.updateSVG()
         }
+    }
+    private processMouseLeave(event: MouseEvent): void {
+        if (this._dragged) {
+            //Node centern, damit wird verhindert, dass man die Node verliert, wenn man zu schnell über den Bildschirm wischt s. TRAN-58
+            this._x = event.offsetX ;
+            this._y = event.offsetY ;
+            this.updateSVG()
+        }
+
     }
 
     private processMouseUp(event: MouseEvent): void {
