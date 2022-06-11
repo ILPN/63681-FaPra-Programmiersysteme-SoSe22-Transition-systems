@@ -1,12 +1,28 @@
 import { Vector } from "./vector";
 
 export class Point {
-    x: number;
-    y: number;
+    private _x: number;
+    private _y: number;
 
     constructor(x: number, y: number) {
-        this.x = x;
-        this.y = y;
+        this._x = x;
+        this._y = y;
+    }
+
+    get x(): number {
+        return this._x;
+    }
+
+    set x(newValue: number) {
+        this._x = newValue;
+    }
+
+    get y(): number {
+        return this._y;
+    }
+
+    set y(newValue: number) {
+        this._y = newValue;
     }
 
     /**
@@ -24,8 +40,8 @@ export class Point {
      * of the vector are added to the one of the point.
      */
     public moveBy(vector: Vector): void {
-        this.x += vector.x;
-        this.y += vector.y;
+        this._x += vector.x;
+        this._y += vector.y;
     }
 
     /**

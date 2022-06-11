@@ -1,8 +1,9 @@
+import {Point} from '../spring_embedder/models/point'
+
 export abstract class TsElement {
     abstract updateSVG():void;
 
-    protected _x: number;
-    protected _y: number;
+    protected _position: Point;
     //Das SVGElement samt Funktionen könnte in eine eigene Klasse die dann Instanzvariable von TSElement ist.
     //Momentan sind Logik und Darstellung etwas verschränkt.
     protected _svgElement!: SVGElement;
@@ -12,32 +13,39 @@ export abstract class TsElement {
     protected _id: string;
     protected readonly _label: string;
 
-    protected constructor(id: string, label: string) {
-        this._x = 0;
-        this._y = 0;
+    protected constructor(id: string, label: string, position: Point = new Point(0, 0)) {
         this._id = id;
         this._label = label;
         this._dragged = false;
         this._dragShiftX = 0;
         this._dragShiftY = 0;
+        this._position = position;
     }
 
     get x(): number {
-        return this._x;
+        return this._position.x;
     }
 
     set x(value: number) {
         //man kann neue Koordinaten setzen ohne das SVG upzudaten. X, Y sollen als Point extrahiert werden.
         //Außerdem muss bei Verändern der Koordinaten zwingen das SVG ebenfalls upgedatet werden.
-        this._x = value;
+        this._position.x = value;
     }
 
     get y(): number {
-        return this._y;
+        return this._position.y;
     }
 
     set y(value: number) {
-        this._y = value;
+        this._position.y = value;
+    }
+
+    get position(): Point {
+        return this._position;
+    }
+
+    set position(newPosition: Point) {
+        this._position = newPosition;
     }
 
     public registerSvg(svg: SVGElement) {
