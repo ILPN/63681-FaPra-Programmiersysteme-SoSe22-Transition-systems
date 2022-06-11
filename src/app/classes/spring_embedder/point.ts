@@ -1,16 +1,5 @@
 import { Vector } from "./vector";
 
-export class Graph {}
-
-export class Node {
-    x: number;
-    y: number;
-    constructor(x: number, y: number) {
-        this.x = x;
-        this.y = y;
-    }
-}
-
 export class Point {
     x: number;
     y: number;
@@ -37,5 +26,12 @@ export class Point {
     public moveBy(vector: Vector): void {
         this.x += vector.x;
         this.y += vector.y;
+    }
+
+    /**
+     * Returns true if the coordinates of both points are pairwise equal.
+     */
+    public equals(otherPoint: Point): boolean {
+        return this.x === otherPoint.x && this.y === otherPoint.y
     }
 }
