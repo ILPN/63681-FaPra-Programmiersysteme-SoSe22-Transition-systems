@@ -102,13 +102,10 @@ export class TsModel {
         const alive = mortalTransitions === [];
         const deadlocks = this.searchDeadlocksInModel();
         return new TsGraphProperties(deadlocks,mortalTransitions,cycleElements,this.isFreeOfDeadlocks(),acyclic,alive);
-
     }
-
     getSvgElements():Array<SVGElement> {
         const svgEdges = this._edges.map(e => (e.getSvgElement()));
         const svgNodes = this._nodes.map(e => (e.getSvgElement()));
         return svgEdges.concat(svgNodes);
-
     }
 }
