@@ -18,8 +18,8 @@ export class TsNode extends TsElement {
     }
 
     public updateSVG() {
-        this._svgElement?.setAttribute('cx', `${this._x}`);
-        this._svgElement?.setAttribute('cy', `${this._y}`);
+        this._svgElement?.setAttribute('cx', `${this.position.x}`);
+        this._svgElement?.setAttribute('cy', `${this.position.y}`);
         this._connectedEdges.forEach(e => {
             e.updateSVG()
         })
@@ -44,22 +44,22 @@ export class TsNode extends TsElement {
     }
     private processMouseDown(event: MouseEvent): void {
         this._dragged = true;
-        this._dragShiftX = event.offsetX - this._x;
-        this._dragShiftY = event.offsetY - this._y;
+        this._dragShiftX = event.offsetX - this.position.x;
+        this._dragShiftY = event.offsetY - this.position.y;
     }
 
     private processMouseMoving(event: MouseEvent): void {
         if (this._dragged) {
-            this._x = event.offsetX - this._dragShiftX;
-            this._y = event.offsetY - this._dragShiftY;
+            this.position.x = event.offsetX - this._dragShiftX;
+            this.position.y = event.offsetY - this._dragShiftY;
             this.updateSVG()
         }
     }
     private processMouseLeave(event: MouseEvent): void {
         if (this._dragged) {
             //Node centern, damit wird verhindert, dass man die Node verliert, wenn man zu schnell über den Bildschirm wischt s. TRAN-58
-            this._x = event.offsetX ;
-            this._y = event.offsetY ;
+            this.position.x = event.offsetX ;
+            this.position.y = event.offsetY ;
             this.updateSVG()
         }
 
