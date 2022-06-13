@@ -1,5 +1,3 @@
-import {Point} from './point';
-
 export class Vector {
     x: number;
     y: number;
@@ -39,19 +37,33 @@ export class Vector {
     /**
      * Computes a vector running though the given points.
      */
-    static byPoints(point1: Point, point2: Point): Vector {
-        const vector = new Vector(
+    static byPoints(point1: Vector, point2: Vector): Vector {
+        //confusing name
+        return new Vector(
             point2.x - point1.x,
             point2.y - point1.y
         );
-        return vector;
     }
 
+    static random(): Vector {
+        return new Vector(
+            Math.random() * Vector.RANGE_X + Vector.OFFSET,
+            Math.random() * Vector.RANGE_Y + Vector.OFFSET
+        );
+    }
+    private static readonly OFFSET = 20;
+    private static readonly RANGE_X = 800;
+    private static readonly RANGE_Y = 300;
     /**
      * Adds a given vector to the vector. This is applied to every coordinate.
      */
-    add(otherVector: Vector): void {
+    public add(otherVector: Vector): void {
         this.x += otherVector.x;
         this.y += otherVector.y;
+    }
+
+
+    public equals(otherPoint: Vector): boolean {
+        return this.x === otherPoint.x && this.y === otherPoint.y
     }
 }

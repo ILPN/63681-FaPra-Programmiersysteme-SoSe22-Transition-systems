@@ -1,10 +1,10 @@
-import {Point} from '../spring_embedder/models/point'
+import {Vector} from '../spring_embedder/models/vector'
 
 export abstract class TsElement {
 
     abstract updateSVG(): void;
 
-    protected _position: Point;
+    protected _position: Vector;
     //Das SVGElement samt Funktionen könnte in eine eigene Klasse die dann Instanzvariable von TSElement ist.
     //Momentan sind Logik und Darstellung etwas verschränkt.
     protected _svgElement!: SVGElement;
@@ -14,7 +14,7 @@ export abstract class TsElement {
     protected _id: string;
     protected readonly _label: string;
 
-    protected constructor(id: string, label: string, position: Point = new Point(0, 0)) {
+    protected constructor(id: string, label: string, position: Vector = new Vector(0, 0)) {
         this._id = id;
         this._label = label;
         this._dragged = false;
@@ -31,11 +31,11 @@ export abstract class TsElement {
         return this._position.y;
     }
 
-    get position(): Point {
+    get position(): Vector {
         return this._position;
     }
 
-    set position(newPosition: Point) {
+    set position(newPosition: Vector) {
         this._position = newPosition;
         this.updateSVG();
     }

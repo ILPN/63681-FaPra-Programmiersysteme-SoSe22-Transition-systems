@@ -1,18 +1,17 @@
 import {Injectable} from '@angular/core';
 import {TsModel} from '../classes/diagram/tsmodel';
+import {Vector} from "../classes/spring_embedder/models/vector";
+
 
 @Injectable({
     providedIn: 'root'
 })
 export class LayoutService {
 
-    private static readonly OFFSET = 20;
-    private static readonly RANGE_X = 800;
-    private static readonly RANGE_Y = 300;
-
     public layout(diagram: TsModel): void {
         diagram.nodes.forEach(el => {
-            el.setPosition (Math.floor(Math.random() * LayoutService.RANGE_X + LayoutService.OFFSET), Math.floor(Math.random() * LayoutService.RANGE_Y) + LayoutService.OFFSET)
+            // need to be done by spring embedder
+            el.position = Vector.random();
         });
     }
 }

@@ -1,28 +1,28 @@
-import {Point} from './models/point';
+import {Vector} from './models/vector';
 import { Edge } from './models/edge';
 import {FRSpringEmbedder} from './algorithmn';
 
 describe('SpringEmbedder Test', () => {
-    let points: Array<Point> = [];
+    let points: Array<Vector> = [];
     let edges: Array<Edge> = [];
     it('Basic test', () => {
         // The algorithm can be executed without crashing. Not the best test,
         // but so far I can't think of a better one. Please let me know if
         // you found one.
         points = [
-            new Point(0, 0),
-            new Point(0, 1),
-            new Point(1, 1),
-            new Point(1, 0)
+            new Vector(0, 0),
+            new Vector(0, 1),
+            new Vector(1, 1),
+            new Vector(1, 0)
         ];
         edges = [
             new Edge(
-                new Point(0, 0),
-                new Point(1, 1)
+                new Vector(0, 0),
+                new Vector(1, 1)
             ),
             new Edge(
-                new Point(0, 1),
-                new Point(1, 0)
+                new Vector(0, 1),
+                new Vector(1, 0)
             )
         ];
         const embedder = new FRSpringEmbedder(

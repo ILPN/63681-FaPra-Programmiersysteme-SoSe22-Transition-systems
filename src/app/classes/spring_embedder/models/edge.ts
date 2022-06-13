@@ -1,10 +1,10 @@
-import {Point} from './point';
+import {Vector} from './vector';
 
 export class Edge {
-    from: Point;
-    to: Point;
+    from: Vector;
+    to: Vector;
 
-    constructor(from: Point, to: Point) {
+    constructor(from: Vector, to: Vector) {
         this.from = from;
         this.to = to;
     }

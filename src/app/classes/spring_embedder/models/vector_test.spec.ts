@@ -1,4 +1,3 @@
-import { Point } from './point';
 import {Vector} from './vector';
 
 describe('Vector', () => {
@@ -38,10 +37,31 @@ describe('Vector', () => {
     });
 
     it('A vector can be created that runy through two points', () => {
-        const point1 = new Point(1, 0);
-        const point2 = new Point(3, 2);
+        const point1 = new Vector(1, 0);
+        const point2 = new Vector(3, 2);
         const vector = Vector.byPoints(point1, point2);
         expect(vector.x).toEqual(3 - 1);
-        expect(vector.y).toEqual(2 - 0);
+        expect(vector.y).toEqual(2);
+    });
+    it('Can be compared to be equal', () => {
+        const secondPoint = new Vector(3, 4);
+        expect(vector.equals(secondPoint)).toBeTruthy();
+
+        const thirdPoint = new Vector(1, 2);
+        expect(vector.equals(thirdPoint)).toBeFalsy();
+    });
+
+    it('Can be moved by a given vector', () => {
+        const vector2 = new Vector(1, 0.5);
+        vector.add(vector2);
+        expect(vector.x).toEqual(4);
+        expect(vector.y).toEqual(4.5)
+    });
+
+    it('Can be created randomly', () => {
+        // Not realy sure how to test this properly. At least we verify the
+        // existence of the 'random' metod.
+        const randomPoint = Vector.random();
+        expect(randomPoint).toBeInstanceOf(Vector)
     });
 });

@@ -3,7 +3,8 @@ import {TsEdge} from "./tsedge";
 
 export class TsNode extends TsElement {
     public _connectedEdges: Set<TsEdge>;
-    constructor(id: string, label: string, ) {
+
+    constructor(id: string, label: string,) {
         super(id, label);
         this._connectedEdges = new Set<TsEdge>();
         this.initializeSvg();
@@ -30,7 +31,7 @@ export class TsNode extends TsElement {
     public override registerSvg(svg: SVGElement) {
         super.registerSvg(svg);
         this._svgElement.onmousedown = (event) => {
-                this.processMouseDown(event);
+            this.processMouseDown(event);
         };
         this._svgElement.onmouseup = (event) => {
             this.processMouseUp(event);
@@ -43,20 +44,22 @@ export class TsNode extends TsElement {
         }
 
     }
+
     private processMouseDown(event: MouseEvent): void {
         this._dragged = true;
-        this.setPosition( event.offsetX - this._dragShiftX, event.offsetY - this._dragShiftY);
+        this.setPosition(event.offsetX - this._dragShiftX, event.offsetY - this._dragShiftY);
     }
 
     private processMouseMoving(event: MouseEvent): void {
         if (this._dragged) {
-            this.setPosition( event.offsetX - this._dragShiftX, event.offsetY - this._dragShiftY);
+            this.setPosition(event.offsetX - this._dragShiftX, event.offsetY - this._dragShiftY);
         }
     }
+
     private processMouseLeave(event: MouseEvent): void {
         if (this._dragged) {
             //Node centern, damit wird verhindert, dass man die Node verliert, wenn man zu schnell über den Bildschirm wischt s. TRAN-58
-            this.setPosition( event.offsetX , event.offsetY );
+            this.setPosition(event.offsetX, event.offsetY);
 
         }
 
@@ -65,7 +68,8 @@ export class TsNode extends TsElement {
     private processMouseUp(event: MouseEvent): void {
         this._dragged = false;
     }
-    public circleRadius():number {
+
+    public circleRadius(): number {
         return 25;
     }
 }

@@ -1,4 +1,3 @@
-import {Point} from './models/point';
 import {Vector} from './models/vector';
 import {Edge} from './models/edge';
 
@@ -21,7 +20,7 @@ const defaultCooling: Cooling = (interation: number) => 1;
  * Spring embedding according to 'Fruchtman & Reingold'
  */
 export class FRSpringEmbedder {
-    nodes: Array<Point>;
+    nodes: Array<Vector>;
 
     edges: Array<Edge>;
 
@@ -33,7 +32,7 @@ export class FRSpringEmbedder {
     idealSpringLength: number;
 
     constructor(
-        nodes: Array<Point> = [],
+        nodes: Array<Vector> = [],
         edges: Array<Edge> = [],
         cooling: Cooling = defaultCooling,
         idealSpringLength: number = 1
@@ -73,7 +72,7 @@ export class FRSpringEmbedder {
                 const coolingFactor = this.cooling(iteration);
                 force.applyScalar(coolingFactor);
                 // Apply the displacement vector to the position
-                position.moveBy(force);
+                position.add(force);
                 index++;
             }
             iteration++;
@@ -94,7 +93,7 @@ export class FRSpringEmbedder {
     /**
      * Computes the repulsive force between the two given points.
      */
-    private _computeSingleRepulsiveForce(point1: Point, point2: Point): Vector {
+    private _computeSingleRepulsiveForce(point1: Vector, point2: Vector): Vector {
         // If both points are the same we would face some computation erros
         // and the result would be NaN. To avoid this we need to catch this
         // case before.
@@ -116,7 +115,7 @@ export class FRSpringEmbedder {
     /**
      * Computes the repulsive force for the given node
      */
-    private _computeRepulsiveForce(point: Point, positions: Point[]): Vector {
+    private _computeRepulsiveForce(point: Vector, positions: Vector[]): Vector {
         const repulsiveForce = new Vector(0, 0);
         const pointsToUse = positions.filter(p => !p.equals(point));
         for (const position of pointsToUse) {
@@ -129,14 +128,14 @@ export class FRSpringEmbedder {
     /**
      * Computes the attractive force, given by the edge.
      */
-    private _computeSingleAttractiveForce(point1: Point, point2: Point): Vector {
+    private _computeSingleAttractiveForce(point1: Vector, point2: Vector): Vector {
         const attractiveVector = Vector.byPoints(point1, point2);
         const scalar = Math.pow(attractiveVector.norm(), 2) / this.idealSpringLength;
         attractiveVector.applyScalar(scalar);
         return attractiveVector;
     }
 
-    private _computeAttractiveForce(point: Point, edges: Edge[]): Vector {
+    private _computeAttractiveForce(point: Vector, edges: Edge[]): Vector {
         const attractiveForce = new Vector(0, 0);
         const edgesToUse = edges.filter(e => e.from.equals(point));
         for (const edge of edgesToUse) {
@@ -162,11 +161,11 @@ export class FRSpringEmbedder {
      * Computes the initial positions of the embedding. The positions
      * are set randomly.
      */
-    private _computeInitialPositions(): Array<Point> {
+    private _computeInitialPositions(): Array<Vector> {
         // Create a random position for each node in the graph.
-        const positions: Array<Point> = [];
+        const positions: Array<Vector> = [];
         for (const node of this.nodes) {
-            positions.push(Point.random());
+            positions.push(Vector.random());
         }
         console.log(`Computed ${positions.length} random positions`)
         return positions;
