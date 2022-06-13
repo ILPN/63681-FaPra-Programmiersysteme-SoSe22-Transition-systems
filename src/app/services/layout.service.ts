@@ -11,7 +11,7 @@ export class LayoutService {
     public layout(diagram: TsModel): void {
         diagram.nodes.forEach(el => {
             // need to be done by spring embedder
-            el.position = Vector.random();
+            el.position = Vector.atRandomPosition();
         });
     }
 }
