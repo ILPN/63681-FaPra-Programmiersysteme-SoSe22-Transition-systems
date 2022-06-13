@@ -62,6 +62,9 @@ export class Vector {
         this.y += otherVector.y;
     }
 
+    public angle(otherVector: Vector): number {
+        return Math.atan2((otherVector.y - this.y), (otherVector.x - this.x))
+    }
 
     public equals(otherPoint: Vector): boolean {
         return this.x === otherPoint.x && this.y === otherPoint.y

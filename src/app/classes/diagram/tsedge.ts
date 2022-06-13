@@ -1,5 +1,6 @@
 import {TsElement} from "./tselement";
 import {TsNode} from "./tsnode";
+import {Vector} from "../spring_embedder/models/vector";
 
 export class TsEdge extends TsElement {
 
@@ -26,30 +27,23 @@ export class TsEdge extends TsElement {
         return this._nodeTo;
     }
 
-    get x_from(): number {
-        return this._nodeFrom.x;
+    get position_from(): Vector {
+        return this._nodeFrom.position;
     }
 
-    get x_to(): number {
-        return this._nodeTo.x;
-    }
-
-    get y_from(): number {
-        return this._nodeFrom.y;
-    }
-
-    get y_to(): number {
-        return this._nodeTo.y;
+    get position_to(): Vector {
+        return this._nodeTo.position;
     }
 
     public updateSVG() {
         //is not needed as public (but also not harmful). But I don´t understand how to declare private in combination with abstract in TSElement.
-        let x1 = this.x_from;
-        let x2 = this.x_to;
-        let y1 = this.y_from;
-        let y2 = this.y_to;
+        //can be done smarter by Vector functions
+        let x1 = this.position_from.x;
+        let x2 = this.position_to.x;
+        let y1 = this.position_from.y;
+        let y2 = this.position_to.y;
         //Pfeile beginnen am Kreisrand -> Polarkoordinaten
-        const phi = Math.atan2((y2 - y1), (x2 - x1));
+        const phi = this.position_from.angle(this.position_to);
         x1 = x1 + this._nodeFrom.circleRadius() * Math.cos(phi);
         x2 = x2 - this._nodeFrom.circleRadius() * Math.cos(phi);
         y1 = y1 + this._nodeFrom.circleRadius() * Math.sin(phi);
