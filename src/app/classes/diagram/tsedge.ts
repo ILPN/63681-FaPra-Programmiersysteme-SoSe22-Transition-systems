@@ -18,27 +18,32 @@ export class TsEdge extends TsElement {
         this.initializeSvg();
     }
 
-    get nodeFrom(): TsNode{
+    get nodeFrom(): TsNode {
         return this._nodeFrom;
     }
 
-    get nodeTo(): TsNode{
+    get nodeTo(): TsNode {
         return this._nodeTo;
     }
 
     get x_from(): number {
         return this._nodeFrom.x;
     }
+
     get x_to(): number {
         return this._nodeTo.x;
     }
+
     get y_from(): number {
         return this._nodeFrom.y;
     }
+
     get y_to(): number {
         return this._nodeTo.y;
     }
-    public updateSVG(){
+
+    public updateSVG() {
+        //is not needed as public (but also not harmful). But I don´t understand how to declare private in combination with abstract in TSElement.
         let x1 = this.x_from;
         let x2 = this.x_to;
         let y1 = this.y_from;
@@ -55,6 +60,7 @@ export class TsEdge extends TsElement {
         this._svgElement?.setAttribute('y1', y1.toString());
         this._svgElement?.setAttribute('y2', y2.toString());
     }
+
     private initializeSvg(): void {
         const svg = document.createElementNS('http://www.w3.org/2000/svg', 'line');
         svg.setAttribute('stroke', 'black');

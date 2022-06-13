@@ -12,9 +12,7 @@ export class LayoutService {
 
     public layout(diagram: TsModel): void {
         diagram.nodes.forEach(el => {
-            el.x = Math.floor(Math.random() * LayoutService.RANGE_X) + LayoutService.OFFSET;
-            el.y = Math.floor(Math.random() * LayoutService.RANGE_Y) + LayoutService.OFFSET;
-            el.updateSVG();
+            el.setPosition (Math.floor(Math.random() * LayoutService.RANGE_X + LayoutService.OFFSET), Math.floor(Math.random() * LayoutService.RANGE_Y) + LayoutService.OFFSET)
         });
     }
 }

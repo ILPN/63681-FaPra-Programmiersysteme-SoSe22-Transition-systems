@@ -18,6 +18,7 @@ export class TsNode extends TsElement {
     }
 
     public updateSVG() {
+        //is not needed as public (but also not harmful). But I don´t understand how to declare private in combination with abstract in TSElement.
         this._svgElement?.setAttribute('cx', `${this.position.x}`);
         this._svgElement?.setAttribute('cy', `${this.position.y}`);
         this._connectedEdges.forEach(e => {
@@ -29,7 +30,7 @@ export class TsNode extends TsElement {
     public override registerSvg(svg: SVGElement) {
         super.registerSvg(svg);
         this._svgElement.onmousedown = (event) => {
-            this.processMouseDown(event);
+                this.processMouseDown(event);
         };
         this._svgElement.onmouseup = (event) => {
             this.processMouseUp(event);
@@ -44,23 +45,19 @@ export class TsNode extends TsElement {
     }
     private processMouseDown(event: MouseEvent): void {
         this._dragged = true;
-        this._dragShiftX = event.offsetX - this.position.x;
-        this._dragShiftY = event.offsetY - this.position.y;
+        this.setPosition( event.offsetX - this._dragShiftX, event.offsetY - this._dragShiftY);
     }
 
     private processMouseMoving(event: MouseEvent): void {
         if (this._dragged) {
-            this.position.x = event.offsetX - this._dragShiftX;
-            this.position.y = event.offsetY - this._dragShiftY;
-            this.updateSVG()
+            this.setPosition( event.offsetX - this._dragShiftX, event.offsetY - this._dragShiftY);
         }
     }
     private processMouseLeave(event: MouseEvent): void {
         if (this._dragged) {
             //Node centern, damit wird verhindert, dass man die Node verliert, wenn man zu schnell über den Bildschirm wischt s. TRAN-58
-            this.position.x = event.offsetX ;
-            this.position.y = event.offsetY ;
-            this.updateSVG()
+            this.setPosition( event.offsetX , event.offsetY );
+
         }
 
     }
