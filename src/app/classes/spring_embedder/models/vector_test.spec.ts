@@ -17,12 +17,12 @@ describe('Vector', () => {
 
     it('A scalar can be multiplied', () => {
         const scalar = 1.5;
-        vector.applyScalar(scalar);
+        vector.multiplyWith(scalar);
         expect(vector.x).toEqual(4.5);
         expect(vector.y).toEqual(6);
     });
 
-    it('The norm can be computes', () => {
+    it('The norm can be computed', () => {
         expect(vector.norm()).toEqual(5);
     });
 
@@ -61,7 +61,7 @@ describe('Vector', () => {
     it('Can be created randomly', () => {
         // Not realy sure how to test this properly. At least we verify the
         // existence of the 'random' metod.
-        const randomPoint = Vector.random();
+        const randomPoint = Vector.atRandomPosition();
         expect(randomPoint).toBeInstanceOf(Vector)
     });
 });
