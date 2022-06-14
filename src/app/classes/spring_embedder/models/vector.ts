@@ -23,13 +23,13 @@ export class Vector {
      */
     normalize(): void {
         const norm = this.norm();
-        this.applyScalar(1 / norm);
+        this.multiplyWith(1 / norm);
     }
 
     /**
      * Multiplies the entries with the given scalar.
      */
-    applyScalar(scalar: number): void {
+    multiplyWith(scalar: number): void {
         this.x = scalar * this.x;
         this.y = scalar * this.y;
     }
@@ -45,7 +45,7 @@ export class Vector {
         );
     }
 
-    static random(): Vector {
+    static atRandomPosition(): Vector {
         return new Vector(
             Math.random() * Vector.RANGE_X + Vector.OFFSET,
             Math.random() * Vector.RANGE_Y + Vector.OFFSET
@@ -62,6 +62,9 @@ export class Vector {
         this.y += otherVector.y;
     }
 
+    public angle(otherVector: Vector): number {
+        return Math.atan2((otherVector.y - this.y), (otherVector.x - this.x))
+    }
 
     public equals(otherPoint: Vector): boolean {
         return this.x === otherPoint.x && this.y === otherPoint.y
