@@ -11,7 +11,6 @@ export class TsModel {
     constructor() {
         this._nodes = new Array<TsNode>();
         this._edges = new Array<TsEdge>();
-
     }
 
     get nodes(): Array<TsNode>{
@@ -32,7 +31,6 @@ export class TsModel {
     public getNode(id: String): TsNode | undefined {
         // @ts-ignore
         return this._nodes.find ( n => (id === n.id));
-
     }
 
     /** Searches for Deadlocks in the Model and sets the associated attributes
@@ -41,60 +39,66 @@ export class TsModel {
     public searchDeadlocksInModel(): Array<TsNode>{
         // first clear deadlock array to prevent double values (if already prefilled)
         let deadlocks: TsNode[];
-        deadlocks = this.searchDeadlocks(this._nodes, this._edges);
+        deadlocks = TsModel.searchDeadlocks(this._nodes, this._edges);
         return deadlocks;
     }
 
     public isFreeOfDeadlocks(): boolean {
         return this.searchDeadlocksInModel() === [];
-
     }
+
     /**
      * Searches for Deadlocks in a given set of nodes and edges.
      * @param nodeArray given set of nodes
      * @param edgeArray given set of edges
      */
-    private searchDeadlocks(nodeArray: Array<TsNode>, edgeArray: Array<TsEdge>): Array<TsNode> {
-        let deadlocks = new Array<TsNode>();
-        let noDeadlock = new Array<TsNode>();
-        edgeArray.forEach(e =>
-            noDeadlock.push(e.nodeFrom));
-        nodeArray.forEach(n =>
-            {if (! noDeadlock.includes(n))
-            {deadlocks.push(n)}}
-        )
+    private static searchDeadlocks(nodeArray: Array<TsNode>, edgeArray: Array<TsEdge>): Array<TsNode> {
+        let deadlocks: TsNode[];
+        deadlocks = [];
+        let noDeadlock: TsNode[];
+        noDeadlock = [];
+        for (let i = 0; i < edgeArray.length; i++) {
+            const e = edgeArray[i];
+            noDeadlock.push(e.nodeFrom);
+        }
+        for (let i = 0; i < nodeArray.length; i++){
+            const n = nodeArray[i];
+            if  (!(noDeadlock.includes(n)))
+        {deadlocks.push(n)}}
         return deadlocks;
     }
 
     /**
-     * Checks if the model is acyclic and sets the associated attributes
-     * {@link _acyclic}, {@link _cycleElements} , {@link _mortalTransitions}
-     * and {@link _alive}.
+     * Checks if the model has deadlocks and mortal transitions and if there are cycles.
+     * Returns an instance of {@link TsGraphProperties}.
      */
     public getGraphProperties(): TsGraphProperties {
         //create copies of nodes and edges of the model
-        const tempNodes = [...this._nodes];
-        const tempEdges = [...this._edges];
-        const tempMortalTransitions = [...this._edges];
+        let tempNodes = [...this.nodes];
+        let tempEdges = [...this.edges];
+        const tempMortalTransitions = [...this.edges];
         // search Deadlocks in the model
-        let tempDeadlocks = this.searchDeadlocks(tempNodes, tempEdges);
+        let tempDeadlocks: Array<TsNode>;
+        tempDeadlocks = TsModel.searchDeadlocks(tempNodes, tempEdges);
+        let currentDeadlock: TsNode| undefined;
 
-        while (tempDeadlocks !== []){
+        while (tempDeadlocks.length !== 0){
             // take one deadlock
-            let currentDeadlock = tempDeadlocks.pop();
+             currentDeadlock = tempDeadlocks[0];
             //remove all edges from the model whose nodeTo is the current Deadlock
-            tempEdges.filter(e =>
+            tempEdges = tempEdges.filter(e =>
                 e.nodeTo !== currentDeadlock);
             // remove the current deadlock from the model
-            tempNodes.filter(n =>
+            tempNodes = tempNodes.filter(n =>
                 n !== currentDeadlock);
             // search Deadlocks in remaining model
-            tempDeadlocks = this.searchDeadlocks(tempNodes, tempEdges)
+            tempDeadlocks = TsModel.searchDeadlocks(tempNodes, tempEdges);
         }
         // if there are no remaining nodes in the model, the graph is acyclic
-        const acyclic = tempNodes === [];
+        let acyclic: boolean;
+        acyclic = (tempNodes === []);
         // all remaining nodes and edges belong to cycles
-        let cycleElements = new Array<TsElement>();
+        const cycleElements = new Array<TsElement>();
         tempNodes.forEach(n => cycleElements.push(n));
         tempEdges.forEach(e => cycleElements.push(e));
         // removed edges belong to a transition that may die

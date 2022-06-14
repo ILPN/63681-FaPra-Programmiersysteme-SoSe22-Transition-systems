@@ -3,11 +3,11 @@ import {TsNode} from "./tsnode";
 import {TsEdge} from "./tsedge";
 import {expect} from "@angular/flex-layout/_private-utils/testing";
 
-describe('test of getGraphPropertiesFunction with an example model',
+describe('Test of getGraphProperties function with an example model',
     () => {
         // create example model
         //need to be fixed
-        /*let myModel = new TsModel();
+        let myModel = new TsModel();
         let node1 = new TsNode('n1', 'node1');
         let node2 = new TsNode('n2', 'node2');
         let node3 = new TsNode('n3', 'node3');
@@ -38,7 +38,7 @@ describe('test of getGraphPropertiesFunction with an example model',
 
         it('models is not alive', function () {
             expect(myProperties.alive).toBe(false)
-        });*/
+        });
 
 
     })
