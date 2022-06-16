@@ -85,6 +85,7 @@ export class TsNode extends TsElement {
     }
 
     private processMouseUp(event: MouseEvent): void {
+        //TODO tbd?
         this._dragged = false;
     }
 
