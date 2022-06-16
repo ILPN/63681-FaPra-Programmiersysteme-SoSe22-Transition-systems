@@ -8,6 +8,8 @@ export abstract class TsElement {
     //Das SVGElement samt Funktionen könnte in eine eigene Klasse die dann Instanzvariable von TSElement ist.
     //Momentan sind Logik und Darstellung etwas verschränkt.
     protected _svgElement!: SVGElement;
+    protected _svgLabelElement!: SVGElement;
+    protected _svgNamespace: string = 'http://www.w3.org/2000/svg';
     protected _dragged: boolean
     protected _dragShiftX: number;
     protected _dragShiftY: number;
@@ -52,6 +54,10 @@ export abstract class TsElement {
         this._svgElement = svg;
     }
 
+    public registerLabelSvg(svgLabel: SVGElement){
+        this._svgLabelElement = svgLabel;
+    }
+
     get id(): string {
         return this._id;
     }
@@ -74,6 +80,10 @@ export abstract class TsElement {
 
     getSvgElement(): SVGElement {
         return <SVGElement>this._svgElement;
+    }
+
+    getSvgLabelElement(): SVGElement {
+        return this._svgLabelElement;
     }
 }
 
