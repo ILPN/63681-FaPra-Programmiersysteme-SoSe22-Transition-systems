@@ -11,10 +11,22 @@ export class TsNode extends TsElement {
     }
 
     private initializeSvg() {
-        const svg = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        const svg: SVGElement = <SVGElement>document.createElementNS(this._svgNamespace, 'circle');
         svg.setAttribute('r', this.circleRadius().toString());
-        svg.setAttribute('fill', 'gray');
+        svg.setAttribute('fill', 'white');
+        svg.setAttribute("stroke", "black");
+        svg.setAttribute("stroke-width", "1");
+
+        // create label
+        const text: SVGElement = <SVGElement>document.createElementNS(this._svgNamespace, 'text');
+        text.setAttribute("stroke-width", "1");
+        text.setAttribute("fill", "black");
+        text.setAttribute("font-size", 0.8 * this.circleRadius() + "px");
+        const textNode = document.createTextNode(this._label);
+        text.appendChild(textNode)
+
         this.registerSvg(svg);
+        this.registerLabelSvg(text);
         this.updateSVG();
     }
 
@@ -22,6 +34,13 @@ export class TsNode extends TsElement {
         //is not needed as public (but also not harmful). But I don´t understand how to declare private in combination with abstract in TSElement.
         this._svgElement?.setAttribute('cx', `${this.position.x}`);
         this._svgElement?.setAttribute('cy', `${this.position.y}`);
+        // set label-position
+        // TODO dependent on circle-radius?
+        let xTxt = this._position.x - 0.5 * this.circleRadius();
+        let yTxt = this._position.y + 0.3 * this.circleRadius();
+        this._svgLabelElement.setAttribute("x", xTxt.toString());
+        this._svgLabelElement.setAttribute("y", yTxt.toString());
+
         this._connectedEdges.forEach(e => {
             e.updateSVG()
         })
