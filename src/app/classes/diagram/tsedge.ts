@@ -53,14 +53,31 @@ export class TsEdge extends TsElement {
         this._svgElement?.setAttribute('x2', x2.toString());
         this._svgElement?.setAttribute('y1', y1.toString());
         this._svgElement?.setAttribute('y2', y2.toString());
+
+        // set label-position
+        let xTxt = x1 + 0.5 * (x2 - x1);
+        let yTxt = y1 + 0.5 * (y2 - y1);
+        this._svgLabelElement.setAttribute("x", xTxt.toString());
+        this._svgLabelElement.setAttribute("y", yTxt.toString());
     }
 
     private initializeSvg(): void {
-        const svg = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        const svg: SVGElement = <SVGElement>document.createElementNS(this._svgNamespace, 'line');
         svg.setAttribute('stroke', 'black');
-        svg.setAttribute('stroke-width', '3');
+        svg.setAttribute('stroke-width', '1');
         svg.setAttribute('marker-end', "url(#arrow)");
+
+        // create label
+        // TODO duplicate code like in tsnode.ts
+        const text: SVGElement = <SVGElement>document.createElementNS(this._svgNamespace, 'text');
+        text.setAttribute("stroke-width", "1");
+        text.setAttribute("fill", "black");
+        text.setAttribute("font-size", 0.8 * this._nodeFrom.circleRadius() + "px");
+        const textNode = document.createTextNode(this._label);
+        text.appendChild(textNode)
+
         this.registerSvg(svg);
+        this.registerLabelSvg(text);
         this.updateSVG();
     }
 }
