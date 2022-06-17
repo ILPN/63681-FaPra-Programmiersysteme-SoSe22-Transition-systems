@@ -75,7 +75,6 @@ export class TsEdge extends TsElement {
         text.setAttribute("font-size", 0.8 * this._nodeFrom.circleRadius() + "px");
         const textNode = document.createTextNode(this._label);
         text.appendChild(textNode)
-
         this.registerSvg(svg);
         this.registerLabelSvg(text);
         this.updateSVG();

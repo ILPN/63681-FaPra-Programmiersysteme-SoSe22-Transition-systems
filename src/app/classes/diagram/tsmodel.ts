@@ -13,30 +13,31 @@ export class TsModel {
         this._edges = new Array<TsEdge>();
     }
 
-    get nodes(): Array<TsNode>{
+    get nodes(): Array<TsNode> {
         return this._nodes;
     }
 
-    get edges(): Array<TsEdge>{
+    get edges(): Array<TsEdge> {
         return this._edges;
     }
 
-    public addNode(aNode: TsNode){
+    public addNode(aNode: TsNode) {
         this._nodes.push(aNode);
     }
-    public addEdge(aEdge: TsEdge){
+
+    public addEdge(aEdge: TsEdge) {
         this._edges.push(aEdge);
     }
 
     public getNode(id: String): TsNode | undefined {
         // @ts-ignore
-        return this._nodes.find ( n => (id === n.id));
+        return this._nodes.find(n => (id === n.id));
     }
 
     /** Searches for Deadlocks in the Model and sets the associated attributes
      * {@link _deadlocks} and {@link _freeOfDeadlocks}.
      */
-    public searchDeadlocksInModel(): Array<TsNode>{
+    public searchDeadlocksInModel(): Array<TsNode> {
         // first clear deadlock array to prevent double values (if already prefilled)
         let deadlocks: TsNode[];
         deadlocks = TsModel.searchDeadlocks(this._nodes, this._edges);
@@ -57,14 +58,16 @@ export class TsModel {
         deadlocks = [];
         let noDeadlock: TsNode[];
         noDeadlock = [];
-        for (let i = 0; i < edgeArray.length; i++) {
-            const e = edgeArray[i];
+
+        for (let e of edgeArray) {
             noDeadlock.push(e.nodeFrom);
         }
-        for (let i = 0; i < nodeArray.length; i++){
-            const n = nodeArray[i];
-            if  (!(noDeadlock.includes(n)))
-        {deadlocks.push(n)}}
+        for (let e of nodeArray) {
+            if (!(noDeadlock.includes(e))) {
+                deadlocks.push(e)
+            }
+        }
+
         return deadlocks;
     }
 
@@ -80,11 +83,11 @@ export class TsModel {
         // search Deadlocks in the model
         let tempDeadlocks: Array<TsNode>;
         tempDeadlocks = TsModel.searchDeadlocks(tempNodes, tempEdges);
-        let currentDeadlock: TsNode| undefined;
+        let currentDeadlock: TsNode | undefined;
 
-        while (tempDeadlocks.length !== 0){
+        while (tempDeadlocks.length !== 0) {
             // take one deadlock
-             currentDeadlock = tempDeadlocks[0];
+            currentDeadlock = tempDeadlocks[0];
             //remove all edges from the model whose nodeTo is the current Deadlock
             tempEdges = tempEdges.filter(e =>
                 e.nodeTo !== currentDeadlock);
@@ -105,13 +108,16 @@ export class TsModel {
         const mortalTransitions = tempMortalTransitions.filter(t => !tempEdges.includes(t));
         const alive = mortalTransitions === [];
         const deadlocks = this.searchDeadlocksInModel();
-        return new TsGraphProperties(deadlocks,mortalTransitions,cycleElements,this.isFreeOfDeadlocks(),acyclic,alive);
+        return new TsGraphProperties(deadlocks, mortalTransitions, cycleElements, this.isFreeOfDeadlocks(), acyclic, alive);
     }
-    getSvgElements():Array<SVGElement> {
+
+    getSvgElements(): Array<SVGElement> {
         const svgEdges = this._edges.map(e => (e.getSvgElement()));
         const svgNodes = this._nodes.map(e => (e.getSvgElement()));
         const svgNodeLabel = this._nodes.map(e => (e.getSvgLabelElement()));
         const svgEdgeLabel = this._edges.map(e => (e.getSvgLabelElement()));
-        return svgEdges.concat(svgNodes).concat(svgNodeLabel).concat(svgEdgeLabel);
+        //Reihenfolge ist wichtig, damit die Nodes im Vordergrund sind und problemfrei bewegt werden können (TRAN-61)
+        //Folgefrage: geht das Bewegen der Nodes vielleicht smarter?
+        return svgNodeLabel.concat(svgEdgeLabel).concat(svgEdges).concat(svgNodes);
     }
 }

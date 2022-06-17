@@ -13,7 +13,7 @@ export class TsNode extends TsElement {
     private initializeSvg() {
         const svg: SVGElement = <SVGElement>document.createElementNS(this._svgNamespace, 'circle');
         svg.setAttribute('r', this.circleRadius().toString());
-        svg.setAttribute('fill', 'white');
+        svg.setAttribute('fill', 'transparent');
         svg.setAttribute("stroke", "black");
         svg.setAttribute("stroke-width", "1");
 
@@ -85,7 +85,7 @@ export class TsNode extends TsElement {
     }
 
     private processMouseUp(event: MouseEvent): void {
-        //TODO tbd?
+        //entfernt den dragged marker -> Element wird losgelassen
         this._dragged = false;
     }
 
