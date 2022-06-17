@@ -21,7 +21,7 @@ export class AppComponent implements OnDestroy {
         this.textareaFc = new FormControl();
         this.model = new TsModel();
         this._sub = this.textareaFc.valueChanges.pipe(debounceTime(400)).subscribe(val => this.processSourceChange(val));
-        this.textareaFc.setValue(this.defaultText());
+        this.textareaFc.setValue(AppComponent.defaultText());
     }
 
 
@@ -60,32 +60,27 @@ export class AppComponent implements OnDestroy {
 
     }
 
-    private defaultText() {
+    private static defaultText() {
         return `.type ts
 .nodes
-n1 11
-n2 12
-n3 13
-n4 14
-n5 15
-n6 16
-n7 17
-n8 18
-n9 19
-n10 20
+n1 (10000)
+n2 (01000)
+n3 (00100)
+n4 (00001)
+n5 (00010)
 .edges
-e1 C 1 n1 n2
-e2 C 1 n2 n4
-e3 C 1 n4 n6
-e4 C 1 n6 n8
-e5 C 1 n3 n5
-e6 C 1 n5 n7
-e7 C 1 n7 n9
-e8 D 1 n2 n3
-e9 D 1 n4 n5
-e10 D 1 n6 n7
-e11 D 1 n8 n9
-e12 D 1 n9 n10
+e1 t1 1 n1 n2
+e2 t2 1 n2 n3
+e3 t3 1 n3 n4
+e4 t4 1 n3 n5
+e5 t5 1 n4 n2
 `;
+    }
+
+    highlightProperties() {
+        const properties = this.model.getGraphProperties();
+        properties.cycleElements.forEach(e => e.highlightCycleElement());
+        properties.deadlocks.forEach(d => d.highlightDeadlock());
+        properties.mortalTransitions.forEach(m => m.highlightMortalTransition());
     }
 }

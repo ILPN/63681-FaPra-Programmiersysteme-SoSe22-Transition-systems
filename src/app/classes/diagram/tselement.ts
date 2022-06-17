@@ -85,5 +85,10 @@ export abstract class TsElement {
     getSvgLabelElement(): SVGElement {
         return this._svgLabelElement;
     }
+
+    highlightCycleElement() {
+    this._svgElement.setAttribute('stroke','blue');
+    this._svgLabelElement.setAttribute('fill','blue');
+    }
 }
 

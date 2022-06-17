@@ -79,4 +79,9 @@ export class TsEdge extends TsElement {
         this.registerLabelSvg(text);
         this.updateSVG();
     }
+
+    highlightMortalTransition() {
+        this._svgElement.setAttribute('stroke','orange');
+        this._svgLabelElement.setAttribute('fill','orange');
+    }
 }

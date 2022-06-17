@@ -92,4 +92,9 @@ export class TsNode extends TsElement {
     public circleRadius(): number {
         return 25;
     }
+
+    highlightDeadlock() {
+        this._svgElement.setAttribute('stroke','red');
+        this._svgLabelElement.setAttribute('fill','red');
+    }
 }

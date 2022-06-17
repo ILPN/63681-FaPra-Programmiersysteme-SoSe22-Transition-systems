@@ -13,6 +13,7 @@ import {FooterComponent} from './components/footer/footer.component';
 import {TemplateButtonComponent} from './components/template-button/template-button.component';
 import { UploadButtonComponent } from './components/upload-button/upload-button.component';
 import { DownloadButtonComponent } from './components/download-button/download-button.component';
+import { GraphPropertiesButtonComponent } from './components/graph-properties-button/graph-properties-button.component';
 
 @NgModule({
     declarations: [
@@ -21,7 +22,8 @@ import { DownloadButtonComponent } from './components/download-button/download-b
         FooterComponent,
         TemplateButtonComponent,
         UploadButtonComponent,
-        DownloadButtonComponent
+        DownloadButtonComponent,
+        GraphPropertiesButtonComponent
     ],
     imports: [
         BrowserModule,
