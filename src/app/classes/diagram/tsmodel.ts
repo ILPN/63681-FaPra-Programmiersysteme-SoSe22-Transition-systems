@@ -67,8 +67,21 @@ export class TsModel {
                 deadlocks.push(e)
             }
         }
-
         return deadlocks;
+    }
+
+    private static searchStartNode (nodeArray: Array<TsNode>, edgeArray: Array<TsEdge>): TsNode | undefined {
+      let startNode: TsNode | undefined;
+      let noStartNode: TsNode[];
+      noStartNode = [];
+      for (let e of edgeArray) {
+          noStartNode.push(e.nodeTo);
+      }
+      for (let e of nodeArray) {
+            if (!(noStartNode.includes(e)))
+                (startNode = e)
+      }
+      return startNode;
     }
 
     /**
@@ -84,14 +97,17 @@ export class TsModel {
         let tempDeadlocks: Array<TsNode>;
         tempDeadlocks = TsModel.searchDeadlocks(tempNodes, tempEdges);
         let currentDeadlock: TsNode | undefined;
+        let currentStartNode: TsNode | undefined;
+        currentStartNode = TsModel.searchStartNode(tempNodes, tempEdges);
 
+        //loop to stepwise remove nodes with no out coming edge
         while (tempDeadlocks.length !== 0) {
             // take one deadlock
             currentDeadlock = tempDeadlocks[0];
-            //remove all edges from the model whose nodeTo is the current Deadlock
+            //remove all edges from the model whose nodeTo is the currentDeadlock
             tempEdges = tempEdges.filter(e =>
                 e.nodeTo !== currentDeadlock);
-            // remove the current deadlock from the model
+            // remove the currentDeadlock from the model
             tempNodes = tempNodes.filter(n =>
                 n !== currentDeadlock);
             // search Deadlocks in remaining model
@@ -100,12 +116,28 @@ export class TsModel {
         // if there are no remaining nodes in the model, the graph is acyclic
         let acyclic: boolean;
         acyclic = (tempNodes === []);
-        // all remaining nodes and edges belong to cycles
+
+        // loop to stepwise remove nodes with no incoming edge
+        while (currentStartNode !== undefined) {
+            //remove all edges from the model whose nodeFrom is currentStartNode
+            tempEdges = tempEdges.filter(e =>
+                e.nodeFrom !== currentStartNode);
+            // remove currentStartNode from the model
+            tempNodes = tempNodes.filter(n =>
+                n !== currentStartNode);
+            // search StartNode in remaining model
+            currentStartNode = TsModel.searchStartNode(tempNodes, tempEdges);
+        }
+
+        // remaining elements belong to a cycle
         const cycleElements = new Array<TsElement>();
         tempNodes.forEach(n => cycleElements.push(n));
         tempEdges.forEach(e => cycleElements.push(e));
+
+        // toDo: abklären, ob das korrekt ist und gegebenenfalls abändern!
         // removed edges belong to a transition that may die
         const mortalTransitions = tempMortalTransitions.filter(t => !tempEdges.includes(t));
+
         const alive = mortalTransitions === [];
         const deadlocks = this.searchDeadlocksInModel();
         return new TsGraphProperties(deadlocks, mortalTransitions, cycleElements, this.isFreeOfDeadlocks(), acyclic, alive);
