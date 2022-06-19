@@ -1,7 +1,7 @@
 import {Vector} from './models/vector';
 import {TsNode} from '../diagram/tsnode';
 import {TsEdge} from '../diagram/tsedge';
-import {FRSpringEmbedder} from './algorithmn';
+import {FRSpringEmbedder} from './frspringembedder';
 
 describe('SpringEmbedder Test', () => {
     let points: Array<TsNode> = [];
@@ -43,7 +43,7 @@ describe('SpringEmbedder Test', () => {
             points,
             edges
         );
-        embedder.embedd(10, 0.1);
+        embedder.run(10, 0.1);
         console.log('Points after embedding:');
         for (const p of points) {
             console.log(`Point: x: ${p.x}, y: ${p.y}`)

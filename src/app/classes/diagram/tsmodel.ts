@@ -2,6 +2,7 @@ import {TsNode} from "./tsnode";
 import {TsEdge} from "./tsedge";
 import {TsElement} from "./tselement";
 import {TsGraphProperties} from "./tsgraphproperties";
+import {FRSpringEmbedder} from "../spring_embedder/frspringembedder";
 
 export class TsModel {
 
@@ -151,5 +152,17 @@ export class TsModel {
         //Reihenfolge ist wichtig, damit die Nodes im Vordergrund sind und problemfrei bewegt werden können (TRAN-61)
         //Folgefrage: geht das Bewegen der Nodes vielleicht smarter?
         return svgNodeLabel.concat(svgEdgeLabel).concat(svgEdges).concat(svgNodes);
+    }
+
+    public layoutBySpringEmbedder() {
+        //Problematischer Aufruf. Der Spring Embedder bekommt die privaten Nodes und Edges
+        new FRSpringEmbedder(this._nodes,this._edges).run(10,20);
+        this.updateSVG();
+    }
+
+    private updateSVG() {
+        for (const node of this._nodes) {
+            node.updateSVG();
+        }
     }
 }

@@ -14,7 +14,7 @@ type Cooling = (interation: number) => number;
  * Don't apply any cooling - leave the displacement vector as it is.
  * @param interation
  */
-const defaultCooling: Cooling = (interation: number) => 1;
+const defaultCooling: Cooling = (interation: number) => 0.001;
 
 
 /**
@@ -46,7 +46,7 @@ export class FRSpringEmbedder {
     /**
      * Computes the embedding of the graph
      */
-    public embedd(maxIterations: number, eps: number): void {
+    public run(maxIterations: number, epsilon: number): void {
         // The positions of the nodes. The initial positons are choosen
         // randomly.
         console.log('Computing random positions');
@@ -54,7 +54,7 @@ export class FRSpringEmbedder {
         // The forces moving the nodes
         const forces: Array<Vector> = [];
         let iteration = 1;
-        while (iteration < maxIterations && this.normIsToHigh(forces, eps)) {
+        while (iteration < maxIterations && this.normIsToHigh(forces, epsilon)) {
             console.log(`${iteration}. iteration,`)
             let index = 0;
             for (const node of this.nodes) {
@@ -78,16 +78,17 @@ export class FRSpringEmbedder {
             iteration++;
         }
         console.log(`Computed embedding after ${iteration} iterations`);
+
     }
 
     /**
      * Catches the case in which the given array of forces is empty. In that
      * case true is returned.
      */
-    private normIsToHigh(forces: Array<Vector>, eps: number): boolean {
+    private normIsToHigh(forces: Array<Vector>, epsilon: number): boolean {
         return (forces.length === 0)
             ? true
-            : this._getMaxNorm(forces) > eps;
+            : this._getMaxNorm(forces) > epsilon;
     }
 
     /**
@@ -169,8 +170,7 @@ export class FRSpringEmbedder {
     private _computeInitialPositions(): void {
         // Create a random position for each node in the graph.
         for (const node of this.nodes) {
-            const randomPosition = Vector.atRandomPosition();
-            node.position = randomPosition;
+            node.position = Vector.atRandomPosition();
         }
         console.log(`Computed ${this.nodes.length} random positions`)
     }

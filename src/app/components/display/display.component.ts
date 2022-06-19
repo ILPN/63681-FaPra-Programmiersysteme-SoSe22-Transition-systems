@@ -1,7 +1,6 @@
 import {Component, ElementRef, OnDestroy, ViewChild} from '@angular/core';
 import {DisplayService} from '../../services/display.service';
 import {Subscription} from 'rxjs';
-import {LayoutService} from '../../services/layout.service';
 import {SvgService} from '../../services/svg.service';
 import {TsModel} from '../../classes/diagram/tsmodel';
 
@@ -17,13 +16,12 @@ export class DisplayComponent implements OnDestroy {
     private _sub: Subscription;
     private _model: TsModel;
 
-    constructor(private _layoutService: LayoutService,
-                private _displayService: DisplayService) {
-        //um undefined zu vermeiden
+    constructor(private _displayService: DisplayService) {
+        //um undefined zu vermeiden. Geht bestimmt besser!?
         this._model = new TsModel();
         this._sub = this._displayService.model$.subscribe(diagram => {
             this._model = diagram;
-            this._layoutService.layout(this._model);
+            this._model.layoutBySpringEmbedder();
             this.draw();
         });
 
