@@ -97,4 +97,9 @@ export class TsNode extends TsElement {
         this._svgElement.setAttribute('stroke','red');
         this._svgLabelElement.setAttribute('fill','red');
     }
+
+    writeOn(result: string): string {
+        result += `${this._id} ${this._label} (${this._position.x.toFixed(2)},${this._position.y.toFixed(2)})\r`;
+        return result;
+    }
 }

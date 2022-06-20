@@ -84,4 +84,9 @@ export class TsEdge extends TsElement {
         this._svgElement.setAttribute('stroke','orange');
         this._svgLabelElement.setAttribute('fill','orange');
     }
+
+    writeOn(result: string):string {
+        result += `${this._id} ${this._label} ${this._weighting} ${this.nodeFrom.id} ${this.nodeTo.id}\r`;
+        return result;
+    }
 }
