@@ -45,10 +45,6 @@ export class TsModel {
         return deadlocks;
     }
 
-    public isFreeOfDeadlocks(): boolean {
-        return this.searchDeadlocksInModel() === [];
-    }
-
     /**
      * Searches for Deadlocks in a given set of nodes and edges.
      * @param nodeArray given set of nodes
@@ -71,6 +67,11 @@ export class TsModel {
         return deadlocks;
     }
 
+    /**
+     * Searches for a node with no incoming edge in a given set of nodes and edges.
+     * @param nodeArray given set of nodes
+     * @param edgeArray given set of edges
+     */
     private static searchStartNode (nodeArray: Array<TsNode>, edgeArray: Array<TsEdge>): TsNode | undefined {
       let startNode: TsNode | undefined;
       let noStartNode: TsNode[];
@@ -86,20 +87,27 @@ export class TsModel {
     }
 
     /**
-     * Checks if the model has deadlocks and mortal transitions and if there are cycles.
+     * Checks if and where the model has deadlocks, cycles and mortal transitions.
      * Returns an instance of {@link TsGraphProperties}.
      */
     public getGraphProperties(): TsGraphProperties {
         //create copies of nodes and edges of the model
         let tempNodes = [...this.nodes];
         let tempEdges = [...this.edges];
-        const tempMortalTransitions = [...this.edges];
+        //let tempMortalTransitions = [...this.edges];
+
         // search Deadlocks in the model
+        const deadlocks = this.searchDeadlocksInModel();
+        const freeOfDeadlocks = (deadlocks === []);
+
+        // if there is any deadlock in the model, all transitions may die
+        let mortalTransitions: TsEdge[];
+        mortalTransitions = [];
+        if (! freeOfDeadlocks) {mortalTransitions = [...this.edges]}
+
         let tempDeadlocks: Array<TsNode>;
-        tempDeadlocks = TsModel.searchDeadlocks(tempNodes, tempEdges);
+        tempDeadlocks = deadlocks;
         let currentDeadlock: TsNode | undefined;
-        let currentStartNode: TsNode | undefined;
-        currentStartNode = TsModel.searchStartNode(tempNodes, tempEdges);
 
         //loop to stepwise remove nodes with no out coming edge
         while (tempDeadlocks.length !== 0) {
@@ -115,8 +123,10 @@ export class TsModel {
             tempDeadlocks = TsModel.searchDeadlocks(tempNodes, tempEdges);
         }
         // if there are no remaining nodes in the model, the graph is acyclic
-        let acyclic: boolean;
-        acyclic = (tempNodes === []);
+        const acyclic = (tempNodes === []);
+
+        let currentStartNode: TsNode | undefined;
+        currentStartNode = TsModel.searchStartNode(tempNodes, tempEdges);
 
         // loop to stepwise remove nodes with no incoming edge
         while (currentStartNode !== undefined) {
@@ -135,13 +145,16 @@ export class TsModel {
         tempNodes.forEach(n => cycleElements.push(n));
         tempEdges.forEach(e => cycleElements.push(e));
 
-        // toDo: abklären, ob das korrekt ist und gegebenenfalls abändern!
         // removed edges belong to a transition that may die
-        const mortalTransitions = tempMortalTransitions.filter(t => !tempEdges.includes(t));
+        if (freeOfDeadlocks)  // if not, all transitions already are in mortalTransitions Array (see above)
+        {mortalTransitions = this.edges.filter(t => !tempEdges.includes(t))}
+
+        // toDo: Überprüfung, ob alle noch vorhandenen Knoten in einem gemeinsamen Cyclus (alle erreichbar?)
+        // nicht erreichbare Knoten > Transitionen sterben
 
         const alive = mortalTransitions === [];
-        const deadlocks = this.searchDeadlocksInModel();
-        return new TsGraphProperties(deadlocks, mortalTransitions, cycleElements, this.isFreeOfDeadlocks(), acyclic, alive);
+
+        return new TsGraphProperties(deadlocks, mortalTransitions, cycleElements, freeOfDeadlocks, acyclic, alive);
     }
 
     getSvgElements(): Array<SVGElement> {
