@@ -7,6 +7,7 @@ export class TsEdge extends TsElement {
     private _weighting: number;
     private readonly _nodeFrom: TsNode;
     private readonly _nodeTo: TsNode;
+    protected dragpoints: Array<Vector>;
 
 
     constructor(id: string, label: string, weighting: number, from: TsNode, to: TsNode) {
@@ -17,7 +18,9 @@ export class TsEdge extends TsElement {
         this._nodeTo = to;
         to._connectedEdges.add(this);
         this.initializeSvg();
+        this.dragpoints = new Array<Vector>();
     }
+
 
     get nodeFrom(): TsNode {
         return this._nodeFrom;
@@ -48,8 +51,16 @@ export class TsEdge extends TsElement {
         x2 = x2 - this._nodeFrom.circleRadius() * Math.cos(phi);
         y1 = y1 + this._nodeFrom.circleRadius() * Math.sin(phi);
         y2 = y2 - this._nodeFrom.circleRadius() * Math.sin(phi);
-        //Add Dragpoints here (Space separated)
-        this._svgElement.setAttribute('points',`${x1.toString()},${y1.toString()} ${x2.toString()},${y2.toString()}`)
+        let postitionsString = `${x1.toString()},${y1.toString()} `;
+        //dragpoints can be undefined due to call of Constructor of tsElements.
+        //TODO Constructor needs to be overridden
+        if (this.dragpoints) {
+            for (let point of this.dragpoints) {
+                postitionsString += `${point.x.toString()},${point.y.toString()} `;
+            }
+        }
+        postitionsString += `${x2.toString()},${y2.toString()}`;
+        this._svgElement.setAttribute('points', postitionsString)
 
 
         // set label-position
@@ -64,6 +75,7 @@ export class TsEdge extends TsElement {
         svg.setAttribute('stroke', 'black');
         svg.setAttribute('stroke-width', '1');
         svg.setAttribute('marker-end', "url(#arrow)");
+        svg.setAttribute('fill','none');
 
         // create label
         // TODO duplicate code like in tsnode.ts
@@ -79,12 +91,15 @@ export class TsEdge extends TsElement {
     }
 
     highlightMortalTransition() {
-        this._svgElement.setAttribute('stroke','orange');
-        this._svgLabelElement.setAttribute('fill','orange');
+        this._svgElement.setAttribute('stroke', 'orange');
+        this._svgLabelElement.setAttribute('fill', 'orange');
     }
 
-    writeOn(result: string):string {
+    writeOn(result: string): string {
         result += `${this._id} ${this._label} ${this._weighting} ${this.nodeFrom.id} ${this.nodeTo.id}\n`;
         return result;
+    }
+    public addDragPoint (position: Vector): void{
+        this.dragpoints.push(position);
     }
 }

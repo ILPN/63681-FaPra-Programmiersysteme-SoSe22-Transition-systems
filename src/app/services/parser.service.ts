@@ -2,6 +2,7 @@ import {Injectable} from '@angular/core';
 import {TsNode} from "../classes/diagram/tsnode";
 import {TsEdge} from "../classes/diagram/tsedge";
 import {TsModel} from "../classes/diagram/tsmodel";
+import {Vector} from "../classes/spring_embedder/models/vector";
 
 @Injectable({
     providedIn: 'root'
@@ -59,7 +60,15 @@ export class ParserService {
         if (!secondNode) {
             throw new Error("Could not find a node with the ID " + elems[4].trim());
         }
-        return new TsEdge(elems[0].trim(), elems[1].trim(), +elems[2].trim(), firstNode, secondNode);
+        let tsEdge: TsEdge = new TsEdge(elems[0].trim(), elems[1].trim(), +elems[2].trim(), firstNode, secondNode);
+        if (elems.length > 5) {
+            for (let dragpoint of elems.slice(5)){
+                dragpoint = dragpoint.replace('(','').replace(')','');
+                let koord = dragpoint.split(',');
+                tsEdge.addDragPoint(new Vector(Number(koord[0]),Number(koord[1])))
+            }
+        }
+        return tsEdge;
     }
 
 }
