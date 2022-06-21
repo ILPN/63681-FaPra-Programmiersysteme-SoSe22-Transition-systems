@@ -5,6 +5,7 @@ import {DisplayService} from './services/display.service';
 import {debounceTime, Subscription} from 'rxjs';
 import {TsModel} from "./classes/diagram/tsmodel";
 import {ExportService} from "./services/export.service";
+import {ValidatorService} from "./services/validator.service";
 
 @Component({
     selector: 'app-root',
@@ -18,7 +19,7 @@ export class AppComponent implements OnDestroy {
     private _sub: Subscription;
 
     constructor(private _parserService: ParserService,
-                private _displayService: DisplayService, private _exportService: ExportService) {
+                private _displayService: DisplayService, private _exportService: ExportService, private _validatorService:ValidatorService) {
         this.textareaFc = new FormControl();
         this.model = new TsModel();
         this._sub = this.textareaFc.valueChanges.pipe(debounceTime(400)).subscribe(val => this.processSourceChange(val));
@@ -41,8 +42,14 @@ export class AppComponent implements OnDestroy {
         if (fileList) {
             let file = fileList[0];
             let result = await file.text();
-            //TODO result should be processed later here (validation for .ts files and conversion for .pnml files)
-            this.textareaFc.setValue(result)
+            let isValid = this._validatorService.validateTS(result);
+            if(isValid){
+                this.textareaFc.setValue(result.trim())
+            }else{
+                this.textareaFc.setValue("")
+                this.textareaFc.setValue("File is not valid")
+            }
+
         }
     }
 

@@ -8,7 +8,6 @@ import {TsModel} from "../classes/diagram/tsmodel";
 })
 export class ParserService {
 
-
     constructor() {
     }
     parse(text: string): TsModel {
@@ -28,11 +27,11 @@ export class ParserService {
                     switch(sectionMarker) {
                         case "nodes": {
                             console.log("node")
-                            result.addNode(this.parseNode(line));
+                            result.addNode(this.parseNode(line.trim()));
                             break;
                         }
                         case "edges": {
-                            result.addEdge(this.parseEdge(line, result));
+                            result.addEdge(this.parseEdge(line.trim(), result));
                             break;
                         }
                         default: {
@@ -62,6 +61,5 @@ export class ParserService {
         }
         return new TsEdge(elems[0].trim(), elems[1].trim(), +elems[2].trim(), firstNode, secondNode);
     }
-
 
 }
