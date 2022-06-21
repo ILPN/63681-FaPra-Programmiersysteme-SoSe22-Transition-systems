@@ -48,11 +48,9 @@ export class TsEdge extends TsElement {
         x2 = x2 - this._nodeFrom.circleRadius() * Math.cos(phi);
         y1 = y1 + this._nodeFrom.circleRadius() * Math.sin(phi);
         y2 = y2 - this._nodeFrom.circleRadius() * Math.sin(phi);
+        //Add Dragpoints here (Space separated)
+        this._svgElement.setAttribute('points',`${x1.toString()},${y1.toString()} ${x2.toString()},${y2.toString()}`)
 
-        this._svgElement?.setAttribute('x1', x1.toString());
-        this._svgElement?.setAttribute('x2', x2.toString());
-        this._svgElement?.setAttribute('y1', y1.toString());
-        this._svgElement?.setAttribute('y2', y2.toString());
 
         // set label-position
         let xTxt = x1 + 0.5 * (x2 - x1);
@@ -62,7 +60,7 @@ export class TsEdge extends TsElement {
     }
 
     private initializeSvg(): void {
-        const svg: SVGElement = <SVGElement>document.createElementNS(this._svgNamespace, 'line');
+        const svg: SVGElement = <SVGElement>document.createElementNS(this._svgNamespace, 'polyline');
         svg.setAttribute('stroke', 'black');
         svg.setAttribute('stroke-width', '1');
         svg.setAttribute('marker-end', "url(#arrow)");
