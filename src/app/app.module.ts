@@ -10,7 +10,6 @@ import {MatButtonModule} from '@angular/material/button';
 import {MatIconModule} from '@angular/material/icon';
 import {ReactiveFormsModule} from '@angular/forms';
 import {FooterComponent} from './components/footer/footer.component';
-import {TemplateButtonComponent} from './components/template-button/template-button.component';
 import { UploadButtonComponent } from './components/upload-button/upload-button.component';
 import { DownloadButtonComponent } from './components/download-button/download-button.component';
 import { GraphPropertiesButtonComponent } from './components/graph-properties-button/graph-properties-button.component';
@@ -20,7 +19,6 @@ import { GraphPropertiesButtonComponent } from './components/graph-properties-bu
         AppComponent,
         DisplayComponent,
         FooterComponent,
-        TemplateButtonComponent,
         UploadButtonComponent,
         DownloadButtonComponent,
         GraphPropertiesButtonComponent

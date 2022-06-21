@@ -18,21 +18,21 @@ export class ValidatorService {
 
         const lines = text.split('\n');
         lines.every(line => {
-            if (line.trimEnd().length > 0) {
+            if (line.trim().length > 0) {
                 if (line.trim().replace(/\s/g, "") === ".typets") {
                     if(currentMarker != 0){
                         isValid = false;
                         return isValid;
                     }
                     currentMarker = fileFormatLineReached;
-                }else if (line.trimEnd() === ".nodes") {
+                }else if (line.trim() === ".nodes") {
                     if(currentMarker != fileFormatLineReached){
                         isValid = false;
                         return isValid;
                     }
                     currentMarker = nodesSectionReached;
                     sectionMarker = "nodes"
-                } else if (line.trimEnd() === ".edges") {
+                } else if (line.trim() === ".edges") {
                     if(currentMarker != nodesSectionReached){
                         isValid = false;
                         return isValid;
@@ -42,7 +42,7 @@ export class ValidatorService {
                 } else {
                     switch (sectionMarker) {
                         case "nodes": {
-                            let elems = line.split(" ");
+                            let elems = line.trim().split(" ");
                             if(elems.length != 2){
                                 isValid = false;
                                 break;
@@ -51,7 +51,7 @@ export class ValidatorService {
                             break;
                         }
                         case "edges": {
-                            let elems = line.split(" ");
+                            let elems = line.trim().split(" ");
                             if(elems.length != 5){
                                 isValid = false;
                                 break;
