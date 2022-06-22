@@ -62,12 +62,11 @@ export class ParserService {
         }
         let tsEdge: TsEdge = new TsEdge(elems[0].trim(), elems[1].trim(), +elems[2].trim(), firstNode, secondNode);
         if (elems.length > 5) {
-            for (let dragpoint of elems.slice(5)){
-                dragpoint = dragpoint.replace('(','').replace(')','');
+                let dragpoint = elems[5].trim().replace('(','').replace(')','');
                 let koord = dragpoint.split(',');
-                tsEdge.addDragPoint(new Vector(Number(koord[0]),Number(koord[1])))
+                tsEdge.setDragpoint(new Vector(Number(koord[0]),Number(koord[1])))
             }
-        }
+
         return tsEdge;
     }
 

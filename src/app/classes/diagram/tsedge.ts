@@ -7,7 +7,7 @@ export class TsEdge extends TsElement {
     private _weighting: number;
     private readonly _nodeFrom: TsNode;
     private readonly _nodeTo: TsNode;
-    protected dragpoints: Array<Vector>;
+    protected dragpoint: Vector | undefined;
 
 
     constructor(id: string, label: string, weighting: number, from: TsNode, to: TsNode) {
@@ -18,7 +18,7 @@ export class TsEdge extends TsElement {
         this._nodeTo = to;
         to._connectedEdges.add(this);
         this.initializeSvg();
-        this.dragpoints = new Array<Vector>();
+
     }
 
 
@@ -51,16 +51,10 @@ export class TsEdge extends TsElement {
         x2 = x2 - this._nodeFrom.circleRadius() * Math.cos(phi);
         y1 = y1 + this._nodeFrom.circleRadius() * Math.sin(phi);
         y2 = y2 - this._nodeFrom.circleRadius() * Math.sin(phi);
-        let postitionsString = `${x1.toString()},${y1.toString()} `;
-        //dragpoints can be undefined due to call of Constructor of tsElements.
-        //TODO Constructor needs to be overridden
-        if (this.dragpoints) {
-            for (let point of this.dragpoints) {
-                postitionsString += `${point.x.toString()},${point.y.toString()} `;
-            }
-        }
-        postitionsString += `${x2.toString()},${y2.toString()}`;
-        this._svgElement.setAttribute('points', postitionsString)
+        let postitionsString = `M ${x1.toString()},${y1.toString()} `;
+        let controlpoint = this.dragpoint?? new Vector((x1+x2)/2,(y1+y2)/2);
+        postitionsString += `Q ${controlpoint.x.toString()},${controlpoint.y.toString()},${x2.toString()},${y2.toString()}`;
+        this._svgElement.setAttribute('d', postitionsString);
 
 
         // set label-position
@@ -71,7 +65,7 @@ export class TsEdge extends TsElement {
     }
 
     private initializeSvg(): void {
-        const svg: SVGElement = <SVGElement>document.createElementNS(this._svgNamespace, 'polyline');
+        const svg: SVGElement = <SVGElement>document.createElementNS(this._svgNamespace, 'path');
         svg.setAttribute('stroke', 'black');
         svg.setAttribute('stroke-width', '1');
         svg.setAttribute('marker-end', "url(#arrow)");
@@ -99,7 +93,8 @@ export class TsEdge extends TsElement {
         result += `${this._id} ${this._label} ${this._weighting} ${this.nodeFrom.id} ${this.nodeTo.id}\n`;
         return result;
     }
-    public addDragPoint (position: Vector): void{
-        this.dragpoints.push(position);
+    public setDragpoint (position: Vector): void{
+        this.dragpoint = position;
     }
 }
+
