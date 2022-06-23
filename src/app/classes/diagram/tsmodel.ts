@@ -39,7 +39,6 @@ export class TsModel {
      * {@link _deadlocks} and {@link _freeOfDeadlocks}.
      */
     public searchDeadlocksInModel(): Array<TsNode> {
-        // first clear deadlock array to prevent double values (if already prefilled)
         let deadlocks: TsNode[];
         deadlocks = TsModel.searchDeadlocks(this._nodes, this._edges);
         return deadlocks;
@@ -98,12 +97,12 @@ export class TsModel {
 
         // search Deadlocks in the model
         const deadlocks = this.searchDeadlocksInModel();
-        const freeOfDeadlocks = (deadlocks === []);
+        const freeOfDeadlocks = (deadlocks.length === 0);
 
         // if there is any deadlock in the model, all transitions may die
-        let mortalTransitions: TsEdge[];
-        mortalTransitions = [];
-        if (! freeOfDeadlocks) {mortalTransitions = [...this.edges]}
+        let mortalEdges: TsEdge[];
+        mortalEdges = [];
+        if (!freeOfDeadlocks) {mortalEdges = [...this.edges];}
 
         let tempDeadlocks: Array<TsNode>;
         tempDeadlocks = deadlocks;
@@ -147,14 +146,14 @@ export class TsModel {
 
         // removed edges belong to a transition that may die
         if (freeOfDeadlocks)  // if not, all transitions already are in mortalTransitions Array (see above)
-        {mortalTransitions = this.edges.filter(t => !tempEdges.includes(t))}
+        {mortalEdges = this.edges.filter(t => !tempEdges.includes(t))}
 
         // toDo: Überprüfung, ob alle noch vorhandenen Knoten in einem gemeinsamen Cyclus (alle erreichbar?)
         // nicht erreichbare Knoten > Transitionen sterben
 
-        const alive = mortalTransitions === [];
+        const alive = mortalEdges === [];
 
-        return new TsGraphProperties(deadlocks, mortalTransitions, cycleElements, freeOfDeadlocks, acyclic, alive);
+        return new TsGraphProperties(deadlocks, mortalEdges, cycleElements, freeOfDeadlocks, acyclic, alive);
     }
 
     getSvgElements(): Array<SVGElement> {
