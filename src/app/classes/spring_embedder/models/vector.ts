@@ -55,6 +55,9 @@ export class Vector {
     private static readonly OFFSET = 20;
     private static readonly RANGE_X = 800;
     private static readonly RANGE_Y = 300;
+    //TODO: take FULL_X from .canvas how does that work?
+    public static readonly FULL_X = 1296;
+    public static readonly FULL_Y = 400;
 
     /**
      * Adds a given vector to the vector. This is applied to every coordinate.
@@ -75,5 +78,10 @@ export class Vector {
     devideBy(factor: number) {
         this.x = this.x / factor;
         this.y = this.y / factor;
+    }
+
+    limitToScreen() {
+        this.x = Math.min(Math.max(0, this.x), Vector.FULL_X);
+        this.y = Math.min(Math.max(0, this.y), Vector.FULL_Y);
     }
 }

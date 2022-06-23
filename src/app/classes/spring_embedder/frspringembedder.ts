@@ -14,7 +14,7 @@ type Cooling = (interation: number) => number;
  * Don't apply any cooling - leave the displacement vector as it is.
  * @param iteration
  */
-const defaultCooling: Cooling = (iteration: number) => 5 + 5 * iteration;
+const defaultCooling: Cooling = (iteration: number) => 50 + iteration;
 
 
 /**
@@ -35,7 +35,7 @@ export class FRSpringEmbedder {
         nodes: Array<TsNode> = [],
         edges: Array<TsEdge> = [],
         cooling: Cooling = defaultCooling,
-        idealSpringLength: number = 200
+        idealSpringLength: number = 130
     ) {
         this.nodes = nodes;
         this.edges = edges;
@@ -46,9 +46,13 @@ export class FRSpringEmbedder {
     /**
      * Computes the embedding of the graph
      */
-    public run(maxIterations: number = 100, epsilon: number = 20): void {
+    public run(maxIterations: number = 100000, epsilon: number = 10): void {
         // The positions of the nodes. The initial positons are choosen
         // randomly.
+        //empty nodes-> no sense
+        if (! (this.nodes.length > 0) ) {
+            return
+        }
         console.log('Computing random positions');
         this._computeInitialPositions();
         // The forces moving the nodes
@@ -73,6 +77,7 @@ export class FRSpringEmbedder {
                 force.devideBy(coolingFactor);
                 // Apply the displacement vector to the position
                 node.position.add(force);
+                node.position.limitToScreen();
                 index++;
             }
             iteration++;
