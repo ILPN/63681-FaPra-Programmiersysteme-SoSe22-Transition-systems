@@ -72,18 +72,18 @@ export class TsModel {
      * @param nodeArray given set of nodes
      * @param edgeArray given set of edges
      */
-    private static searchStartNode (nodeArray: Array<TsNode>, edgeArray: Array<TsEdge>): TsNode | undefined {
-      let startNode: TsNode | undefined;
-      let noStartNode: TsNode[];
-      noStartNode = [];
-      for (let e of edgeArray) {
-          noStartNode.push(e.nodeTo);
-      }
-      for (let e of nodeArray) {
+    private static searchStartNode(nodeArray: Array<TsNode>, edgeArray: Array<TsEdge>): TsNode | undefined {
+        let startNode: TsNode | undefined;
+        let noStartNode: TsNode[];
+        noStartNode = [];
+        for (let e of edgeArray) {
+            noStartNode.push(e.nodeTo);
+        }
+        for (let e of nodeArray) {
             if (!(noStartNode.includes(e)))
                 (startNode = e)
-      }
-      return startNode;
+        }
+        return startNode;
     }
 
     /**
@@ -103,7 +103,9 @@ export class TsModel {
         // if there is any deadlock in the model, all transitions may die
         let mortalTransitions: TsEdge[];
         mortalTransitions = [];
-        if (! freeOfDeadlocks) {mortalTransitions = [...this.edges]}
+        if (!freeOfDeadlocks) {
+            mortalTransitions = [...this.edges]
+        }
 
         let tempDeadlocks: Array<TsNode>;
         tempDeadlocks = deadlocks;
@@ -147,7 +149,9 @@ export class TsModel {
 
         // removed edges belong to a transition that may die
         if (freeOfDeadlocks)  // if not, all transitions already are in mortalTransitions Array (see above)
-        {mortalTransitions = this.edges.filter(t => !tempEdges.includes(t))}
+        {
+            mortalTransitions = this.edges.filter(t => !tempEdges.includes(t))
+        }
 
         // toDo: Überprüfung, ob alle noch vorhandenen Knoten in einem gemeinsamen Cyclus (alle erreichbar?)
         // nicht erreichbare Knoten > Transitionen sterben
@@ -169,7 +173,7 @@ export class TsModel {
 
     public layoutBySpringEmbedder() {
         //Problematischer Aufruf. Der Spring Embedder bekommt die privaten Nodes und Edges
-        new FRSpringEmbedder(this._nodes,this._edges).run(10,20);
+        new FRSpringEmbedder(this._nodes, this._edges).run();
         this.updateSVG();
     }
 

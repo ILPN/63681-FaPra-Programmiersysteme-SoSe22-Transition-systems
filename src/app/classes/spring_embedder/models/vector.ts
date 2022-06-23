@@ -51,9 +51,11 @@ export class Vector {
             Math.random() * Vector.RANGE_Y + Vector.OFFSET
         );
     }
+
     private static readonly OFFSET = 20;
     private static readonly RANGE_X = 800;
     private static readonly RANGE_Y = 300;
+
     /**
      * Adds a given vector to the vector. This is applied to every coordinate.
      */
@@ -68,5 +70,10 @@ export class Vector {
 
     public equals(otherPoint: Vector): boolean {
         return this.x === otherPoint.x && this.y === otherPoint.y
+    }
+
+    devideBy(factor: number) {
+        this.x = this.x / factor;
+        this.y = this.y / factor;
     }
 }

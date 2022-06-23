@@ -12,9 +12,9 @@ type Cooling = (interation: number) => number;
 
 /**
  * Don't apply any cooling - leave the displacement vector as it is.
- * @param interation
+ * @param iteration
  */
-const defaultCooling: Cooling = (interation: number) => 0.001;
+const defaultCooling: Cooling = (iteration: number) => 5 + 5 * iteration;
 
 
 /**
@@ -35,7 +35,7 @@ export class FRSpringEmbedder {
         nodes: Array<TsNode> = [],
         edges: Array<TsEdge> = [],
         cooling: Cooling = defaultCooling,
-        idealSpringLength: number = 1
+        idealSpringLength: number = 200
     ) {
         this.nodes = nodes;
         this.edges = edges;
@@ -46,7 +46,7 @@ export class FRSpringEmbedder {
     /**
      * Computes the embedding of the graph
      */
-    public run(maxIterations: number, epsilon: number): void {
+    public run(maxIterations: number = 100, epsilon: number = 20): void {
         // The positions of the nodes. The initial positons are choosen
         // randomly.
         console.log('Computing random positions');
@@ -54,8 +54,8 @@ export class FRSpringEmbedder {
         // The forces moving the nodes
         const forces: Array<Vector> = [];
         let iteration = 1;
-        while (iteration < maxIterations && this.normIsToHigh(forces, epsilon)) {
-            console.log(`${iteration}. iteration,`)
+        while (iteration < maxIterations && (this.normIsToHigh(forces, epsilon) || !this.distancesOk())) {
+            console.log(`${iteration}. iteration, Max Norm Of Forces: ${this._getMaxNorm(forces)}`)
             let index = 0;
             for (const node of this.nodes) {
                 const repulsiveForce = this._computeRepulsiveForce(node);
@@ -70,7 +70,7 @@ export class FRSpringEmbedder {
                 // Apply the cooling to the displacement vector
                 const force = forces[index];
                 const coolingFactor = this.cooling(iteration);
-                force.multiplyWith(coolingFactor);
+                force.devideBy(coolingFactor);
                 // Apply the displacement vector to the position
                 node.position.add(force);
                 index++;
@@ -102,13 +102,8 @@ export class FRSpringEmbedder {
             return new Vector(0, 0);
         }
         const repulsiveVector = Vector.byPoints(point1, point2);
+        const scalar = Math.pow(this.idealSpringLength, 2) / repulsiveVector.norm();
         repulsiveVector.normalize();
-        const scalar = Math.pow(this.idealSpringLength, 2) / (
-            Math.sqrt(
-                Math.pow(point2.x - point1.x, 2) +
-                Math.pow(point2.y - point1.y, 2)
-            )
-        )
         repulsiveVector.multiplyWith(scalar);
         return repulsiveVector;
     }
@@ -156,7 +151,7 @@ export class FRSpringEmbedder {
      */
     private _getMaxNorm(array: Array<Vector>): number {
         if (array.length <= 0) {
-            throw new Error('Array must not be empty');
+            return 0;
         }
         // Find the maximal norm on array.
         const norms = array.map(vector => vector.norm());
@@ -173,5 +168,17 @@ export class FRSpringEmbedder {
             node.position = Vector.atRandomPosition();
         }
         console.log(`Computed ${this.nodes.length} random positions`)
+    }
+
+    private distancesOk() {
+        for (let node1 of this.nodes) {
+            for (let node2 of this.nodes) {
+                if (!(node1 === node2 ||
+                    Vector.byPoints(node1.position, node2.position).norm() > node1.circleRadius() * 2)) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 }
