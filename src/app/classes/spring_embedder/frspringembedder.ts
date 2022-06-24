@@ -14,7 +14,7 @@ type Cooling = (interation: number) => number;
  * Don't apply any cooling - leave the displacement vector as it is.
  * @param iteration
  */
-const defaultCooling: Cooling = (iteration: number) => 50 + 2*iteration;
+const defaultCooling: Cooling = (iteration: number) => 50 + iteration;
 
 
 /**
@@ -35,7 +35,7 @@ export class FRSpringEmbedder {
         nodes: Array<TsNode> = [],
         edges: Array<TsEdge> = [],
         cooling: Cooling = defaultCooling,
-        idealSpringLength: number = 150
+        idealSpringLength: number = 130
     ) {
         this.nodes = nodes;
         this.edges = edges;
