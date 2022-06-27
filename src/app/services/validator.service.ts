@@ -43,11 +43,15 @@ export class ValidatorService {
                     switch (sectionMarker) {
                         case "nodes": {
                             let elems = line.trim().split(" ");
-                            if(elems.length != 2){
+                            if(elems.length != 2 && elems.length != 3){
                                 isValid = false;
                                 break;
                             }
-                            isValid = elems[1].trim().startsWith("(") && elems[1].trim().endsWith(")")
+                            isValid = elems[1].trim().startsWith("(") && elems[1].trim().endsWith(")");
+                            if(elems.length == 3){
+                                isValid = elems[2].trim().startsWith("(") && elems[1].trim().endsWith(")");
+                                break;
+                            }
                             break;
                         }
                         case "edges": {

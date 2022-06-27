@@ -19,15 +19,14 @@ export class ParserService {
 
         lines.forEach(line => {
             if (line.trimEnd().length > 0) {
-                if(line.trimEnd() === ".nodes"){
+                if(line.trim() === ".nodes"){
                     sectionMarker = "nodes"
-                }else if(line.trimEnd() === ".edges"){
+                }else if(line.trim() === ".edges"){
                     sectionMarker = "edges"
                 }
                 else{
                     switch(sectionMarker) {
                         case "nodes": {
-                            console.log("node")
                             result.addNode(this.parseNode(line.trim()));
                             break;
                         }
@@ -47,7 +46,12 @@ export class ParserService {
 
     private parseNode(line: string): TsNode {
         let elems = line.split(" ");
-        return new TsNode(elems[0].trim(), elems[1].trim());
+        let node = new TsNode(elems[0].trim(), elems[1].trim());
+        if (elems.length == 3){
+            let coordinates = elems[2].trim().replace("(","").replace(")","").split(",")
+            node.setPosition(+coordinates[0], +coordinates[1]);
+        }
+        return node;
     }
 
     private parseEdge(line: string, model: TsModel): TsEdge {

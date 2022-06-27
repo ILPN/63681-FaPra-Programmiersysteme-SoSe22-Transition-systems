@@ -1,4 +1,4 @@
-<div fxLayout="column" fxLayoutAlign="start stretch">
+<div fxLayout="column" fxLayoutAlign="start stretch" xmlns="http://www.w3.org/1999/html">
     <!--  Header  -->
     <a href="https://www.fernuni-hagen.de/ilovepetrinets/"><h1>I <span class="red">❤</span> Petri Nets</h1></a>
     <h2>Show a transition system</h2>
@@ -11,13 +11,14 @@
         <app-upload-button buttonText="Upload File" (click)="fileInput.click()" buttonIcon="upload"></app-upload-button>
         <input #fileInput type="file" (change)="onFileInput($event)" style="display:none;" />
         <mat-form-field appearance="outline"
-                        class="textarea">
+                        class="textarea" [style.width.px]=250>
             <mat-label>Source file</mat-label>
             <textarea matInput
                       cdkTextareaAutosize
                       cdkAutosizeMinRows="10"
-                      cdkAutosizeMaxRows="20"
+                      cdkAutosizeMaxRows="50"
                       [formControl]="textareaFc"></textarea>
+            <button type="button" (click)="refreshGraph()">Refresh</button>
         </mat-form-field>
         <app-download-button buttonText="Download File" (click)="saveTSFile()" buttonIcon="download"></app-download-button>
         <app-graph-properties-button buttonText="Show Properties" (click)="highlightProperties()" buttonIcon="highlight"></app-graph-properties-button>
