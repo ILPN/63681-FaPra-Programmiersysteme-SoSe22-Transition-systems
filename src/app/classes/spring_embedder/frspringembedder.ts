@@ -53,13 +53,12 @@ export class FRSpringEmbedder {
         if (! (this.nodes.length > 0) ) {
             return
         }
-        console.log('Computing random positions');
         this._computeInitialPositions();
         // The forces moving the nodes
         const forces: Array<Vector> = [];
         let iteration = 1;
         while (iteration < maxIterations && (this.normIsToHigh(forces, epsilon) || !this.distancesOk())) {
-            console.log(`${iteration}. iteration, Max Norm Of Forces: ${this._getMaxNorm(forces)}`)
+            //console.log(`${iteration}. iteration, Max Norm Of Forces: ${this._getMaxNorm(forces)}`)
             let index = 0;
             for (const node of this.nodes) {
                 const repulsiveForce = this._computeRepulsiveForce(node);
@@ -172,7 +171,6 @@ export class FRSpringEmbedder {
         for (const node of this.nodes) {
             node.position = Vector.atRandomPosition();
         }
-        console.log(`Computed ${this.nodes.length} random positions`)
     }
 
     private distancesOk() {

@@ -59,10 +59,10 @@ export class ParserService {
         const firstNode = model.getNode(elems[3].trim());
         const secondNode = model.getNode(elems[4].trim());
         if (!firstNode) {
-            throw new Error("Could not find a node with the ID " + elems[3].trim());
+            throw new Error("Impossible; should be caught by validator. Could not find a node with the ID " + elems[3].trim());
         }
         if (!secondNode) {
-            throw new Error("Could not find a node with the ID " + elems[4].trim());
+            throw new Error("Impossible; should be caught by validator. Could not find a node with the ID " + elems[4].trim());
         }
         let tsEdge: TsEdge = new TsEdge(elems[0].trim(), elems[1].trim(), +elems[2].trim(), firstNode, secondNode);
         if (elems.length > 5) {
