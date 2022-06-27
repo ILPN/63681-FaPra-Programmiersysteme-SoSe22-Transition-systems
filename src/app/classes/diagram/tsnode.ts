@@ -99,8 +99,8 @@ export class TsNode extends TsElement {
     }
 
     writeOn(result: string): string {
-        result += `${this._id} ${this._label}\n`;
-        //result += `${this._id} ${this._label} (${this._position.x.toFixed(2)},${this._position.y.toFixed(2)})\r`;
+        //result += `${this._id} ${this._label}\n`;
+        result += `${this._id} ${this._label} (${this._position.x.toFixed(2)},${this._position.y.toFixed(2)})\n`;
         return result;
     }
 }
