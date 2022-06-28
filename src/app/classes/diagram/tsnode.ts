@@ -3,6 +3,7 @@ import {TsEdge} from "./tsedge";
 
 export class TsNode extends TsElement {
     public _connectedEdges: Set<TsEdge>;
+    private labelFontSize: number = 0.6 * this.circleRadius();
 
     constructor(id: string, label: string,) {
         super(id, label);
@@ -21,7 +22,9 @@ export class TsNode extends TsElement {
         const text: SVGElement = <SVGElement>document.createElementNS(this._svgNamespace, 'text');
         text.setAttribute("stroke-width", "1");
         text.setAttribute("fill", "black");
-        text.setAttribute("font-size", 0.6 * this.circleRadius() + "px");
+        text.setAttribute("font-size", this.labelFontSize + "px");
+        text.setAttribute("textLength", 1.85 * this.circleRadius() + "px");
+        text.setAttribute("lengthAdjust", "spacingAndGlyphs");
         const textNode = document.createTextNode(this._id + ":" + this._label);
         text.appendChild(textNode);
 
@@ -35,9 +38,8 @@ export class TsNode extends TsElement {
         this._svgElement?.setAttribute('cx', `${this.position.x}`);
         this._svgElement?.setAttribute('cy', `${this.position.y}`);
         // set label-position
-        // TODO dependent on circle-radius?
         let xTxt = this._position.x - 0.9 * this.circleRadius();
-        let yTxt = this._position.y + 0.2 * this.circleRadius();
+        let yTxt = this._position.y + 0.3 * this.labelFontSize;
         this._svgLabelElement.setAttribute("x", xTxt.toString());
         this._svgLabelElement.setAttribute("y", yTxt.toString());
 
