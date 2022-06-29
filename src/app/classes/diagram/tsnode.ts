@@ -25,6 +25,7 @@ export class TsNode extends TsElement {
         text.setAttribute("font-size", this.labelFontSize + "px");
         text.setAttribute("textLength", 1.85 * this.circleRadius() + "px");
         text.setAttribute("lengthAdjust", "spacingAndGlyphs");
+        text.setAttribute("font-family","Arial, Helvetica, sans-serif");
         const textNode = document.createTextNode(this._id + ":" + this._label);
         text.appendChild(textNode);
 

@@ -77,6 +77,7 @@ export class TsEdge extends TsElement {
         text.setAttribute("stroke-width", "1");
         text.setAttribute("fill", "black");
         text.setAttribute("font-size", 0.8 * this._nodeFrom.circleRadius() + "px");
+        text.setAttribute("font-family","Arial, Helvetica, sans-serif");
         const textNode = document.createTextNode(this._label);
         text.appendChild(textNode)
         this.registerSvg(svg);
