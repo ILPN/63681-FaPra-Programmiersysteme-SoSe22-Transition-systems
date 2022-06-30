@@ -4,7 +4,7 @@ import {Vector} from "../spring_embedder/models/vector";
 
 export class TsEdge extends TsElement {
 
-    private _weighting: number;
+    private readonly _weighting: number;
     private readonly _nodeFrom: TsNode;
     private readonly _nodeTo: TsNode;
     protected dragpoint: Vector | undefined;
@@ -19,6 +19,10 @@ export class TsEdge extends TsElement {
         to._connectedEdges.add(this);
         this.initializeSvg();
 
+    }
+
+    getTransitions(): String[]{
+        return this.label.split(",");
     }
 
 
