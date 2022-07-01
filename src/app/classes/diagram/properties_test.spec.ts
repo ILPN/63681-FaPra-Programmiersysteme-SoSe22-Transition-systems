@@ -17,7 +17,7 @@ describe('Test of getGraphProperties function with an example model',
         let edge2 = new TsEdge('e2', 'edge2', 1, node2, node3);
         let edge3 = new TsEdge('e3', 'edge3', 1, node3, node4);
         let edge4 = new TsEdge('e4', 'edge4', 1, node3, node5);
-        let edge5 = new TsEdge('e4', 'edge4', 1, node4, node2);
+        let edge5 = new TsEdge('e5', 'edge5', 1, node4, node2);
         myModel.addNode(node1);
         myModel.addNode(node2);
         myModel.addNode(node3);
@@ -28,6 +28,7 @@ describe('Test of getGraphProperties function with an example model',
         myModel.addEdge(edge3);
         myModel.addEdge(edge4);
         myModel.addEdge(edge5);
+        myModel.startNode = node1;
 
         // get properties of example model
         let myProperties = myModel.getGraphProperties();

@@ -86,9 +86,15 @@ export abstract class TsElement {
         return this._svgLabelElement;
     }
 
+
     highlightCycleElement() {
-    this._svgElement.setAttribute('stroke','lightblue');
-    this._svgLabelElement.setAttribute('fill','lightblue');
+        this._svgElement.setAttribute('stroke','lightblue');
+        this._svgLabelElement.setAttribute('fill','lightblue');
+    }
+
+    highlightNonReachableElement() {
+        this._svgElement.setAttribute('stroke','lightgrey');
+        this._svgLabelElement.setAttribute('fill','lightgrey');
     }
 }
 

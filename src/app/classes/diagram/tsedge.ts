@@ -89,9 +89,13 @@ export class TsEdge extends TsElement {
         this.updateSVG();
     }
 
-    highlightMortalTransition() {
+    highlightMortalEdge() {
         this._svgElement.setAttribute('stroke', 'orange');
-        this._svgLabelElement.setAttribute('fill', 'orange');
+    }
+
+    highlightMortalTransition(transition: String){
+        // toDo: Kann jemand nur den übergebenen String, also möglicherweise nur einen Teil des Labels highlighten?
+        this._svgLabelElement.setAttribute('fill','orange');
     }
 
     writeOn(result: string): string {
