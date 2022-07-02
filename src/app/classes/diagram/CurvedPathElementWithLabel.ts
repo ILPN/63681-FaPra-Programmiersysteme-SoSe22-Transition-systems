@@ -10,7 +10,7 @@ export class CurvedPathElementWithLabel extends SVGElementWithLabel {
 
     setUpSVGAttributes(): void {
         this.svgElement.setAttribute('stroke', 'black');
-        this.svgElement.setAttribute('stroke-width', '2');
+        this.svgElement.setAttribute('stroke-width', '1');
         this.svgElement.setAttribute('marker-end', "url(#arrow)");
         this.svgElement.setAttribute('fill','none');
     }
