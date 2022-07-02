@@ -24,6 +24,9 @@ export abstract class TsElement {
         this._svgElement.svgElement.onmousedown = (event) => {
             this.processMouseDown();
         }
+        this._svgElement.labelElement.onmousedown = (event) => {
+            this.processMouseDown();
+        }
     }
 
     private processMouseDown(): void {
