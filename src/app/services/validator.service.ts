@@ -1,4 +1,6 @@
 import {Injectable} from '@angular/core';
+import {TSLineType} from "../util/tsline-type";
+import {TSValidatorUtil} from "../util/tsvalidator-util";
 
 
 @Injectable({
@@ -6,65 +8,45 @@ import {Injectable} from '@angular/core';
 })
 export class ValidatorService {
 
+    tsValidatorUtil;
+    nodeIDs = new Array<string>()
+
     constructor() {
+        this.tsValidatorUtil = new TSValidatorUtil();
     }
 
     validateTS(text: string): boolean {
         let isValid: boolean = true;
-        let fileFormatLineReached = 1;
-        let nodesSectionReached = 2;
-        let edgeSectionReached = 3;
-        let sectionMarker = "";
-        let currentMarker = 0;
-        let nodeIDs = new Array<string>();
+        let currentLineType = TSLineType.UNDEFINED;
 
         const lines = text.split('\n');
+
+        //Check first line
+        if (this.tsValidatorUtil.validateTSLine(TSLineType.TYPETS, lines[0], this.nodeIDs)) {
+            currentLineType = TSLineType.TYPETS;
+        } else {
+            isValid = false;
+            return isValid;
+        }
+
+        //Check other lines
         lines.every(line => {
+            line = line.replace(/\s\s+/g, ' ').trim();
             if (line.trim().length > 0) {
-                if (line.trim().replace(/\s/g, "") === ".typets") {
-                    if (currentMarker != 0) {
+                if (line.trim() === ".nodes") {
+                    if (currentLineType != TSLineType.TYPETS) {
                         isValid = false;
                         return isValid;
                     }
-                    currentMarker = fileFormatLineReached;
-                } else if (line.trim() === ".nodes") {
-                    if (currentMarker != fileFormatLineReached) {
-                        isValid = false;
-                        return isValid;
-                    }
-                    currentMarker = nodesSectionReached;
-                    sectionMarker = "nodes"
+                    currentLineType = TSLineType.NODE;
                 } else if (line.trim() === ".edges") {
-                    if (currentMarker != nodesSectionReached) {
+                    if (currentLineType != TSLineType.NODE) {
                         isValid = false;
                         return isValid;
                     }
-                    currentMarker = edgeSectionReached;
-                    sectionMarker = "edges"
+                    currentLineType = TSLineType.EDGE;
                 } else {
-                    switch (sectionMarker) {
-                        case "nodes": {
-                            let elems = line.trim().split(" ");
-                            nodeIDs.push(elems[0]);
-                            if (elems.length != 2 && elems.length != 3) {
-                                isValid = false;
-                                break;
-                            }
-                            break;
-                        }
-                        case "edges": {
-                            let elems = line.trim().split(" ");
-                            if (elems.length != 5) {
-                                isValid = false;
-                                break;
-                            }
-                            isValid = nodeIDs.some(e => (e === elems[3])) && nodeIDs.some(e => (e === elems[4]));
-                            break;
-                        }
-                        default: {
-                            break;
-                        }
-                    }
+                    isValid = this.tsValidatorUtil.validateTSLine(currentLineType, line, this.nodeIDs)
                     return isValid;
                 }
             }
@@ -72,4 +54,5 @@ export class ValidatorService {
         });
         return isValid;
     }
+
 }

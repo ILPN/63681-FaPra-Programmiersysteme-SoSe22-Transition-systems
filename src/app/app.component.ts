@@ -11,28 +11,22 @@ import {ValidatorService} from "./services/validator.service";
     templateUrl: './app.component.html',
     styleUrls: ['./app.component.scss']
 })
-export class AppComponent implements OnDestroy, AfterViewInit{
+export class AppComponent implements OnDestroy, AfterViewInit {
 
     public textareaFc: FormControl;
     private model: TsModel;
     files: any[] = [];
 
     constructor(private _parserService: ParserService,
-                private _displayService: DisplayService, private _exportService: ExportService, private _validatorService:ValidatorService) {
+                private _displayService: DisplayService, private _exportService: ExportService, private _validatorService: ValidatorService) {
         this.textareaFc = new FormControl();
         this.model = new TsModel();
         this.textareaFc.setValue(AppComponent.defaultText());
     }
 
-
-    async  onFileDropped($event: any) {
-        let file = $event[0];
-        await this.processFile(file)
-    }
-
-
     ngOnDestroy(): void {
     }
+
     ngAfterViewInit() {
         this.refreshGraph();
     }
@@ -40,6 +34,11 @@ export class AppComponent implements OnDestroy, AfterViewInit{
     private processSourceChange(newSource: string) {
         this.model = this._parserService.parse(newSource.trim());
         this._displayService.display(this.model);
+    }
+
+    async onFileDropped($event: any) {
+        let file = $event[0];
+        await this.processFile(file)
     }
 
     async onFileInput(event: Event) {
@@ -51,33 +50,31 @@ export class AppComponent implements OnDestroy, AfterViewInit{
         }
     }
 
-    private async processFile(file: File){
+    private async processFile(file: File) {
         let content = await file.text();
         let isValid = this._validatorService.validateTS(content);
-        if(isValid){
+        if (isValid) {
             this.textareaFc.setValue(this.getTSContentToDisplay(content));
-            //this.textareaFc.setValue(this.getTSContentToDisplay(content))
             this.processSourceChange(content);
-        }else{
+        } else {
             alert("The file your are trying to upload is not valid\nPlease check the file!")
         }
     }
 
-    private getTSContentToDisplay(text: string): string{
+    private getTSContentToDisplay(text: string): string {
         const lines = text.trim().split('\n');
         let result = ".type ts\n";
         let sectionMarker = "";
         lines.forEach(line => {
             if (line.trimEnd().length > 0) {
-                if(line.trim() === ".nodes"){
+                if (line.trim() === ".nodes") {
                     sectionMarker = "nodes"
                     result = result + line + "\n";
-                }else if(line.trim() === ".edges"){
+                } else if (line.trim() === ".edges") {
                     sectionMarker = "edges"
                     result = result + line + "\n";
-                }
-                else{
-                    switch(sectionMarker) {
+                } else {
+                    switch (sectionMarker) {
                         case "nodes": {
                             let elems = line.split(" ");
                             result = result + elems[0] + " " + elems[1] + "\n"
@@ -97,16 +94,16 @@ export class AppComponent implements OnDestroy, AfterViewInit{
         return result;
     }
 
-    refreshGraph(){
-        if(this.textareaFc.value != null){
+    refreshGraph() {
+        if (this.textareaFc.value != null) {
             let content = this.textareaFc.value.trim();
             let isValid = this._validatorService.validateTS(content);
-            if(isValid){
+            if (isValid) {
                 this.processSourceChange(content)
-            }else{
+            } else {
                 alert("Your input is not valid\nPlease check!")
             }
-        }else{
+        } else {
             alert("Your input is empty\nThis is not allowed!")
         }
 
@@ -151,11 +148,6 @@ e4 t4 1 n3 n5
 e5 t5 1 n4 n2
 `;
     }
-
-
-
-
-
 
 
 }
