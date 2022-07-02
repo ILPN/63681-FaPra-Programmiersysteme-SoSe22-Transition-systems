@@ -52,6 +52,14 @@ export abstract class TsElement {
 
     public registerSvg(svg: SVGElement) {
         this._svgElement = svg;
+        this._svgElement.onmousedown = (event) => {
+            this.processMouseDown(event);
+        };
+
+    }
+
+    private processMouseDown(event: MouseEvent): void {
+        this._dragged = true;
     }
 
     public registerLabelSvg(svgLabel: SVGElement){

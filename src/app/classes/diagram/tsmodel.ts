@@ -298,4 +298,15 @@ export class TsModel {
         return reachableEdges;
         }
 
+
+    getElementForMouseEvent(event: MouseEvent) {
+        return this._nodes.find(e => e.isDragged)?? this._edges.find(e => e.isDragged);
+    }
+
+    removeAllDragedMarker() {
+        for (const each of this._nodes)
+            each.isDragged= false;
+        for (const each of this._edges)
+            each.isDragged= false;
+    }
 }

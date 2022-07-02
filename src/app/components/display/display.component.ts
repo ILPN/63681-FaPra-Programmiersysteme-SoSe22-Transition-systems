@@ -3,6 +3,8 @@ import {DisplayService} from '../../services/display.service';
 import {Subscription} from 'rxjs';
 import {SvgService} from '../../services/svg.service';
 import {TsModel} from '../../classes/diagram/tsmodel';
+import {TsEdge} from "../../classes/diagram/tsedge";
+import {TsNode} from "../../classes/diagram/tsnode";
 
 @Component({
     selector: 'app-display',
@@ -15,6 +17,7 @@ export class DisplayComponent implements OnDestroy {
 
     private _sub: Subscription;
     private _model: TsModel;
+    private draggedElement: TsNode|TsEdge|undefined;
 
     constructor(private _displayService: DisplayService) {
         //um undefined zu vermeiden. Geht bestimmt besser!?
@@ -37,6 +40,7 @@ export class DisplayComponent implements OnDestroy {
             return;
         }
         this.clearDrawingArea();
+        this.setUpMouseEvents();
         //Das Defs Element enthält den Arrowhead, auf den die Edges referenzieren
         this.drawingArea.nativeElement.appendChild(SvgService.createDefsElement());
         for (const element of this._model.getSvgElements()) {
@@ -55,4 +59,41 @@ export class DisplayComponent implements OnDestroy {
         }
     }
 
+    private setUpMouseEvents() {
+        const drawingArea = this.drawingArea?.nativeElement;
+        if (drawingArea === undefined) {
+            return;
+        }
+        drawingArea.onmousedown = (event) => {
+            this.processMouseDown(event);
+        };
+        drawingArea.onmouseup = (event) => {
+            this.processMouseUp(event);
+        };
+        drawingArea.onmousemove = (event) => {
+            this.processMouseMoving(event);
+        }
+        drawingArea.onmouseleave = (event) => {
+            this.processMouseLeave(event);
+        }
+    }
+
+    private processMouseDown(event: MouseEvent) {
+        this.draggedElement = this._model.getElementForMouseEvent(event);
+    }
+
+    private processMouseUp(event: MouseEvent) {
+        this._model.removeAllDragedMarker()
+        this.draggedElement = undefined;
+    }
+
+    private processMouseMoving(event: MouseEvent) {
+        if(this.draggedElement){
+            this.draggedElement.setPosition(event.offsetX, event.offsetY)
+        }
+    }
+
+    private processMouseLeave(event: MouseEvent) {
+
+    }
 }

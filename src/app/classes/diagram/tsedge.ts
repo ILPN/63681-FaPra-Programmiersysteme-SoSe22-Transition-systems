@@ -71,10 +71,9 @@ export class TsEdge extends TsElement {
     private initializeSvg(): void {
         const svg: SVGElement = <SVGElement>document.createElementNS(this._svgNamespace, 'path');
         svg.setAttribute('stroke', 'black');
-        svg.setAttribute('stroke-width', '1');
+        svg.setAttribute('stroke-width', '2');
         svg.setAttribute('marker-end', "url(#arrow)");
         svg.setAttribute('fill','none');
-
         // create label
         // TODO duplicate code like in tsnode.ts
         const text: SVGElement = <SVGElement>document.createElementNS(this._svgNamespace, 'text');
@@ -104,6 +103,11 @@ export class TsEdge extends TsElement {
     }
     public setDragpoint (position: Vector): void{
         this.dragpoint = position;
+        this.updateSVG();
+    }
+
+    override setPosition(x: number , y: number ) {
+        this.setDragpoint(new Vector(x,y));
     }
 }
 
