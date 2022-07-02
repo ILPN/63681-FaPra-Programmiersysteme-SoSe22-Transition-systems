@@ -104,9 +104,9 @@ export class TsModel {
         // make lists of all reachable and non-reachable nodes in the model
         // (starting from startNode)
         const reachableNodes: TsNode[] = [];
-        //this clause should not be needed, but it is. Start Node can be undefined!??
-        if (this.startNode)
-            reachableNodes.push(this.startNode);
+       if (!this.startNode)
+            throw new Error('no Start Node defined');
+        reachableNodes.push(this.startNode);
         for (let re of reachableEdges){
             if (!reachableNodes.includes(re.nodeTo)){
                 reachableNodes.push(re.nodeTo)
