@@ -1,12 +1,10 @@
-import {AfterViewInit, Component, OnDestroy, OnInit} from '@angular/core';
+import {AfterViewInit, Component, OnDestroy} from '@angular/core';
 import {FormControl} from '@angular/forms';
 import {ParserService} from './services/parser.service';
 import {DisplayService} from './services/display.service';
-import {debounceTime, filter, Subscription} from 'rxjs';
 import {TsModel} from "./classes/diagram/tsmodel";
 import {ExportService} from "./services/export.service";
 import {ValidatorService} from "./services/validator.service";
-import {keyframes} from "@angular/animations";
 
 @Component({
     selector: 'app-root',
@@ -131,8 +129,9 @@ export class AppComponent implements OnDestroy, AfterViewInit{
 
     highlightProperties() {
         const properties = this.model.getGraphProperties();
-        properties.cycleElements.forEach(e => e.highlightCycleElement());
-        properties.deadlocks.forEach(d => d.highlightDeadlock());
+        properties.highlightCycles()
+        properties.highlightDeadlocks()
+
         //properties.mortalTransitions.forEach(m => m.highlightMortalTransition());
     }
 

@@ -7,7 +7,6 @@ export abstract class TsElement {
     abstract setPosition(x: number, y: number): void;
 
     protected _svgElement!: CircleElementWithLabel|CurvedPathElementWithLabel;
-    protected _svgLabelElement!: SVGElement;
     protected _dragged: boolean
     protected _id: string;
     protected readonly _label: string;
@@ -69,7 +68,7 @@ export abstract class TsElement {
 
     highlightNonReachableElement() {
         this._svgElement.setAttribute('stroke', 'lightgrey');
-        this._svgLabelElement.setAttribute('fill', 'lightgrey');
+        this._svgElement.setLabelAttribute('fill', 'lightgrey');
     }
 
 }

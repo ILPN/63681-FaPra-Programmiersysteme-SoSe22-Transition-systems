@@ -36,7 +36,7 @@ export class TsNode extends TsElement {
 
     highlightDeadlock() {
         this._svgElement.setAttribute('stroke', 'red');
-        this._svgLabelElement.setAttribute('fill', 'red');
+        this._svgElement.setLabelAttribute('fill', 'red');
     }
 
     writeOn(result: string): string {
