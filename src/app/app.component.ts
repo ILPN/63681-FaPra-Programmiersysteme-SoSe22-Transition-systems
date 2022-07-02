@@ -6,6 +6,7 @@ import {debounceTime, filter, Subscription} from 'rxjs';
 import {TsModel} from "./classes/diagram/tsmodel";
 import {ExportService} from "./services/export.service";
 import {ValidatorService} from "./services/validator.service";
+import {keyframes} from "@angular/animations";
 
 @Component({
     selector: 'app-root',
@@ -16,12 +17,19 @@ export class AppComponent implements OnDestroy, AfterViewInit{
 
     public textareaFc: FormControl;
     private model: TsModel;
+    files: any[] = [];
 
     constructor(private _parserService: ParserService,
                 private _displayService: DisplayService, private _exportService: ExportService, private _validatorService:ValidatorService) {
         this.textareaFc = new FormControl();
         this.model = new TsModel();
         this.textareaFc.setValue(AppComponent.defaultText());
+    }
+
+
+    async  onFileDropped($event: any) {
+        let file = $event[0];
+        await this.processFile(file)
     }
 
 
@@ -41,15 +49,19 @@ export class AppComponent implements OnDestroy, AfterViewInit{
         let fileList: FileList | null = element.files;
         if (fileList) {
             let file = fileList[0];
-            let content = await file.text();
-            let isValid = this._validatorService.validateTS(content);
-            if(isValid){
-                this.textareaFc.setValue(this.getTSContentToDisplay(content));
-                //this.textareaFc.setValue(this.getTSContentToDisplay(content))
-                this.processSourceChange(content);
-            }else{
-                alert("The file your are trying to upload is not valid\nPlease check the file!")
-            }
+            await this.processFile(file)
+        }
+    }
+
+    private async processFile(file: File){
+        let content = await file.text();
+        let isValid = this._validatorService.validateTS(content);
+        if(isValid){
+            this.textareaFc.setValue(this.getTSContentToDisplay(content));
+            //this.textareaFc.setValue(this.getTSContentToDisplay(content))
+            this.processSourceChange(content);
+        }else{
+            alert("The file your are trying to upload is not valid\nPlease check the file!")
         }
     }
 
@@ -121,7 +133,7 @@ export class AppComponent implements OnDestroy, AfterViewInit{
         const properties = this.model.getGraphProperties();
         properties.cycleElements.forEach(e => e.highlightCycleElement());
         properties.deadlocks.forEach(d => d.highlightDeadlock());
-        properties.mortalTransitions.forEach(m => m.highlightMortalTransition());
+        //properties.mortalTransitions.forEach(m => m.highlightMortalTransition());
     }
 
     private static defaultText() {
@@ -140,4 +152,12 @@ e4 t4 1 n3 n5
 e5 t5 1 n4 n2
 `;
     }
+
+
+
+
+
+
+
 }
+
