@@ -65,24 +65,22 @@ export class DisplayComponent implements OnDestroy {
             return;
         }
         drawingArea.onmousedown = (event) => {
-            this.processMouseDown(event);
+            this.processMouseDown();
         };
         drawingArea.onmouseup = (event) => {
-            this.processMouseUp(event);
+            this.processMouseUp();
         };
         drawingArea.onmousemove = (event) => {
             this.processMouseMoving(event);
         }
-        drawingArea.onmouseleave = (event) => {
-            this.processMouseLeave(event);
-        }
+
     }
 
-    private processMouseDown(event: MouseEvent) {
-        this.draggedElement = this._model.getElementForMouseEvent(event);
+    private processMouseDown() {
+        this.draggedElement = this._model.getDraggedElement();
     }
 
-    private processMouseUp(event: MouseEvent) {
+    private processMouseUp() {
         this._model.removeAllDragedMarker()
         this.draggedElement = undefined;
     }
@@ -93,7 +91,5 @@ export class DisplayComponent implements OnDestroy {
         }
     }
 
-    private processMouseLeave(event: MouseEvent) {
 
-    }
 }

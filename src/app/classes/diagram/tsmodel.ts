@@ -299,7 +299,7 @@ export class TsModel {
         }
 
 
-    getElementForMouseEvent(event: MouseEvent) {
+    getDraggedElement() {
         return this._nodes.find(e => e.isDragged)?? this._edges.find(e => e.isDragged);
     }
 
