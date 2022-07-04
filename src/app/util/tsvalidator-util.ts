@@ -8,7 +8,7 @@ export class TSValidatorUtil {
     }
 
     regExNodeLabel : RegExp = /^\(?[0-1]+\)?$/;
-    regExNodeCorrdinates : RegExp = /^\(?([+-]?(?=\.\d|\d)(?:\d+)?(?:\.?\d*))(?:[eE]([+-]?\d+))?,([+-]?(?=\.\d|\d)(?:\d+)?(?:\.?\d*))(?:[eE]([+-]?\d+))?\)?$/;
+    regExNodeCoordinates : RegExp = /^\(?([+-]?(?=\.\d|\d)(?:\d+)?(?:\.?\d*))(?:[eE]([+-]?\d+))?,([+-]?(?=\.\d|\d)(?:\d+)?(?:\.?\d*))(?:[eE]([+-]?\d+))?\)?$/;
 
 
     validateTSLine(type: TSLineType, line: string, nodeIDs: Array<string>): boolean {
@@ -28,7 +28,7 @@ export class TSValidatorUtil {
                     isValid = false;
                     break
                 }
-                if(nodeLineParser.hasCoordinates() && !this.regExNodeCorrdinates.test(elems[2].trim())){
+                if(nodeLineParser.hasCoordinates() && !this.regExNodeCoordinates.test(elems[2].trim())){
                     isValid = false;
                     break
                 }
@@ -42,7 +42,7 @@ export class TSValidatorUtil {
                     isValid = false;
                     break;
                 }
-                if(edgeLineParser.hasDragPoint() && !this.regExNodeCorrdinates.test(elems[5])){
+                if(edgeLineParser.hasDragPoint() && !this.regExNodeCoordinates.test(elems[5])){
                     isValid = false;
                     break;
                 }
