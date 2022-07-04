@@ -1,104 +1,42 @@
 import {TsElement} from "./tselement";
 import {TsEdge} from "./tsedge";
+import {Vector} from "../spring_embedder/models/vector";
+import {SVGElementWithLabel} from "./SVGElementWithLabel";
+import {CircleElementWithLabel} from "./CircleElementWithLabel";
+
 
 export class TsNode extends TsElement {
     public _connectedEdges: Set<TsEdge>;
-    private labelFontSize: number = 0.6 * this.circleRadius();
+    protected _position: Vector;
 
-    constructor(id: string, label: string,) {
+    constructor(id: string, label: string) {
         super(id, label);
+        this._position = new Vector(0, 0);
         this._connectedEdges = new Set<TsEdge>();
         this.initializeSvg();
     }
 
     private initializeSvg() {
-        const svg: SVGElement = <SVGElement>document.createElementNS(this._svgNamespace, 'circle');
-        svg.setAttribute('r', this.circleRadius().toString());
-        svg.setAttribute('fill', 'transparent');
-        svg.setAttribute("stroke", "black");
-        svg.setAttribute("stroke-width", "1");
-
-        // create label
-        const text: SVGElement = <SVGElement>document.createElementNS(this._svgNamespace, 'text');
-        text.setAttribute("stroke-width", "1");
-        text.setAttribute("fill", "black");
-        text.setAttribute("font-size", this.labelFontSize + "px");
-        text.setAttribute("textLength", 1.85 * this.circleRadius() + "px");
-        text.setAttribute("lengthAdjust", "spacingAndGlyphs");
-        text.setAttribute("font-family","Arial, Helvetica, sans-serif");
-        const textNode = document.createTextNode(this._id + ":" + this._label);
-        text.appendChild(textNode);
-
-        this.registerSvg(svg);
-        this.registerLabelSvg(text);
+        this.registerSvg(new CircleElementWithLabel(this._id + ":" + this._label));
         this.updateSVG();
     }
 
     public updateSVG() {
-        //is not needed as public (but also not harmful). But I don´t understand how to declare private in combination with abstract in TSElement.
-        this._svgElement?.setAttribute('cx', `${this.position.x}`);
-        this._svgElement?.setAttribute('cy', `${this.position.y}`);
-        // set label-position
-        let xTxt = this._position.x - 0.9 * this.circleRadius();
-        let yTxt = this._position.y + 0.3 * this.labelFontSize;
-        this._svgLabelElement.setAttribute("x", xTxt.toString());
-        this._svgLabelElement.setAttribute("y", yTxt.toString());
-
+        if (this._svgElement instanceof CircleElementWithLabel) {
+            this._svgElement.setPosition(this.position.x, this.position.y)
+        }
         this._connectedEdges.forEach(e => {
             e.updateSVG()
         })
     }
 
-
-    public override registerSvg(svg: SVGElement) {
-        super.registerSvg(svg);
-        this._svgElement.onmousedown = (event) => {
-            this.processMouseDown(event);
-        };
-        this._svgElement.onmouseup = (event) => {
-            this.processMouseUp(event);
-        };
-        this._svgElement.onmousemove = (event) => {
-            this.processMouseMoving(event);
-        }
-        this._svgElement.onmouseleave = (event) => {
-            this.processMouseLeave(event);
-        }
-
-    }
-
-    private processMouseDown(event: MouseEvent): void {
-        this._dragged = true;
-        this.setPosition(event.offsetX - this._dragShiftX, event.offsetY - this._dragShiftY);
-    }
-
-    private processMouseMoving(event: MouseEvent): void {
-        if (this._dragged) {
-            this.setPosition(event.offsetX - this._dragShiftX, event.offsetY - this._dragShiftY);
-        }
-    }
-
-    private processMouseLeave(event: MouseEvent): void {
-        if (this._dragged) {
-            //Node centern, damit wird verhindert, dass man die Node verliert, wenn man zu schnell über den Bildschirm wischt s. TRAN-58
-            this.setPosition(event.offsetX, event.offsetY);
-
-        }
-
-    }
-
-    private processMouseUp(event: MouseEvent): void {
-        //entfernt den dragged marker -> Element wird losgelassen
-        this._dragged = false;
-    }
-
     public circleRadius(): number {
-        return 25;
+        return SVGElementWithLabel.circleRadius;
     }
 
     highlightDeadlock() {
-        this._svgElement.setAttribute('stroke','red');
-        this._svgLabelElement.setAttribute('fill','red');
+        this._svgElement.setAttribute('stroke', 'red');
+        this._svgElement.setLabelAttribute('fill', 'red');
     }
 
     writeOn(result: string): string {
@@ -106,4 +44,29 @@ export class TsNode extends TsElement {
         result += `${this._id} ${this._label} (${this._position.x.toFixed(2)},${this._position.y.toFixed(2)})\n`;
         return result;
     }
+
+    public setPosition(x: number, y: number) {
+        this._position.x = x;
+        this._position.y = y;
+        this.updateSVG();
+    }
+
+    set position(newPosition: Vector) {
+        //this is not updating the SVG, thus you can´t see the changes
+        this._position = newPosition;
+    }
+
+    get x(): number {
+        return this._position.x;
+    }
+
+    get y(): number {
+        return this._position.y;
+    }
+
+    get position(): Vector {
+        return this._position;
+    }
+
+
 }

@@ -57,4 +57,13 @@ export class TsGraphProperties {
     }
 
 
+    highlightCycles() {
+        if(this._cycleElements)
+            this.cycleElements.forEach(e => e.highlightCycleElement());
+    }
+
+    highlightDeadlocks() {
+        if(this._deadlocks)
+            this.deadlocks.forEach(e => e.highlightDeadlock())
+    }
 }

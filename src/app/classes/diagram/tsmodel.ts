@@ -104,6 +104,8 @@ export class TsModel {
         // make lists of all reachable and non-reachable nodes in the model
         // (starting from startNode)
         const reachableNodes: TsNode[] = [];
+       if (!this.startNode)
+            throw new Error('no Start Node defined');
         reachableNodes.push(this.startNode);
         for (let re of reachableEdges){
             if (!reachableNodes.includes(re.nodeTo)){
@@ -265,13 +267,10 @@ export class TsModel {
         const svgNodes = this._nodes.map(e => (e.getSvgElement()));
         const svgNodeLabel = this._nodes.map(e => (e.getSvgLabelElement()));
         const svgEdgeLabel = this._edges.map(e => (e.getSvgLabelElement()));
-        //Reihenfolge ist wichtig, damit die Nodes im Vordergrund sind und problemfrei bewegt werden können (TRAN-61)
-        //Folgefrage: geht das Bewegen der Nodes vielleicht smarter?
-        return svgNodeLabel.concat(svgEdgeLabel).concat(svgEdges).concat(svgNodes);
+        return svgNodeLabel.concat(svgEdges).concat(svgEdgeLabel).concat(svgNodes);
     }
 
     public layoutBySpringEmbedder() {
-        //Problematischer Aufruf. Der Spring Embedder bekommt die privaten Nodes und Edges
         new FRSpringEmbedder(this._nodes, this._edges).run();
         this.updateSVG();
     }
@@ -298,4 +297,15 @@ export class TsModel {
         return reachableEdges;
         }
 
+
+    getDraggedElement() {
+        return this._nodes.find(e => e.isDragged)?? this._edges.find(e => e.isDragged);
+    }
+
+    removeAllDragedMarker() {
+        for (const each of this._nodes)
+            each.isDragged= false;
+        for (const each of this._edges)
+            each.isDragged= false;
+    }
 }

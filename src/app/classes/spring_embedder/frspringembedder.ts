@@ -50,7 +50,7 @@ export class FRSpringEmbedder {
         // The positions of the nodes. The initial positons are choosen
         // randomly.
         //empty nodes-> no sense
-        if (! (this.nodes.length > 0) ) {
+        if (!(this.nodes.length > 0)) {
             return
         }
         this._computeInitialPositions();
@@ -73,7 +73,7 @@ export class FRSpringEmbedder {
                 // Apply the cooling to the displacement vector
                 const force = forces[index];
                 const coolingFactor = this.cooling(iteration);
-                force.devideBy(coolingFactor);
+                force.divideBy(coolingFactor);
                 // Apply the displacement vector to the position
                 node.position.add(force);
                 node.position.limitToScreen();

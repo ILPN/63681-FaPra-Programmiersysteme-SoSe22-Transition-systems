@@ -2,101 +2,61 @@ import {AfterViewInit, Component, OnDestroy, OnInit} from '@angular/core';
 import {FormControl} from '@angular/forms';
 import {ParserService} from './services/parser.service';
 import {DisplayService} from './services/display.service';
-import {debounceTime, filter, Subscription} from 'rxjs';
 import {TsModel} from "./classes/diagram/tsmodel";
 import {ExportService} from "./services/export.service";
 import {ValidatorService} from "./services/validator.service";
+import {TSParserUtil} from "./util/tsparser-util";
 
 @Component({
     selector: 'app-root',
     templateUrl: './app.component.html',
     styleUrls: ['./app.component.scss']
 })
-export class AppComponent implements OnDestroy, AfterViewInit{
+export class AppComponent implements OnDestroy, OnInit, AfterViewInit {
 
     public textareaFc: FormControl;
     private model: TsModel;
+    files: any[] = [];
+    tsParserUtil: TSParserUtil;
 
     constructor(private _parserService: ParserService,
-                private _displayService: DisplayService, private _exportService: ExportService, private _validatorService:ValidatorService) {
+                private _displayService: DisplayService, private _exportService: ExportService, private _validatorService: ValidatorService) {
         this.textareaFc = new FormControl();
         this.model = new TsModel();
-        this.textareaFc.setValue(AppComponent.defaultText());
+        this.tsParserUtil = new TSParserUtil();
+        let tsText = this.getState();
+        if (tsText != null && !(tsText === '')) {
+            this.textareaFc.setValue(this.tsParserUtil.getTSContentToDisplay(tsText));
+        } else {
+            this.textareaFc.setValue(AppComponent.defaultText());
+        }
     }
-
 
     ngOnDestroy(): void {
     }
+
+    ngOnInit() {
+    }
+
     ngAfterViewInit() {
         this.refreshGraph();
     }
 
-    private processSourceChange(newSource: string) {
-        this.model = this._parserService.parse(newSource.trim());
-        this._displayService.display(this.model);
+    resetToDefault() {
+        let content = AppComponent.defaultText().trim() + "\n";
+        this.textareaFc.setValue(content);
+        this.processSourceChange(content)
     }
-
-    async onFileInput(event: Event) {
-        const element = event.currentTarget as HTMLInputElement;
-        let fileList: FileList | null = element.files;
-        if (fileList) {
-            let file = fileList[0];
-            let content = await file.text();
-            let isValid = this._validatorService.validateTS(content);
-            if(isValid){
-                this.textareaFc.setValue(this.getTSContentToDisplay(content));
-                //this.textareaFc.setValue(this.getTSContentToDisplay(content))
-                this.processSourceChange(content);
-            }else{
-                alert("The file your are trying to upload is not valid\nPlease check the file!")
-            }
-        }
-    }
-
-    private getTSContentToDisplay(text: string): string{
-        const lines = text.trim().split('\n');
-        let result = ".type ts\n";
-        let sectionMarker = "";
-        lines.forEach(line => {
-            if (line.trimEnd().length > 0) {
-                if(line.trim() === ".nodes"){
-                    sectionMarker = "nodes"
-                    result = result + line + "\n";
-                }else if(line.trim() === ".edges"){
-                    sectionMarker = "edges"
-                    result = result + line + "\n";
-                }
-                else{
-                    switch(sectionMarker) {
-                        case "nodes": {
-                            let elems = line.split(" ");
-                            result = result + elems[0] + " " + elems[1] + "\n"
-                            break;
-                        }
-                        case "edges": {
-                            result = result + line + "\n";
-                            break;
-                        }
-                        default: {
-                            break;
-                        }
-                    }
-                }
-            }
-        });
-        return result;
-    }
-
-    refreshGraph(){
-        if(this.textareaFc.value != null){
+    refreshGraph() {
+        if (this.textareaFc.value != null) {
             let content = this.textareaFc.value.trim();
             let isValid = this._validatorService.validateTS(content);
-            if(isValid){
+            if (isValid) {
                 this.processSourceChange(content)
-            }else{
+            } else {
                 alert("Your input is not valid\nPlease check!")
             }
-        }else{
+        } else {
             alert("Your input is empty\nThis is not allowed!")
         }
 
@@ -119,9 +79,51 @@ export class AppComponent implements OnDestroy, AfterViewInit{
 
     highlightProperties() {
         const properties = this.model.getGraphProperties();
-        properties.cycleElements.forEach(e => e.highlightCycleElement());
-        properties.deadlocks.forEach(d => d.highlightDeadlock());
-        properties.mortalTransitions.forEach(m => m.highlightMortalTransition());
+        properties.highlightCycles()
+        properties.highlightDeadlocks()
+
+        //properties.mortalTransitions.forEach(m => m.highlightMortalTransition());
+    }
+
+    async onFileDropped($event: any) {
+        let file = $event[0];
+        await this.processFile(file)
+    }
+
+    async onFileInput(event: Event) {
+        const element = event.currentTarget as HTMLInputElement;
+        let fileList: FileList | null = element.files;
+        if (fileList) {
+            let file = fileList[0];
+            await this.processFile(file)
+        }
+    }
+
+    private processSourceChange(newSource: string) {
+        this.model = this._parserService.parse(newSource.trim());
+        this._displayService.display(this.model);
+        this.saveState();
+    }
+
+    private async processFile(file: File) {
+        let content = await file.text();
+        let isValid = this._validatorService.validateTS(content);
+        if (isValid) {
+            this.textareaFc.setValue(this.tsParserUtil.getTSContentToDisplay(content));
+            this.processSourceChange(content);
+        } else {
+            alert("The file your are trying to upload is not valid\nPlease check the file!")
+        }
+    }
+
+    private saveState() {
+        let tsText = this._exportService.exportTS(this.model);
+        localStorage.removeItem('tsText');
+        localStorage.setItem('tsText', tsText);
+    }
+
+    private getState(): string | null {
+        return localStorage.getItem('tsText');
     }
 
     private static defaultText() {
@@ -140,4 +142,7 @@ e4 t4 1 n3 n5
 e5 t5 1 n4 n2
 `;
     }
+
+
 }
+

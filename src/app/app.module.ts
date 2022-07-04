@@ -13,6 +13,7 @@ import {FooterComponent} from './components/footer/footer.component';
 import { UploadButtonComponent } from './components/upload-button/upload-button.component';
 import { DownloadButtonComponent } from './components/download-button/download-button.component';
 import { GraphPropertiesButtonComponent } from './components/graph-properties-button/graph-properties-button.component';
+import { DndDirective } from './directives/dnd.directive';
 
 @NgModule({
     declarations: [
@@ -21,7 +22,8 @@ import { GraphPropertiesButtonComponent } from './components/graph-properties-bu
         FooterComponent,
         UploadButtonComponent,
         DownloadButtonComponent,
-        GraphPropertiesButtonComponent
+        GraphPropertiesButtonComponent,
+        DndDirective
     ],
     imports: [
         BrowserModule,

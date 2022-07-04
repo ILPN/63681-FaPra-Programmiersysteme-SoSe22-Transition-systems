@@ -6,9 +6,8 @@
     <!--    Main content    -->
     <app-display class="padding full-size"></app-display>
 
-
     <div fxLayout="row" fxLayoutAlign="space-evenly start">
-        <app-upload-button buttonText="Upload File" (click)="fileInput.click()" buttonIcon="upload"></app-upload-button>
+        <app-upload-button appDnd (fileDropped)="onFileDropped($event)" (click)="fileInput.click()" ></app-upload-button>
         <input #fileInput type="file" (change)="onFileInput($event)" style="display:none;" />
         <mat-form-field appearance="outline"
                         class="textarea" [style.width.px]=250>
@@ -18,7 +17,8 @@
                       cdkAutosizeMinRows="10"
                       cdkAutosizeMaxRows="50"
                       [formControl]="textareaFc"></textarea>
-            <button type="button" (click)="refreshGraph()">Refresh</button>
+            <button type="button" (click)="refreshGraph()">Refresh</button>&nbsp;
+            <button type="button" (click)="resetToDefault()">Default</button>
         </mat-form-field>
         <app-download-button buttonText="Download File" (click)="saveTSFile()" buttonIcon="download"></app-download-button>
         <app-graph-properties-button buttonText="Show Properties" (click)="highlightProperties()" buttonIcon="highlight"></app-graph-properties-button>

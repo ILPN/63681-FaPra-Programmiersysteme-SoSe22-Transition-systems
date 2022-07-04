@@ -1,23 +1,34 @@
-.interactive-square {
-    width: 100px;
-    height: 100px;
-    border-color: dimgrey;
-    border-width: 5px;
-    border-style: solid;
-    margin-top: 14px;
-}
+.container {
+    width: 350px;
+    height: 200px;
+    padding: 2rem;
+    text-align: center;
+    border: dashed 1px #979797;
+    position: relative;
+    margin: 0 auto;
 
-.mouse-hover {
-    border-color: black;
-}
+    input {
+        opacity: 0;
+        position: absolute;
+        z-index: 2;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+    }
 
-.larger-icon {
-    font-size: 40px;
-    width: 40px;
-    height: 40px;
-    color: dimgrey;
-}
+    label {
+        color: white;
+        width: 183px;
+        height: 44px;
+        border-radius: 21.5px;
+        background-color: #db202f;
+        padding: 4px 8px;
+    }
 
-.mouse-hover .larger-icon {
-    color: black;
+    h3 {
+        font-size: 20px;
+        font-weight: 400;
+        color: #38424c;
+    }
 }

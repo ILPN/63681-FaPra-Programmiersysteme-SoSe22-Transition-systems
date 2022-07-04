@@ -1,61 +1,35 @@
-import {Vector} from '../spring_embedder/models/vector'
+import {CircleElementWithLabel} from "./CircleElementWithLabel";
+import {CurvedPathElementWithLabel} from "./CurvedPathElementWithLabel";
 
 export abstract class TsElement {
 
     abstract updateSVG(): void;
+    abstract setPosition(x: number, y: number): void;
 
-    protected _position: Vector;
-    //Das SVGElement samt Funktionen könnte in eine eigene Klasse die dann Instanzvariable von TSElement ist.
-    //Momentan sind Logik und Darstellung etwas verschränkt.
-    protected _svgElement!: SVGElement;
-    protected _svgLabelElement!: SVGElement;
-    protected _svgNamespace: string = 'http://www.w3.org/2000/svg';
+    protected _svgElement!: CircleElementWithLabel|CurvedPathElementWithLabel;
     protected _dragged: boolean
-    protected _dragShiftX: number;
-    protected _dragShiftY: number;
     protected _id: string;
     protected readonly _label: string;
 
-    protected constructor(id: string, label: string, position: Vector = new Vector(0, 0)) {
+    protected constructor(id: string, label: string) {
         this._id = id;
         this._label = label;
         this._dragged = false;
-        this._dragShiftX = 0;
-        this._dragShiftY = 0;
-        this._position = position;
+
     }
 
-    get x(): number {
-        return this._position.x;
-    }
-
-    get y(): number {
-        return this._position.y;
-    }
-
-    get position(): Vector {
-        return this._position;
-    }
-
-    set position(newPosition: Vector) {
-        this._position = newPosition;
-        this.updateSVG();
-    }
-
-    public setPosition(x: number | undefined = undefined, y: number | undefined = undefined) {
-        if (x)
-            this._position.x = x;
-        if (y)
-            this._position.y = y;
-        this.updateSVG();
-    }
-
-    public registerSvg(svg: SVGElement) {
+    public registerSvg(svg: CircleElementWithLabel|CurvedPathElementWithLabel) {
         this._svgElement = svg;
+        this._svgElement.svgElement.onmousedown = (event) => {
+            this.processMouseDown();
+        }
+        this._svgElement.labelElement.onmousedown = (event) => {
+            this.processMouseDown();
+        }
     }
 
-    public registerLabelSvg(svgLabel: SVGElement){
-        this._svgLabelElement = svgLabel;
+    private processMouseDown(): void {
+        this._dragged = true;
     }
 
     get id(): string {
@@ -79,22 +53,23 @@ export abstract class TsElement {
     }
 
     getSvgElement(): SVGElement {
-        return <SVGElement>this._svgElement;
+        return this._svgElement.svgElement;
     }
 
     getSvgLabelElement(): SVGElement {
-        return this._svgLabelElement;
+        return this._svgElement.labelElement;
     }
 
 
     highlightCycleElement() {
-        this._svgElement.setAttribute('stroke','lightblue');
-        this._svgLabelElement.setAttribute('fill','lightblue');
+        this._svgElement.setAttribute('stroke', 'lightblue');
+        this._svgElement.setLabelAttribute('fill', 'lightblue');
     }
 
     highlightNonReachableElement() {
-        this._svgElement.setAttribute('stroke','lightgrey');
-        this._svgLabelElement.setAttribute('fill','lightgrey');
+        this._svgElement.setAttribute('stroke', 'lightgrey');
+        this._svgElement.setLabelAttribute('fill', 'lightgrey');
     }
+
 }
 

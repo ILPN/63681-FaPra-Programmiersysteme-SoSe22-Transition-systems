@@ -21,17 +21,18 @@ export class Vector {
      * Normalizes the vector. This means to modify the coordinates of the
      * vector in a way that it's norm is 1.
      */
-    normalize(): void {
+    normalize(): Vector {
         const norm = this.norm();
-        this.multiplyWith(1 / norm);
+        return this.multiplyWith(1 / norm);
     }
 
     /**
      * Multiplies the entries with the given scalar.
      */
-    multiplyWith(scalar: number): void {
+    multiplyWith(scalar: number): Vector {
         this.x = scalar * this.x;
         this.y = scalar * this.y;
+        return this;
     }
 
     /**
@@ -43,6 +44,9 @@ export class Vector {
             point2.x - point1.x,
             point2.y - point1.y
         );
+    }
+    static midOf(point1: Vector, point2: Vector): Vector {
+        return new Vector(point1.x+point2.x,point1.y+point2.y).divideBy(2)
     }
 
     static atRandomPosition(): Vector {
@@ -61,9 +65,10 @@ export class Vector {
     /**
      * Adds a given vector to the vector. This is applied to every coordinate.
      */
-    public add(otherVector: Vector): void {
+    public add(otherVector: Vector): Vector {
         this.x += otherVector.x;
         this.y += otherVector.y;
+        return this;
     }
 
     public angle(otherVector: Vector): number {
@@ -74,9 +79,10 @@ export class Vector {
         return this.x === otherPoint.x && this.y === otherPoint.y
     }
 
-    devideBy(factor: number) {
+    divideBy(factor: number):Vector {
         this.x = this.x / factor;
         this.y = this.y / factor;
+        return this;
     }
 
     limitToScreen() {

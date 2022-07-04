@@ -5,7 +5,6 @@ import {TsModel} from "../classes/diagram/tsmodel";
   providedIn: 'root'
 })
 export class ExportService {
-    //private _model: TsModel;
 
   constructor() {}
 

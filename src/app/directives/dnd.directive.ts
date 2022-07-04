@@ -1,12 +1,9 @@
-import {Component, EventEmitter, HostBinding, HostListener, Input, Output} from '@angular/core';
+import {Directive, EventEmitter, HostBinding, HostListener, Output} from '@angular/core';
 
-@Component({
-  selector: 'app-upload-button',
-  templateUrl: './upload-button.component.html',
-  styleUrls: ['./upload-button.component.scss']
+@Directive({
+  selector: '[appDnd]'
 })
-export class UploadButtonComponent {
-
+export class DndDirective {
     @HostBinding('class.fileover') fileOver: boolean | undefined;
     @Output() fileDropped = new EventEmitter<any>();
 
