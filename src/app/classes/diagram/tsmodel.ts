@@ -92,32 +92,11 @@ export class TsModel {
      */
     public getGraphProperties(): TsGraphProperties {
 
-        // make lists of all reachable and non-reachable edges in the model
-        // (starting from startNode)
         const reachableEdges = this.searchReachableEdgesInModel();
         const nonReachableEdges = this.edges.filter(e => !reachableEdges.includes(e));
-
-        // make a list of reachable edge labels (transitions) in the model
-        // (starting from startNode)
         const reachableTransitions = TsModel.getTransitionsFromEdges(reachableEdges);
-
-        // make lists of all reachable and non-reachable nodes in the model
-        // (starting from startNode)
-        const reachableNodes: TsNode[] = [];
-        if (!this.startNode)
-            throw new Error('no Start Node defined');
-        reachableNodes.push(this.startNode);
-        for (let re of reachableEdges){
-            if (!reachableNodes.includes(re.nodeTo)){
-                reachableNodes.push(re.nodeTo)
-            }
-        }
-        const nonReachableNodes = this.nodes.filter(n => !reachableNodes.includes(n));
-
-        // collect all (from start node) non-reachable nodes and edges
-        const nonReachableElements = new Array<TsElement>();
-        nonReachableNodes.forEach(n => nonReachableElements.push(n));
-        nonReachableEdges.forEach(e => nonReachableElements.push(e));
+        const {reachableNodes, nonReachableNodes} = this.searchReachableAndNonReachableNodes(reachableEdges);
+        const nonReachableElements = this.collectNonReachableElements(nonReachableNodes, nonReachableEdges);
 
         // create copies of reachable nodes and edges of the model
         let tempNodes = [...reachableNodes];
@@ -141,18 +120,9 @@ export class TsModel {
         let currentDeadlock: TsNode | undefined;
 
         //loop to stepwise remove nodes with no out coming edge
-        while (tempDeadlocks.length !== 0) {
-            // take one deadlock
-            currentDeadlock = tempDeadlocks[0];
-            //remove all edges from the model whose nodeTo is the currentDeadlock
-            tempEdges = tempEdges.filter(e =>
-                e.nodeTo !== currentDeadlock);
-            // remove the currentDeadlock from the model
-            tempNodes = tempNodes.filter(n =>
-                n !== currentDeadlock);
-            // search Deadlocks in remaining model
-            tempDeadlocks = TsModel.searchDeadlocks(tempNodes, tempEdges);
-        }
+        const __ret = this.removeNodesWithNoOutGoingEdge(tempDeadlocks, currentDeadlock, tempEdges, tempNodes);
+        tempEdges = __ret.tempEdges;
+        tempNodes = __ret.tempNodes;
         // if there are no remaining nodes in the model, the graph is acyclic
         const acyclic = (tempNodes === []);
 
@@ -193,6 +163,43 @@ export class TsModel {
         const alive = mortalTransitions === [];
         return new TsGraphProperties(nonReachableElements, deadlocks, mortalEdges, mortalTransitions, cycleElements,
             freeOfDeadlocks, acyclic, alive);
+    }
+
+    private collectNonReachableElements(nonReachableNodes: TsNode[], nonReachableEdges: TsEdge[]) {
+        const nonReachableElements = new Array<TsElement>();
+        nonReachableNodes.forEach(n => nonReachableElements.push(n));
+        nonReachableEdges.forEach(e => nonReachableElements.push(e));
+        return nonReachableElements;
+    }
+
+    private searchReachableAndNonReachableNodes(reachableEdges: TsEdge[]) {
+        const reachableNodes: TsNode[] = [];
+        if (!this.startNode)
+            throw new Error('no Start Node defined');
+        reachableNodes.push(this.startNode);
+        for (let re of reachableEdges) {
+            if (!reachableNodes.includes(re.nodeTo)) {
+                reachableNodes.push(re.nodeTo)
+            }
+        }
+        const nonReachableNodes = this.nodes.filter(n => !reachableNodes.includes(n));
+        return {reachableNodes, nonReachableNodes};
+    }
+
+    private removeNodesWithNoOutGoingEdge(tempDeadlocks: TsNode[], currentDeadlock: TsNode | undefined, tempEdges: TsEdge[], tempNodes: TsNode[]) {
+        while (tempDeadlocks.length !== 0) {
+            // take one deadlock
+            currentDeadlock = tempDeadlocks[0];
+            //remove all edges from the model whose nodeTo is the currentDeadlock
+            tempEdges = tempEdges.filter(e =>
+                e.nodeTo !== currentDeadlock);
+            // remove the currentDeadlock from the model
+            tempNodes = tempNodes.filter(n =>
+                n !== currentDeadlock);
+            // search Deadlocks in remaining model
+            tempDeadlocks = TsModel.searchDeadlocks(tempNodes, tempEdges);
+        }
+        return {tempEdges, tempNodes};
     }
 
     private static getTransitionsFromEdges(edgeArray: TsEdge[]): String[] {
