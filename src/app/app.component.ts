@@ -81,8 +81,7 @@ export class AppComponent implements OnDestroy, OnInit, AfterViewInit {
         const properties = this.model.getGraphProperties();
         properties.highlightCycles()
         properties.highlightDeadlocks()
-
-        //properties.mortalTransitions.forEach(m => m.highlightMortalTransition());
+        properties.highlightMortalTransitions()
     }
 
     async onFileDropped($event: any) {

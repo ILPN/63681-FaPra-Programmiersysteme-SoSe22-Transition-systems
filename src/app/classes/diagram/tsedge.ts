@@ -75,5 +75,6 @@ export class TsEdge extends TsElement {
     setPosition(x: number , y: number ):void {
         this.setDragpoint(new Vector(x,y));
     }
+
 }
 

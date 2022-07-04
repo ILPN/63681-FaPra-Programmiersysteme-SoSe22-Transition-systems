@@ -59,11 +59,22 @@ export class TsGraphProperties {
 
     highlightCycles() {
         if(this._cycleElements)
-            this.cycleElements.forEach(e => e.highlightCycleElement());
+            this.cycleElements.forEach(e => e.highlightCycleElement())
     }
 
     highlightDeadlocks() {
         if(this._deadlocks)
             this.deadlocks.forEach(e => e.highlightDeadlock())
+    }
+
+    highlightMortalTransitions() {
+        if((this._mortalEdges) && (this._mortalEdges)) {
+            for (let me of this.mortalEdges) {
+                me.highlightMortalEdge();
+                for (let t of me.getTransitions()){
+                    if (this._mortalTransitions.includes(t))
+                        me.highlightMortalTransition(t)}
+            }
+        }
     }
 }
