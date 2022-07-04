@@ -33,7 +33,7 @@ export class TSValidatorUtil {
                     isValid = false;
                     break
                 }
-                isValid = this.regExNodeLabel.test(nodeLineParser.getLabel());
+                //isValid = this.regExNodeLabel.test(nodeLineParser.getLabel());
                 break;
             }
             case TSLineType.EDGE: {
