@@ -41,6 +41,7 @@ export class ParserService {
                 }
             }
         });
+        result.startNode = result.nodes[0];
         return result;
     }
 
