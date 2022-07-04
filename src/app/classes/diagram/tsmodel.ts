@@ -104,7 +104,7 @@ export class TsModel {
         // make lists of all reachable and non-reachable nodes in the model
         // (starting from startNode)
         const reachableNodes: TsNode[] = [];
-       if (!this.startNode)
+        if (!this.startNode)
             throw new Error('no Start Node defined');
         reachableNodes.push(this.startNode);
         for (let re of reachableEdges){

@@ -29,6 +29,7 @@ export class ParserService {
                 }
             }
         });
+        tsModel.startNode = tsModel.nodes[0];
         return tsModel;
     }
 
