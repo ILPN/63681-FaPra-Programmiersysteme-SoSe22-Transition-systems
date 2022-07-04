@@ -3,6 +3,7 @@ import {NodeLineParser} from "./node-line-parser";
 import {TsModel} from "../classes/diagram/tsmodel";
 import {TsEdge} from "../classes/diagram/tsedge";
 import {EdgeLineParser} from "./edge-line-parser";
+import {TSLineType} from "./tsline-type";
 
 export class TSParserUtil {
 
@@ -35,23 +36,23 @@ export class TSParserUtil {
     getTSContentToDisplay(text: string): string {
         const lines = text.trim().split('\n');
         let result = ".type ts\n";
-        let sectionMarker = "";
+        let sectionMarker = TSLineType.UNDEFINED;
         lines.forEach(line => {
             if (line.trimEnd().length > 0) {
                 if (line.trim() === ".nodes") {
-                    sectionMarker = "nodes"
+                    sectionMarker = TSLineType.NODE
                     result = result + line + "\n";
                 } else if (line.trim() === ".edges") {
-                    sectionMarker = "edges"
+                    sectionMarker = TSLineType.EDGE
                     result = result + line + "\n";
                 } else {
                     switch (sectionMarker) {
-                        case "nodes": {
-                            let elems = line.split(" ");
-                            result = result + elems[0] + " " + elems[1] + "\n"
+                        case TSLineType.NODE: {
+                            let nodeLineParser = new NodeLineParser(line);
+                            result = result + nodeLineParser.getID() + " " + nodeLineParser.getLabel() + "\n"
                             break;
                         }
-                        case "edges": {
+                        case TSLineType.EDGE: {
                             result = result + line + "\n";
                             break;
                         }
