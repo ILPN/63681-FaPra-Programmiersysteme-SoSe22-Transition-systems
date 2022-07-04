@@ -1,4 +1,4 @@
-import {TSLineType} from "./tsline-type";
+import {Vector} from "../classes/spring_embedder/models/vector";
 
 export class EdgeLineParser {
     line;
@@ -41,6 +41,15 @@ export class EdgeLineParser {
         if (this.hasDragPoint()) {
             let coordinateY = this.lineElems[5].trim().replace("(", "").replace(")", "").split(",")[1].trim()
             return Number(coordinateY);
+        }
+        throw new Error("This method can only be called for type EDGES");
+    }
+
+    getDragPoint(): Vector {
+        if (this.hasDragPoint()) {
+            let x = this.lineElems[5].trim().replace("(", "").replace(")", "").split(",")[0].trim()
+            let y = this.lineElems[5].trim().replace("(", "").replace(")", "").split(",")[1].trim()
+            return new Vector(Number(x),Number(y));
         }
         throw new Error("This method can only be called for type EDGES");
     }

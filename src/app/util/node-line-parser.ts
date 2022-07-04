@@ -1,4 +1,4 @@
-import {TSLineType} from "./tsline-type";
+
 
 export class NodeLineParser {
 
@@ -18,7 +18,7 @@ export class NodeLineParser {
         return this.lineElems[1].trim();
     }
 
-    getCoordianteX(): number {
+    getCoordinateX(): number {
         if (this.hasCoordinates()) {
             let coordinateX = this.lineElems[2].trim().replace("(", "").replace(")", "").split(",")[0].trim()
             return Number(coordinateX);
@@ -26,10 +26,20 @@ export class NodeLineParser {
         throw new Error("This method can only be called for type EDGES");
     }
 
-    getCoordianteY(): number {
+    getCoordinateY(): number {
         if (this.hasCoordinates()) {
             let coordinateY = this.lineElems[2].trim().replace("(", "").replace(")", "").split(",")[1].trim()
             return Number(coordinateY);
+        }
+        throw new Error("This method can only be called for type EDGES");
+    }
+
+    getCoordinates(): Array<number> {
+        let coordinates = new Array()
+        if (this.hasCoordinates()) {
+            coordinates[0] = this.lineElems[2].trim().replace("(", "").replace(")", "").split(",")[0].trim()
+            coordinates[1] = this.lineElems[2].trim().replace("(", "").replace(")", "").split(",")[1].trim()
+            return coordinates;
         }
         throw new Error("This method can only be called for type EDGES");
     }

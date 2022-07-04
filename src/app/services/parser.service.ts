@@ -2,7 +2,6 @@ import {Injectable} from '@angular/core';
 import {TsNode} from "../classes/diagram/tsnode";
 import {TsEdge} from "../classes/diagram/tsedge";
 import {TsModel} from "../classes/diagram/tsmodel";
-import {Vector} from "../classes/spring_embedder/models/vector";
 import {TSLineType} from "../util/tsline-type";
 import {NodeLineParser} from "../util/node-line-parser";
 import {EdgeLineParser} from "../util/edge-line-parser";
@@ -56,7 +55,7 @@ export class ParserService {
         let nodeLineParser = new NodeLineParser(line);
         let node = new TsNode(nodeLineParser.getID(), nodeLineParser.getLabel());
         if (nodeLineParser.hasCoordinates()) {
-            node.setPosition(nodeLineParser.getCoordianteX(), nodeLineParser.getCoordianteY());
+            node.setPosition(nodeLineParser.getCoordinateX(), nodeLineParser.getCoordinateY());
         }
         return node;
     }
@@ -73,7 +72,7 @@ export class ParserService {
         }
         let tsEdge: TsEdge = new TsEdge(edgeLineParser.getID(), edgeLineParser.getLabel(), edgeLineParser.getWeight(), nodeFrom, nodeTo);
         if (edgeLineParser.hasDragPoint()) {
-            tsEdge.setDragpoint(new Vector(edgeLineParser.getDragPointX(), edgeLineParser.getDragPointY()))
+            tsEdge.setDragpoint(edgeLineParser.getDragPoint());
         }
         return tsEdge;
     }
