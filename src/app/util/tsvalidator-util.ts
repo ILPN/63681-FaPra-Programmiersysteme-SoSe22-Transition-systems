@@ -7,7 +7,6 @@ export class TSValidatorUtil {
     constructor() {
     }
 
-    regExNodeLabel : RegExp = /^\(?[0-1]+\)?$/;
     regExNodeCoordinates : RegExp = /^\(?([+-]?(?=\.\d|\d)(?:\d+)?(?:\.?\d*))(?:[eE]([+-]?\d+))?,([+-]?(?=\.\d|\d)(?:\d+)?(?:\.?\d*))(?:[eE]([+-]?\d+))?\)?$/;
     regExEdgeWeighting : RegExp = /^[0-9]+$/;
 
@@ -33,7 +32,6 @@ export class TSValidatorUtil {
                     isValid = false;
                     break
                 }
-                //isValid = this.regExNodeLabel.test(nodeLineParser.getLabel());
                 break;
             }
             case TSLineType.EDGE: {
@@ -47,7 +45,10 @@ export class TSValidatorUtil {
                     isValid = false;
                     break;
                 }
-                isValid = nodeIDs.some(e => (e === edgeLineParser.getNodeFrom())) && nodeIDs.some(e => (e === edgeLineParser.getNodeTo()));
+                if(!nodeIDs.some(e => (e === edgeLineParser.getNodeFrom())) || !nodeIDs.some(e => (e === edgeLineParser.getNodeTo()))){
+                    isValid = false;
+                    break;
+                }
                 isValid = this.regExEdgeWeighting.test(elems[2]);
                 break;
             }
