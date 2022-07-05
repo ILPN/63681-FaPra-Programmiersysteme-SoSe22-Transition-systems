@@ -140,9 +140,8 @@ export class FRSpringEmbedder {
     }
 
     private _computeAttractiveForce(node: TsNode): Vector {
-        const currentPosition = node.position;
         const attractiveForce = new Vector(0, 0);
-        const edgesToUse = this.edges.filter(e => e.position_from.equals(currentPosition));
+        const edgesToUse = node.getConnectedEdges().filter(e => !e.isSelfLoop());
         for (const edge of edgesToUse) {
             const force = this._computeSingleAttractiveForce(edge.position_from, edge.position_to);
             attractiveForce.add(force);

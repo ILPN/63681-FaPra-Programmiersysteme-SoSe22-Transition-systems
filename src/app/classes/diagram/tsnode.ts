@@ -6,7 +6,7 @@ import {CircleElementWithLabel} from "./CircleElementWithLabel";
 
 
 export class TsNode extends TsElement {
-    public _connectedEdges: Set<TsEdge>;
+    private readonly _connectedEdges: Set<TsEdge>;
     protected _position: Vector;
 
     constructor(id: string, label: string) {
@@ -68,5 +68,11 @@ export class TsNode extends TsElement {
         return this._position;
     }
 
+    getConnectedEdges() {
+        return Array.from(this._connectedEdges);
+    }
 
+    addConnectedEdge(edge: TsEdge) {
+        this._connectedEdges.add(edge);
+    }
 }

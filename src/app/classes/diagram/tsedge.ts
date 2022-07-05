@@ -15,9 +15,9 @@ export class TsEdge extends TsElement {
         super(id, label);
         this._weighting = weighting;
         this._nodeFrom = from;
-        from._connectedEdges.add(this);
+        from.addConnectedEdge(this);
         this._nodeTo = to;
-        to._connectedEdges.add(this);
+        to.addConnectedEdge(this);
         this.initializeSvg();
 
     }
@@ -76,5 +76,8 @@ export class TsEdge extends TsElement {
         this.setDragpoint(new Vector(x,y));
     }
 
+    isSelfLoop() {
+        return this._nodeFrom===this._nodeTo;
+    }
 }
 
