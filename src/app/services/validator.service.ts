@@ -18,6 +18,7 @@ export class ValidatorService {
     validateTS(text: string): boolean {
         let isValid: boolean = true;
         let currentLineType = TSLineType.UNDEFINED;
+        this.nodeIDs = new Array<string>()
 
         const lines = text.split('\n');
 
