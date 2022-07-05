@@ -2,6 +2,7 @@ import {TsElement} from "./tselement";
 import {TsNode} from "./tsnode";
 import {Vector} from "../spring_embedder/models/vector";
 import {CurvedPathElementWithLabel} from "./CurvedPathElementWithLabel";
+import {CircleElementWithLabel} from "./CircleElementWithLabel";
 
 export class TsEdge extends TsElement {
 
@@ -19,7 +20,6 @@ export class TsEdge extends TsElement {
         this._nodeTo = to;
         to.addConnectedEdge(this);
         this.initializeSvg();
-
     }
 
     getTransitions(): String[]{
@@ -44,7 +44,10 @@ export class TsEdge extends TsElement {
 
     public updateSVG() {
         if (this._svgElement instanceof CurvedPathElementWithLabel) {
-            this._svgElement.setPosition(this.position_from, this.position_to, this.dragpoint)
+            if (this.isSelfLoop()){
+                this.dragpoint = this.position_from.add(this.selfLoopShift());
+            }
+            this._svgElement.setPosition(this.position_from, this.position_to, this.dragpoint);
         }
     }
 
@@ -78,6 +81,10 @@ export class TsEdge extends TsElement {
 
     isSelfLoop() {
         return this._nodeFrom===this._nodeTo;
+    }
+
+    private selfLoopShift() {
+        return new Vector(0, -4 * CircleElementWithLabel.circleRadius);
     }
 }
 

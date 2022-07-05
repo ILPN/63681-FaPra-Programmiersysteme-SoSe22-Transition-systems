@@ -66,9 +66,7 @@ export class Vector {
      * Adds a given vector to the vector. This is applied to every coordinate.
      */
     public add(otherVector: Vector): Vector {
-        this.x += otherVector.x;
-        this.y += otherVector.y;
-        return this;
+        return new Vector(this.x + otherVector.x, this.y + otherVector.y);
     }
 
     public angle(otherVector: Vector): number {
@@ -88,5 +86,9 @@ export class Vector {
     limitToScreen() {
         this.x = Math.min(Math.max(0, this.x), Vector.FULL_X);
         this.y = Math.min(Math.max(0, this.y), Vector.FULL_Y);
+    }
+
+    copy() {
+        return new Vector(this.x,this.y);
     }
 }

@@ -10,7 +10,7 @@ describe('Vector', () => {
 
     it('Vectors can be added', () => {
         const otherVector = new Vector(1, 1);
-        vector.add(otherVector);
+        vector = vector.add(otherVector);
         expect(vector.x).toEqual(4);
         expect(vector.y).toEqual(5);
     });
@@ -53,7 +53,7 @@ describe('Vector', () => {
 
     it('Can be moved by a given vector', () => {
         const vector2 = new Vector(1, 0.5);
-        vector.add(vector2);
+        vector = vector.add(vector2);
         expect(vector.x).toEqual(4);
         expect(vector.y).toEqual(4.5)
     });

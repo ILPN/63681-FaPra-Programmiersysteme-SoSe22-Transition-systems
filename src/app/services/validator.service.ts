@@ -55,4 +55,9 @@ export class ValidatorService {
         return isValid;
     }
 
+    private sectionMarkersValid(lines: string[]) {
+        return lines.filter(e => e.trim().replace(/\s/g, "") === ".typets").length === 1
+        && lines.filter(e => e.trim().replace(/\s/g, "") === ".nodes").length === 1
+        && lines.filter(e => e.trim().replace(/\s/g, "") === ".edges").length === 1;
+    }
 }

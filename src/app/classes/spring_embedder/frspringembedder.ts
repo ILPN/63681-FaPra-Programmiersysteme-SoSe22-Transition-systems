@@ -61,9 +61,9 @@ export class FRSpringEmbedder {
             //console.log(`${iteration}. iteration, Max Norm Of Forces: ${this._getMaxNorm(forces)}`)
             let index = 0;
             for (const node of this.nodes) {
-                const repulsiveForce = this._computeRepulsiveForce(node);
+                let repulsiveForce = this._computeRepulsiveForce(node);
                 const attractiveForce = this._computeAttractiveForce(node);
-                repulsiveForce.add(attractiveForce);
+                repulsiveForce = repulsiveForce.add(attractiveForce);
                 forces[index] = repulsiveForce;
                 index++;
             }
@@ -75,7 +75,7 @@ export class FRSpringEmbedder {
                 const coolingFactor = this.cooling(iteration);
                 force.divideBy(coolingFactor);
                 // Apply the displacement vector to the position
-                node.position.add(force);
+                node.position = node.position.add(force);
                 node.position.limitToScreen();
                 index++;
             }
@@ -116,14 +116,14 @@ export class FRSpringEmbedder {
      * Computes the repulsive force for the given node
      */
     private _computeRepulsiveForce(node: TsNode): Vector {
-        const repulsiveForce = new Vector(0, 0);
+        let repulsiveForce = new Vector(0, 0);
         const currentPosition = node.position;
         const pointsToUse = this.nodes
             .map(n => n.position)
             .filter(p => !p.equals(currentPosition));
         for (const position of pointsToUse) {
             const force = this._computeSingleRepulsiveForce(currentPosition, position);
-            repulsiveForce.add(force);
+            repulsiveForce = repulsiveForce.add(force);
         }
         return repulsiveForce;
     }
@@ -140,11 +140,11 @@ export class FRSpringEmbedder {
     }
 
     private _computeAttractiveForce(node: TsNode): Vector {
-        const attractiveForce = new Vector(0, 0);
+        let attractiveForce = new Vector(0, 0);
         const edgesToUse = node.getConnectedEdges().filter(e => !e.isSelfLoop());
         for (const edge of edgesToUse) {
             const force = this._computeSingleAttractiveForce(edge.position_from, edge.position_to);
-            attractiveForce.add(force);
+            attractiveForce = attractiveForce.add(force);
         }
         return attractiveForce;
     }
