@@ -106,45 +106,28 @@ export class TsModel {
         const deadlocks = TsModel.searchDeadlocks(reachableNodes, reachableEdges);
         const freeOfDeadlocks = (deadlocks.length === 0);
 
-        // if there is any deadlock in the model, all transitions may die
         let mortalEdges: TsEdge[] = [];
         let mortalTransitions: String[] = [];
 
+        // if there is any deadlock in the model, all transitions may die
         if (!freeOfDeadlocks) {
             mortalEdges = [...reachableEdges];
             mortalTransitions = reachableTransitions;
         }
 
-        let tempDeadlocks: TsNode[];
-        tempDeadlocks = deadlocks;
-        let currentDeadlock: TsNode | undefined;
+        let tempModel = this.removeNodesWithNoOutGoingEdge(deadlocks, tempEdges, tempNodes);
+        tempEdges = tempModel.tempEdges;
+        tempNodes = tempModel.tempNodes;
 
-        //loop to stepwise remove nodes with no out coming edge
-        const __ret = this.removeNodesWithNoOutGoingEdge(tempDeadlocks, currentDeadlock, tempEdges, tempNodes);
-        tempEdges = __ret.tempEdges;
-        tempNodes = __ret.tempNodes;
         // if there are no remaining nodes in the model, the graph is acyclic
         const acyclic = (tempNodes === []);
 
-        let tempStartNodes: TsNode[];
-        tempStartNodes = TsModel.searchStartNodes(tempNodes, tempEdges);
-        let currentStartNode: TsNode | undefined;
-
-        // loop to stepwise remove nodes with no incoming edge
-        while (tempStartNodes.length !== 0) {
-            // take one start node
-            currentStartNode = tempStartNodes[0];
-            //remove all edges from the model whose nodeFrom is currentStartNode
-            tempEdges = tempEdges.filter(e =>
-                e.nodeFrom !== currentStartNode);
-            // remove currentStartNode from the model
-            tempNodes = tempNodes.filter(n =>
-                n !== currentStartNode);
-            // search start nodes in remaining model
-            tempStartNodes = TsModel.searchStartNodes(tempNodes, tempEdges);
-        }
+        tempModel = this.removeNodesWithNoInGoingEdge(tempNodes, tempEdges);
+        tempNodes = tempModel.tempNodes;
+        tempEdges = tempModel.tempEdges;
 
         // remaining elements belong to a cycle
+        // toDo: this is not correct for all cases > Debug
         const cycleElements = new Array<TsElement>();
         tempNodes.forEach(n => cycleElements.push(n));
         tempEdges.forEach(e => cycleElements.push(e));
@@ -163,6 +146,27 @@ export class TsModel {
         const alive = mortalTransitions === [];
         return new TsGraphProperties(nonReachableElements, deadlocks, mortalEdges, mortalTransitions, cycleElements,
             freeOfDeadlocks, acyclic, alive);
+    }
+
+    private removeNodesWithNoInGoingEdge(tempNodes: TsNode[], tempEdges: TsEdge[]) {
+        let tempStartNodes: TsNode[];
+        tempStartNodes = TsModel.searchStartNodes(tempNodes, tempEdges);
+        let currentStartNode: TsNode | undefined;
+
+        // loop to stepwise remove nodes with no incoming edge
+        while (tempStartNodes.length !== 0) {
+            // take one start node
+            currentStartNode = tempStartNodes[0];
+            //remove all edges from the model whose nodeFrom is currentStartNode
+            tempEdges = tempEdges.filter(e =>
+                e.nodeFrom !== currentStartNode);
+            // remove currentStartNode from the model
+            tempNodes = tempNodes.filter(n =>
+                n !== currentStartNode);
+            // search start nodes in remaining model
+            tempStartNodes = TsModel.searchStartNodes(tempNodes, tempEdges);
+        }
+        return {tempNodes, tempEdges};
     }
 
     private collectNonReachableElements(nonReachableNodes: TsNode[], nonReachableEdges: TsEdge[]) {
@@ -186,7 +190,10 @@ export class TsModel {
         return {reachableNodes, nonReachableNodes};
     }
 
-    private removeNodesWithNoOutGoingEdge(tempDeadlocks: TsNode[], currentDeadlock: TsNode | undefined, tempEdges: TsEdge[], tempNodes: TsNode[]) {
+    private removeNodesWithNoOutGoingEdge(knownDeadlocks: TsNode[], tempEdges: TsEdge[], tempNodes: TsNode[]) {
+        let tempDeadlocks: TsNode[] = knownDeadlocks;
+        let currentDeadlock: TsNode;
+
         while (tempDeadlocks.length !== 0) {
             // take one deadlock
             currentDeadlock = tempDeadlocks[0];
@@ -223,21 +230,23 @@ export class TsModel {
         let cycleWithNoExitEdges: TsEdge[] =[];
 
         for (let e of edgeArray) {
-            // search all edges that are reachable from e (current start)
-            let currentReachableEdges: TsEdge[] = [];
-            currentReachableEdges.push(e);
-            TsModel.searchEdgesReachableFromDefinedEdges(currentReachableEdges, edgeArray);
-            if (currentReachableEdges.length < edgeArray.length){
-                // check if currentReachableEdges is a cycle
-                let isCycle: boolean = false;
-                for (let re of currentReachableEdges){
-                    if (re.nodeTo === e.nodeFrom){
-                        isCycle = true;
+            if (!cycleWithNoExitEdges.includes(e)) {
+                // search all edges that are reachable from e (current start)
+                let currentReachableEdges: TsEdge[] = [];
+                currentReachableEdges.push(e);
+                TsModel.searchEdgesReachableFromDefinedEdges(currentReachableEdges, edgeArray);
+                if (currentReachableEdges.length < edgeArray.length) {
+                    // check if currentReachableEdges is a cycle
+                    let isCycle: boolean = false;
+                    for (let re of currentReachableEdges) {
+                        if (re.nodeTo === e.nodeFrom) {
+                            isCycle = true;
+                        }
                     }
-                }
-                if (isCycle){
-                    noExitCycleCounter++;
-                    cycleWithNoExitEdges = [...currentReachableEdges];
+                    if (isCycle) {
+                        noExitCycleCounter++;
+                        cycleWithNoExitEdges = [...currentReachableEdges];
+                    }
                 }
             }
         }
