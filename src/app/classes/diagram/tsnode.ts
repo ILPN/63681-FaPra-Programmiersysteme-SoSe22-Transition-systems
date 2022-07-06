@@ -86,5 +86,6 @@ export class TsNode extends TsElement {
 
     highlightStartNode() {
         this._svgElement.setAttribute('stroke', 'yellow');
+        this._svgElement.setAttribute('stroke-width', '3');
     }
 }
