@@ -79,6 +79,7 @@ export class AppComponent implements OnDestroy, OnInit, AfterViewInit {
 
     highlightProperties() {
         const properties = this.model.getGraphProperties();
+        properties.highlightNonReachableElements()
         properties.highlightCycles()
         properties.highlightDeadlocks()
         properties.highlightMortalTransitions()

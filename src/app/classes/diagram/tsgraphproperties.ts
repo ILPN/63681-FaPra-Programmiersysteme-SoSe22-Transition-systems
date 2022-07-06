@@ -77,4 +77,9 @@ export class TsGraphProperties {
             }
         }
     }
+
+    highlightNonReachableElements() {
+        if(this._nonReachableElements)
+            this.nonReachableElements.forEach(e => e.highlightNonReachableElement())
+    }
 }
