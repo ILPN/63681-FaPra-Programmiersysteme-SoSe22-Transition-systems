@@ -126,11 +126,7 @@ export class TsModel {
         tempNodes = tempModel.tempNodes;
         tempEdges = tempModel.tempEdges;
 
-        // remaining elements belong to a cycle
-        // toDo: this is not correct for all cases > Debug
-        const cycleElements = new Array<TsElement>();
-        tempNodes.forEach(n => cycleElements.push(n));
-        tempEdges.forEach(e => cycleElements.push(e));
+        const cycleElements = TsModel.searchCycleElements(tempEdges);
 
         if (freeOfDeadlocks) {
             // if not, all transitions already are in mortalTransitions Array (see above)
@@ -146,6 +142,22 @@ export class TsModel {
         const alive = mortalTransitions === [];
         return new TsGraphProperties(nonReachableElements, deadlocks, mortalEdges, mortalTransitions, cycleElements,
             freeOfDeadlocks, acyclic, alive);
+    }
+
+    private static searchCycleElements(tempEdges: TsEdge[]) {
+        const cycleElements = new Array<TsElement>();
+        for (let e of tempEdges) {
+            let arrayWithE: TsEdge[] = [];
+            arrayWithE.push(e);
+            TsModel.searchEdgesReachableFromDefinedEdges(arrayWithE, tempEdges);
+            //
+            let isCycle: boolean = TsModel.isCycle(arrayWithE,e)
+            if (isCycle) {
+                cycleElements.push(e);
+                cycleElements.push(e.nodeFrom)
+            }
+        }
+        return cycleElements;
     }
 
     private removeNodesWithNoInGoingEdge(tempNodes: TsNode[], tempEdges: TsEdge[]) {
@@ -237,12 +249,7 @@ export class TsModel {
                 TsModel.searchEdgesReachableFromDefinedEdges(currentReachableEdges, edgeArray);
                 if (currentReachableEdges.length < edgeArray.length) {
                     // check if currentReachableEdges is a cycle
-                    let isCycle: boolean = false;
-                    for (let re of currentReachableEdges) {
-                        if (re.nodeTo === e.nodeFrom) {
-                            isCycle = true;
-                        }
-                    }
+                    let isCycle = this.isCycle(currentReachableEdges, e);
                     if (isCycle) {
                         noExitCycleCounter++;
                         cycleWithNoExitEdges = [...currentReachableEdges];
@@ -259,6 +266,16 @@ export class TsModel {
                 return [];
             }
         }
+    }
+
+    private static isCycle(edgeArray: TsEdge[], startEdge: TsEdge) {
+        let isCycle: boolean = false;
+        for (let re of edgeArray) {
+            if (re.nodeTo === startEdge.nodeFrom) {
+                isCycle = true;
+            }
+        }
+        return isCycle;
     }
 
     /**
