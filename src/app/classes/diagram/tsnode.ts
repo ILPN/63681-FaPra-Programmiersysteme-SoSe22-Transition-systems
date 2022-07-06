@@ -83,4 +83,8 @@ export class TsNode extends TsElement {
             SVGElementWithLabel.FULL_Y - SVGElementWithLabel.circleRadius);
         this.position = new Vector(x,y);
     }
+
+    highlightStartNode() {
+        this._svgElement.setAttribute('stroke', 'yellow');
+    }
 }

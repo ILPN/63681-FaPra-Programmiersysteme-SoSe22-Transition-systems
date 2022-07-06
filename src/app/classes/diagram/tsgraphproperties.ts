@@ -82,4 +82,5 @@ export class TsGraphProperties {
         if(this._nonReachableElements)
             this.nonReachableElements.forEach(e => e.highlightNonReachableElement())
     }
+
 }

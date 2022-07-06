@@ -83,6 +83,7 @@ export class AppComponent implements OnDestroy, OnInit, AfterViewInit {
         properties.highlightCycles()
         properties.highlightDeadlocks()
         properties.highlightMortalTransitions()
+        this.model.highlightStartNode()
     }
 
     async onFileDropped($event: any) {

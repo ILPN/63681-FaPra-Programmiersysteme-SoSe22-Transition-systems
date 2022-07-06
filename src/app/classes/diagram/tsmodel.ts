@@ -324,4 +324,10 @@ export class TsModel {
         for (const each of this._edges)
             each.isDragged= false;
     }
+
+    highlightStartNode() {
+        if(this._startNode)
+                this.startNode.highlightStartNode()
+        }
+
 }
