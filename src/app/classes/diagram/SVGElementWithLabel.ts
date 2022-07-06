@@ -2,6 +2,8 @@
 export abstract class SVGElementWithLabel {
 
     public static circleRadius: number = 25;
+    public static readonly FULL_X = 1296;
+    public static readonly FULL_Y = 400;
 
     get labelElement(): SVGElement {
         return this._labelElement;

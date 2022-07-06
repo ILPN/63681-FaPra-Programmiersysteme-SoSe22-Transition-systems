@@ -75,4 +75,12 @@ export class TsNode extends TsElement {
     addConnectedEdge(edge: TsEdge) {
         this._connectedEdges.add(edge);
     }
+
+    limitPostionToScreen() {
+        let x = Math.min(Math.max(SVGElementWithLabel.circleRadius, this.x),
+            SVGElementWithLabel.FULL_X - SVGElementWithLabel.circleRadius);
+        let y = Math.min(Math.max(SVGElementWithLabel.circleRadius, this.y),
+            SVGElementWithLabel.FULL_Y - SVGElementWithLabel.circleRadius);
+        this.position = new Vector(x,y);
+    }
 }

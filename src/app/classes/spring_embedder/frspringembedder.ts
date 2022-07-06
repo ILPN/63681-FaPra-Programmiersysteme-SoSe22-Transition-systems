@@ -76,7 +76,7 @@ export class FRSpringEmbedder {
                 force.divideBy(coolingFactor);
                 // Apply the displacement vector to the position
                 node.position = node.position.add(force);
-                node.position.limitToScreen();
+                node.limitPostionToScreen();
                 index++;
             }
             iteration++;
@@ -109,7 +109,10 @@ export class FRSpringEmbedder {
         const scalar = Math.pow(this.idealSpringLength, 2) / repulsiveVector.norm();
         repulsiveVector.normalize();
         repulsiveVector.multiplyWith(scalar);
-        return repulsiveVector;
+        if(repulsiveVector.isWellFormed())
+            return repulsiveVector;
+        else
+            return new Vector(0, 0);
     }
 
     /**
@@ -132,11 +135,14 @@ export class FRSpringEmbedder {
      * Computes the attractive force, given by the edge.
      */
     private _computeSingleAttractiveForce(point1: Vector, point2: Vector): Vector {
-        const attractiveVector = Vector.byPoints(point1, point2);
+        let attractiveVector = Vector.byPoints(point1, point2);
         const scalar = Math.pow(attractiveVector.norm(), 2) / this.idealSpringLength;
         attractiveVector.normalize();
-        attractiveVector.multiplyWith(scalar);
-        return attractiveVector;
+        attractiveVector = attractiveVector.multiplyWith(scalar);
+        if(attractiveVector.isWellFormed())
+            return attractiveVector;
+        else
+            return new Vector(0, 0);
     }
 
     private _computeAttractiveForce(node: TsNode): Vector {
@@ -152,7 +158,7 @@ export class FRSpringEmbedder {
     /**
      * Returns the maximal norm from an array of vectors
      */
-    private _getMaxNorm(array: Array<Vector>): number {
+    public _getMaxNorm(array: Array<Vector>): number {
         if (array.length <= 0) {
             return 0;
         }
