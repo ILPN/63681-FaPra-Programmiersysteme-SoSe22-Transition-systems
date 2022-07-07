@@ -302,7 +302,7 @@ export class TsModel {
         const svgNodes = this._nodes.map(e => (e.getSvgElement()));
         const svgNodeLabel = this._nodes.map(e => (e.getSvgLabelElement()));
         const svgEdgeLabel = this._edges.map(e => (e.getSvgLabelElement()));
-        return svgNodeLabel.concat(svgEdges).concat(svgEdgeLabel).concat(svgNodes);
+        return svgNodeLabel.concat(svgNodes).concat(svgEdges).concat(svgEdgeLabel);
     }
 
     public layoutBySpringEmbedder() {
