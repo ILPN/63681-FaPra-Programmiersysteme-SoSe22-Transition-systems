@@ -9,6 +9,7 @@ export class UploadButtonComponent {
 
     @HostBinding('class.fileover') fileOver: boolean | undefined;
     @Output() fileDropped = new EventEmitter<any>();
+    @Input() buttonIcon: string | undefined;
 
     // Dragover listener
     @HostListener('dragover', ['$event']) onDragOver(evt: { preventDefault: () => void; stopPropagation: () => void; }) {
