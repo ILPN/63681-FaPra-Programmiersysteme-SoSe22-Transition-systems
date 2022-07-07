@@ -347,4 +347,15 @@ export class TsModel {
                 this.startNode.highlightStartNode()
         }
 
+    hideProperties() {
+        for (const each of this._nodes)
+            each.hideProperties()
+        for (const each of this._edges)
+            each.hideProperties()
+    }
+
+    makeStartNodeBold() {
+        if(this._startNode)
+            this.startNode.makeStartNodeBold()
+    }
 }

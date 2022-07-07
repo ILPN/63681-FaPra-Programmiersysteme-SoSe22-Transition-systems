@@ -16,6 +16,7 @@ export class AppComponent implements OnDestroy, OnInit, AfterViewInit {
 
     public textareaFc: FormControl;
     private model: TsModel;
+    private _propertiesHighlighted: boolean;
     files: any[] = [];
     tsParserUtil: TSParserUtil;
 
@@ -30,6 +31,11 @@ export class AppComponent implements OnDestroy, OnInit, AfterViewInit {
         } else {
             this.textareaFc.setValue(AppComponent.defaultText());
         }
+        this._propertiesHighlighted = false;
+    }
+
+    get propertiesHighlighted(): boolean {
+        return this._propertiesHighlighted;
     }
 
     ngOnDestroy(): void {
@@ -78,12 +84,18 @@ export class AppComponent implements OnDestroy, OnInit, AfterViewInit {
     }
 
     highlightProperties() {
-        const properties = this.model.getGraphProperties();
-        properties.highlightNonReachableElements()
-        properties.highlightCycles()
-        properties.highlightDeadlocks()
-        properties.highlightMortalTransitions()
-        this.model.highlightStartNode()
+        if (!this.propertiesHighlighted) {
+            const properties = this.model.getGraphProperties()
+            properties.highlightNonReachableElements()
+            properties.highlightCycles()
+            properties.highlightDeadlocks()
+            properties.highlightMortalTransitions()
+            this.model.highlightStartNode()
+            this._propertiesHighlighted = true
+        } else {
+            this.model.hideProperties()
+            this._propertiesHighlighted = false
+        }
     }
 
     async onFileDropped($event: any) {

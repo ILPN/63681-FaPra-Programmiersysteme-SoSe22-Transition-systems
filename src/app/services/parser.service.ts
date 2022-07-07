@@ -30,6 +30,7 @@ export class ParserService {
             }
         });
         tsModel.startNode = tsModel.nodes[0];
+        tsModel.makeStartNodeBold();
         return tsModel;
     }
 
