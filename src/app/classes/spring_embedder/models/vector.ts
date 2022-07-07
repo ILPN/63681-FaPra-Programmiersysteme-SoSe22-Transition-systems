@@ -45,8 +45,9 @@ export class Vector {
             point2.y - point1.y
         );
     }
+
     static midOf(point1: Vector, point2: Vector): Vector {
-        return new Vector(point1.x+point2.x,point1.y+point2.y).divideBy(2)
+        return new Vector(point1.x + point2.x, point1.y + point2.y).divideBy(2)
     }
 
     static atRandomPosition(): Vector {
@@ -55,9 +56,11 @@ export class Vector {
             Math.random() * Vector.RANGE_Y + Vector.OFFSET
         );
     }
+
     private static readonly OFFSET = 20;
     private static readonly RANGE_X = 800;
     private static readonly RANGE_Y = 300;
+
     //TODO: take FULL_X from .canvas how does that work?
 
 
@@ -76,16 +79,58 @@ export class Vector {
         return this.x === otherPoint.x && this.y === otherPoint.y
     }
 
-    divideBy(factor: number):Vector {
+    divideBy(factor: number): Vector {
         this.x = this.x / factor;
         this.y = this.y / factor;
         return this;
     }
+
     copy() {
-        return new Vector(this.x,this.y);
+        return new Vector(this.x, this.y);
     }
 
-    isWellFormed():boolean {
+    isWellFormed(): boolean {
         return !isNaN(this.x) && !isNaN(this.y);
+    }
+
+    static getMaxNorm(vectors: Array<Vector>): number {
+        /**
+         * Returns the maximal norm from an array of vectors
+         */
+        if (vectors.length <= 0) {
+            return 0;
+        }
+        // Find the maximal norm on array.
+        const norms = vectors.map(vector => vector.norm());
+        return Math.max(...norms);
+
+    }
+
+    static getMaxX(vectors: Array<Vector>): number {
+        if (!vectors)
+            return 0;
+        const x = vectors.map(vector => vector.x);
+        return Math.max(...x);
+    }
+
+    static getMaxY(vectors: Array<Vector>): number {
+        if (!vectors)
+            return 0;
+        const y = vectors.map(vector => vector.y);
+        return Math.max(...y);
+    }
+
+    static getMinX(vectors: Array<Vector>): number {
+        if (!vectors)
+            return 0;
+        const x = vectors.map(vector => vector.x);
+        return Math.min(...x);
+    }
+
+    static getMinY(vectors: Array<Vector>): number {
+        if (!vectors)
+            return 0;
+        const y = vectors.map(vector => vector.y);
+        return Math.min(...y);
     }
 }
