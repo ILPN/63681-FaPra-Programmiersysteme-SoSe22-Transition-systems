@@ -1,10 +1,12 @@
-<div fxLayout="column" fxLayoutAlign="start center">
-    {{buttonText}}
-    <div class="interactive-square" fxLayout="row" fxLayoutAlign="center center"
-         (mouseenter)="hoverStart($event)"
-         (mouseleave)="hoverEnd($event)">
+<div class="container">
+    <div fxLayout="column" fxLayoutAlign="start center">
         <mat-icon class="larger-icon">
             {{buttonIcon}}
         </mat-icon>
     </div>
+
+    <h3>Click to download </h3>
+    <h3>-</h3>
+    <label (click)="saveTSFile()" >&nbsp;.ts&nbsp; </label>&nbsp;
+    <label (click)="savePNMLFile()">.pnml</label>
 </div>

@@ -68,21 +68,6 @@ export class AppComponent implements OnDestroy, OnInit, AfterViewInit {
 
     }
 
-    saveTSFile() {
-        let data = new Blob([this._exportService.exportTS(this.model)], {type: 'text/plain'});
-        let url = window.URL.createObjectURL(data);
-        let a = document.createElement('a');
-        document.body.appendChild(a);
-
-        a.setAttribute('style', 'display: none');
-        a.href = url;
-        a.download = 'transition-system.ts';
-        a.click();
-        window.URL.revokeObjectURL(url);
-        a.remove();
-
-    }
-
     highlightProperties() {
         if (!this.model.propertiesHighlighted) {
             const properties = this.model.getGraphProperties()

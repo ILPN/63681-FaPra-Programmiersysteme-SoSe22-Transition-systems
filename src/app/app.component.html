@@ -7,7 +7,7 @@
     <app-display class="padding full-size"></app-display>
 
     <div fxLayout="row" fxLayoutAlign="space-evenly start">
-        <app-upload-button appDnd (fileDropped)="onFileDropped($event)" (click)="fileInput.click()" ></app-upload-button>
+        <app-upload-button appDnd (fileDropped)="onFileDropped($event)" (click)="fileInput.click()" buttonIcon="upload"></app-upload-button>
         <input #fileInput type="file" (change)="onFileInput($event)" style="display:none;" />
         <mat-form-field appearance="outline"
                         class="textarea" [style.width.px]=250>
@@ -20,11 +20,11 @@
             <button type="button" (click)="refreshGraph()">Refresh</button>&nbsp;
             <button type="button" (click)="resetToDefault()">Default</button>
         </mat-form-field>
-        <app-download-button buttonText="Download File" (click)="saveTSFile()" buttonIcon="download"></app-download-button>
         <app-graph-properties-button
             (click)="highlightProperties()"
             buttonIcon="highlight" buttonLabel1="Hover button to" buttonLabel2="see color legend" buttonText="Show/Hide Properties"
             title="Start node: yellow, Deadlocks: red, Cycles: blue, Mortal edges: orange, Mortal transitions orange, Not reachable elements: grey"></app-graph-properties-button>
+        <app-download-button buttonText="Download File" buttonIcon="download"></app-download-button>
     </div>
 
     <!--  Footer  -->
