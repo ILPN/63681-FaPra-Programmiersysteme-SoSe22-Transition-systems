@@ -9,6 +9,8 @@ export class GraphPropertiesButtonComponent {
 
     @Input() buttonText: string | undefined;
     @Input() buttonIcon: string | undefined;
+    @Input() buttonLabel1: string | undefined;
+    @Input() buttonLabel2: string | undefined;
 
   constructor() { }
 

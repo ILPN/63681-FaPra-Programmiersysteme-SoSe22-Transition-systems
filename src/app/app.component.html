@@ -21,7 +21,10 @@
             <button type="button" (click)="resetToDefault()">Default</button>
         </mat-form-field>
         <app-download-button buttonText="Download File" (click)="saveTSFile()" buttonIcon="download"></app-download-button>
-        <app-graph-properties-button buttonText="Show/Hide Properties" (click)="highlightProperties()" buttonIcon="highlight"></app-graph-properties-button>
+        <app-graph-properties-button
+            (click)="highlightProperties()"
+            buttonIcon="highlight" buttonLabel1="Hover button to" buttonLabel2="see color legend" buttonText="Show/Hide Properties"
+            title="Start node: yellow, Deadlocks: red, Cycles: blue, Mortal edges: orange, Mortal transitions orange, Not reachable elements: grey"></app-graph-properties-button>
     </div>
 
     <!--  Footer  -->

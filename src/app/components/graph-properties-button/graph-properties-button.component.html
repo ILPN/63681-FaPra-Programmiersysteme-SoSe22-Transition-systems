@@ -1,4 +1,4 @@
-<div fxLayout="column" fxLayoutAlign="start center">
+<div fxLayout="column" fxLayoutAlign="start center" xmlns="http://www.w3.org/1999/html">
     {{buttonText}}
     <div class="interactive-square" fxLayout="row" fxLayoutAlign="center center"
          (mouseenter)="hoverStart($event)"
@@ -6,6 +6,9 @@
         <mat-icon class="larger-icon">
             {{buttonIcon}}
         </mat-icon>
-        <button title="Start node: yellow, Deadlocks: red, Cycles: blue, Mortal edges: orange, Mortal transitions orange, Not reachable elements: grey">Hover to see color legend</button>
     </div>
+    <hr>
+    {{buttonLabel1}}
+    <br>
+    {{buttonLabel2}}
 </div>
