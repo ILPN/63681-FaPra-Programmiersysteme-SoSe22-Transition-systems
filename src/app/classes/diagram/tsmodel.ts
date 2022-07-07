@@ -3,6 +3,8 @@ import {TsEdge} from "./tsedge";
 import {TsElement} from "./tselement";
 import {TsGraphProperties} from "./tsgraphproperties";
 import {FRSpringEmbedder} from "../spring_embedder/frspringembedder";
+import {SVGElementWithLabel} from "./SVGElementWithLabel";
+import {Vector} from "../spring_embedder/models/vector";
 
 export class TsModel {
 
@@ -310,11 +312,12 @@ export class TsModel {
         const svgNodes = this._nodes.map(e => (e.getSvgElement()));
         const svgNodeLabel = this._nodes.map(e => (e.getSvgLabelElement()));
         const svgEdgeLabel = this._edges.map(e => (e.getSvgLabelElement()));
-        return svgNodeLabel.concat(svgEdges).concat(svgEdgeLabel).concat(svgNodes);
+        return svgNodeLabel.concat(svgNodes).concat(svgEdges).concat(svgEdgeLabel);
     }
 
     public layoutBySpringEmbedder() {
         new FRSpringEmbedder(this._nodes, this._edges).run();
+        this.centerToScreen();
         this.updateSVG();
     }
 
@@ -368,5 +371,17 @@ export class TsModel {
     makeStartNodeBold() {
         if(this._startNode)
             this.startNode.makeStartNodeBold()
+    }
+
+    private centerToScreen() {
+        let max_x = Vector.getMaxX(this.nodes.map(e => e.position));
+        let min_x = Vector.getMinX(this.nodes.map(e => e.position));
+        let max_y = Vector.getMaxY(this.nodes.map(e => e.position));
+        let min_y = Vector.getMinY(this.nodes.map(e => e.position));
+        let shift_x = ((SVGElementWithLabel.FULL_X - min_x - max_x ) /2);
+        let shift_y = ((SVGElementWithLabel.FULL_Y - min_y - max_y ) /2);
+        for (let each of this.nodes){
+            each.position = each.position.add(new Vector(shift_x,shift_y));
+        }
     }
 }

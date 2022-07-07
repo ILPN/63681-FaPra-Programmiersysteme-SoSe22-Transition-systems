@@ -81,8 +81,7 @@ export class FRSpringEmbedder {
             }
             iteration++;
         }
-        console.log(`Computed embedding after ${iteration} iterations, Max Norm Of Forces: ${this._getMaxNorm(forces)}`);
-
+        console.log(`Computed embedding after ${iteration} iterations, Max Norm Of Forces: ${Vector.getMaxNorm(forces)}`);
     }
 
     /**
@@ -92,7 +91,7 @@ export class FRSpringEmbedder {
     private normIsToHigh(forces: Array<Vector>, epsilon: number): boolean {
         return (forces.length === 0)
             ? true
-            : this._getMaxNorm(forces) > epsilon;
+            : Vector.getMaxNorm(forces) > epsilon;
     }
 
     /**
@@ -155,17 +154,6 @@ export class FRSpringEmbedder {
         return attractiveForce;
     }
 
-    /**
-     * Returns the maximal norm from an array of vectors
-     */
-    public _getMaxNorm(array: Array<Vector>): number {
-        if (array.length <= 0) {
-            return 0;
-        }
-        // Find the maximal norm on array.
-        const norms = array.map(vector => vector.norm());
-        return Math.max(...norms);
-    }
 
     /**
      * Computes the initial positions of the embedding. The positions

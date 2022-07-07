@@ -6,6 +6,7 @@ import {TsModel} from "./classes/diagram/tsmodel";
 import {ExportService} from "./services/export.service";
 import {ValidatorService} from "./services/validator.service";
 import {TSParserUtil} from "./util/tsparser-util";
+import {FileType} from "./util/file-type";
 
 @Component({
     selector: 'app-root',
@@ -53,6 +54,7 @@ export class AppComponent implements OnDestroy, OnInit, AfterViewInit {
         this.textareaFc.setValue(content);
         this.processSourceChange(content)
     }
+
     refreshGraph() {
         if (this.textareaFc.value != null) {
             let content = this.textareaFc.value.trim();
@@ -103,6 +105,14 @@ export class AppComponent implements OnDestroy, OnInit, AfterViewInit {
     }
 
     private async processFile(file: File) {
+        if (this.getFileType(file) == FileType.PNML) {
+            await this.processPNMLFile(file);
+        } else {
+            await this.processTSFile(file);
+        }
+    }
+
+    private async processTSFile(file: File) {
         let content = await file.text();
         let isValid = this._validatorService.validateTS(content);
         if (isValid) {
@@ -113,6 +123,11 @@ export class AppComponent implements OnDestroy, OnInit, AfterViewInit {
         }
     }
 
+    private async processPNMLFile(file: File) {
+        //TODO import logic of .pnml Files
+
+    }
+
     private saveState() {
         let tsText = this._exportService.exportTS(this.model);
         localStorage.removeItem('tsText');
@@ -121,6 +136,14 @@ export class AppComponent implements OnDestroy, OnInit, AfterViewInit {
 
     private getState(): string | null {
         return localStorage.getItem('tsText');
+    }
+
+    private getFileType(file: File): FileType {
+        if (file.name.toUpperCase().endsWith("PNML")) {
+            return FileType.PNML;
+        } else {
+            return FileType.TS;
+        }
     }
 
     private static defaultText() {
