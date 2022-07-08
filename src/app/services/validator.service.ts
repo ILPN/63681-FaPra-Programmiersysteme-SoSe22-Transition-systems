@@ -70,7 +70,7 @@ export class ValidatorService {
             let places = doc.documentElement.getElementsByTagName("place");
             let transitions = doc.documentElement.getElementsByTagName("transition");
             let arcs = doc.documentElement.getElementsByTagName("arc");
-            if (places == null || transitions == null) {
+            if (places == null || transitions == null || arcs == null) {
                 isValid = false;
                 return isValid;
             }
