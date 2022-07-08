@@ -6,7 +6,7 @@ export abstract class SVGElementWithLabel {
     public static readonly FULL_Y = 400;
 
     get labelElement(): SVGElement {
-        return this._labelElement;
+        return this._labelElement[0];
     }
 
     get svgElement(): SVGElement {
@@ -14,13 +14,16 @@ export abstract class SVGElementWithLabel {
     }
 
     private _svgElement: SVGElement;
-    private _labelElement: SVGElement;
+    private _labelElement: Array<SVGTextElement>;
 
     protected constructor(qualifiedName: string, label: string) {
         this._svgElement = <SVGElement>document.createElementNS(SVGElementWithLabel.svgNamespace(), qualifiedName);
-        this._labelElement = <SVGElement>document.createElementNS(SVGElementWithLabel.svgNamespace(), 'text');
-        let textNode = document.createTextNode(label);
-        this._labelElement.appendChild(textNode);
+        this._labelElement= new Array<SVGTextElement>();
+        for (const l of label.split(',')) {
+            this._labelElement.push(<SVGTextElement>document.createElementNS(SVGElementWithLabel.svgNamespace(), 'text'));
+            let textNode = document.createTextNode(l);
+            this._labelElement.reverse()[0].appendChild(textNode);
+        }
         this.setUpSVGAttributes();
         this.setUpTextAttributes();
     }
