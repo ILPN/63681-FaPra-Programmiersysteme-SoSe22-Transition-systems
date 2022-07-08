@@ -125,7 +125,13 @@ export class AppComponent implements OnDestroy, OnInit, AfterViewInit {
     }
 
     private async processPNMLFile(file: File) {
-        //TODO import logic of .pnml Files
+        let content = await file.text();
+        let isValid = this._validatorService.validatePNML(content);
+        if (isValid) {
+            //TODO import logic of .pnml Files
+        } else {
+            alert("The file your are trying to upload is not valid\nPlease check the file!")
+        }
 
     }
 
