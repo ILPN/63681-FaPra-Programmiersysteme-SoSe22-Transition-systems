@@ -116,21 +116,21 @@ export class AppComponent implements OnDestroy, OnInit, AfterViewInit {
     private async processTSFile(file: File) {
         let content = await file.text();
         let isValid = this._validatorService.validateTS(content);
-        if (isValid) {
+        if (isValid.valid) {
             this.textareaFc.setValue(this.tsParserUtil.getTSContentToDisplay(content));
             this.processSourceChange(content);
         } else {
-            alert("The file your are trying to upload is not valid\nPlease check the file!")
+            alert("The file your are trying to upload is not valid\nMessage:\n" + isValid.message)
         }
     }
 
     private async processPNMLFile(file: File) {
         let content = await file.text();
         let isValid = this._validatorService.validatePNML(content);
-        if (isValid) {
+        if (isValid.valid) {
             //TODO import logic of .pnml Files
         } else {
-            alert("The file your are trying to upload is not valid\nPlease check the file!")
+            alert("The file your are trying to upload is not valid\nMessage:\n" + isValid.message)
         }
 
     }
