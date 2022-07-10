@@ -17,7 +17,6 @@ export class AppComponent implements OnDestroy, OnInit, AfterViewInit {
 
     public textareaFc: FormControl;
     private model: TsModel;
-    //private _propertiesHighlighted: boolean;
     files: any[] = [];
     tsParserUtil: TSParserUtil;
 
@@ -32,12 +31,8 @@ export class AppComponent implements OnDestroy, OnInit, AfterViewInit {
         } else {
             this.textareaFc.setValue(AppComponent.defaultText());
         }
-        //this._propertiesHighlighted = false;
     }
 
-    //get propertiesHighlighted(): boolean {
-    //    return this._propertiesHighlighted;
-    //}
 
     ngOnDestroy(): void {
     }
@@ -102,7 +97,6 @@ export class AppComponent implements OnDestroy, OnInit, AfterViewInit {
         this.model = this._parserService.parse(newSource.trim());
         this._displayService.display(this.model);
         this.saveCurrentState();
-        this._propertiesHighlighted = false
     }
 
     private async processFile(file: File) {
