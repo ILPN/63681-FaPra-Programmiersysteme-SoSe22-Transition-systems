@@ -1,6 +1,6 @@
 .container {
     width: 350px;
-    height: 200px;
+    height: 210px;
     padding: 2rem;
     text-align: center;
     border: dashed 1px #979797;
@@ -24,6 +24,7 @@
         border-radius: 21.5px;
         background-color: #db202f;
         padding: 4px 8px;
+        cursor: pointer;
     }
 
     h3 {
