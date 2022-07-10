@@ -54,10 +54,10 @@ export class AppComponent implements OnDestroy, OnInit, AfterViewInit {
         if (this.textareaFc.value != null) {
             let content = this.textareaFc.value.trim();
             let isValid = this._validatorService.validateTS(content);
-            if (isValid) {
+            if (isValid.valid) {
                 this.processSourceChange(content)
             } else {
-                alert("Your input is not valid\nPlease check!")
+                alert("The file your are trying to upload is not valid\nMessage:\n" + isValid.message)
             }
         } else {
             alert("Your input is empty\nThis is not allowed!")
