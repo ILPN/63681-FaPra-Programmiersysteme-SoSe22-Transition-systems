@@ -1,14 +1,18 @@
-<div fxLayout="column" fxLayoutAlign="start center" xmlns="http://www.w3.org/1999/html">
-    {{buttonText}}
-    <div class="interactive-square" fxLayout="row" fxLayoutAlign="center center"
+<div class="container">
+    <div fxLayout="column" fxLayoutAlign="start center"
          (mouseenter)="hoverStart($event)"
          (mouseleave)="hoverEnd($event)">
         <mat-icon class="larger-icon">
             {{buttonIcon}}
         </mat-icon>
     </div>
-    <hr>
-    {{buttonLabel1}}
-    <br>
-    {{buttonLabel2}}
+
+    <h3 style="text-align: center">{{buttonText}}</h3>
+    <a style="text-align: center">----------Color legend-----------</a><br>
+    <label style ="background-color: yellow; alignment: left"></label>&nbsp;Start node<br>
+    <label style ="background-color: red"></label>&nbsp;Deadlocks<br>
+    <label style ="background-color: skyblue"></label>&nbsp;Cycles<br>
+    <label style ="background-color: orange"></label>&nbsp;Mortal edges<br>
+    <label style ="background-color: orange"></label>&nbsp;Mortal transitions<br>
+    <label style ="background-color: lightgray"></label>&nbsp;Not reachable elements<br>
 </div>

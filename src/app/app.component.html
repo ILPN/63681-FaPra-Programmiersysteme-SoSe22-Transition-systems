@@ -17,13 +17,10 @@
                       cdkAutosizeMinRows="10"
                       cdkAutosizeMaxRows="50"
                       [formControl]="textareaFc"></textarea>
-            <button type="button" (click)="refreshGraph()">Refresh</button>&nbsp;
-            <button type="button" (click)="resetToDefault()">Default</button>
+            <label (click)="refreshGraph()">Refresh</label>&nbsp;
+            <label  (click)="resetToDefault()">Default</label>
         </mat-form-field>
-        <app-graph-properties-button
-            (click)="highlightProperties()"
-            buttonIcon="highlight" buttonLabel1="Hover button to" buttonLabel2="see color legend" buttonText="Show/Hide Properties"
-            title="Start node: yellow, Deadlocks: red, Cycles: blue, Mortal edges: orange, Mortal transitions orange, Not reachable elements: grey"></app-graph-properties-button>
+        <app-graph-properties-button style="cursor: pointer" buttonText="Show/Hide Properties" (click)="highlightProperties()" buttonIcon="highlight"></app-graph-properties-button>
         <app-download-button buttonText="Download File" buttonIcon="download"></app-download-button>
     </div>
 

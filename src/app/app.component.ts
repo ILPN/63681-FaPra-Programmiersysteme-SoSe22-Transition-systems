@@ -26,7 +26,7 @@ export class AppComponent implements OnDestroy, OnInit, AfterViewInit {
         this.textareaFc = new FormControl();
         this.model = new TsModel();
         this.tsParserUtil = new TSParserUtil();
-        let tsText = this.getState();
+        let tsText = this.getLastState();
         if (tsText != null && !(tsText === '')) {
             this.textareaFc.setValue(this.tsParserUtil.getTSContentToDisplay(tsText));
         } else {
@@ -101,7 +101,8 @@ export class AppComponent implements OnDestroy, OnInit, AfterViewInit {
     private processSourceChange(newSource: string) {
         this.model = this._parserService.parse(newSource.trim());
         this._displayService.display(this.model);
-        this.saveState();
+        this.saveCurrentState();
+        this._propertiesHighlighted = false
     }
 
     private async processFile(file: File) {
@@ -115,26 +116,32 @@ export class AppComponent implements OnDestroy, OnInit, AfterViewInit {
     private async processTSFile(file: File) {
         let content = await file.text();
         let isValid = this._validatorService.validateTS(content);
-        if (isValid) {
+        if (isValid.valid) {
             this.textareaFc.setValue(this.tsParserUtil.getTSContentToDisplay(content));
             this.processSourceChange(content);
         } else {
-            alert("The file your are trying to upload is not valid\nPlease check the file!")
+            alert("The file your are trying to upload is not valid\nMessage:\n" + isValid.message)
         }
     }
 
     private async processPNMLFile(file: File) {
-        //TODO import logic of .pnml Files
+        let content = await file.text();
+        let isValid = this._validatorService.validatePNML(content);
+        if (isValid.valid) {
+            //TODO import logic of .PNML Files
+        } else {
+            alert("The file your are trying to upload is not valid\nMessage:\n" + isValid.message)
+        }
 
     }
 
-    private saveState() {
+    private saveCurrentState() {
         let tsText = this._exportService.exportTS(this.model);
         localStorage.removeItem('tsText');
         localStorage.setItem('tsText', tsText);
     }
 
-    private getState(): string | null {
+    private getLastState(): string | null {
         return localStorage.getItem('tsText');
     }
 

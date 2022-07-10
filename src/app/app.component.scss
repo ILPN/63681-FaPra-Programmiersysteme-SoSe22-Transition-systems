@@ -32,6 +32,17 @@ hr {
     width: 100%;
 }
 
+label {
+    color: white;
+    width: 60px;
+    height: 30px;
+    border-radius: 10px;
+    background-color: #db202f;
+    padding: 2px 8px;
+    cursor: pointer;
+    font-size: small;
+}
+//label:hover {background-color: darkred}
 
 .fileover {
     animation: shake 1s;
