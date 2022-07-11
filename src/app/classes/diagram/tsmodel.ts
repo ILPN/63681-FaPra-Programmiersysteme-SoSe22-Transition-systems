@@ -384,4 +384,22 @@ export class TsModel {
             each.position = each.position.add(new Vector(shift_x,shift_y));
         }
     }
+
+    highlightProperties():void {
+        const properties = this.getGraphProperties();
+        properties.highlightNonReachableElements();
+        properties.highlightCycles();
+        properties.highlightDeadlocks();
+        properties.highlightMortalTransitions();
+        this.highlightStartNode();
+        this.propertiesHighlighted = true;
+    }
+
+    showHideProperties() {
+        if (!this.propertiesHighlighted) {
+            this.highlightProperties();
+        } else {
+            this.hideProperties();
+        }
+    }
 }

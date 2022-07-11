@@ -16,18 +16,15 @@ export class DisplayComponent implements OnDestroy {
     @ViewChild('drawingArea') drawingArea: ElementRef<SVGElement> | undefined;
 
     private _sub: Subscription;
-    private _model: TsModel;
+    private _model!: TsModel;
     private draggedElement: TsNode|TsEdge|undefined;
 
     constructor(private _displayService: DisplayService) {
-        //um undefined zu vermeiden. Geht bestimmt besser!?
-        this._model = new TsModel();
         this._sub = this._displayService.model$.subscribe(diagram => {
             this._model = diagram;
             this._model.layoutBySpringEmbedder();
             this.draw();
         });
-
     }
 
     ngOnDestroy(): void {

@@ -16,7 +16,7 @@ import {FileType} from "./util/file-type";
 export class AppComponent implements OnDestroy, OnInit, AfterViewInit {
 
     public textareaFc: FormControl;
-    private model: TsModel;
+    private model!: TsModel;
     files: any[] = [];
     tsParserUtil: TSParserUtil;
 
@@ -65,18 +65,8 @@ export class AppComponent implements OnDestroy, OnInit, AfterViewInit {
 
     }
 
-    highlightProperties() {
-        if (!this.model.propertiesHighlighted) {
-            const properties = this.model.getGraphProperties()
-            properties.highlightNonReachableElements()
-            properties.highlightCycles()
-            properties.highlightDeadlocks()
-            properties.highlightMortalTransitions()
-            this.model.highlightStartNode()
-            this.model.propertiesHighlighted = true
-        } else {
-            this.model.hideProperties()
-        }
+    showHideProperties() {
+        this.model.showHideProperties();
     }
 
     async onFileDropped($event: any) {
