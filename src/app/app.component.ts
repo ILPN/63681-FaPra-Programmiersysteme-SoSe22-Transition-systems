@@ -16,8 +16,7 @@ import {FileType} from "./util/file-type";
 export class AppComponent implements OnDestroy, OnInit, AfterViewInit {
 
     public textareaFc: FormControl;
-    private model: TsModel;
-    private _propertiesHighlighted: boolean;
+    private model!: TsModel;
     files: any[] = [];
     tsParserUtil: TSParserUtil;
 
@@ -26,18 +25,14 @@ export class AppComponent implements OnDestroy, OnInit, AfterViewInit {
         this.textareaFc = new FormControl();
         this.model = new TsModel();
         this.tsParserUtil = new TSParserUtil();
-        let tsText = this.getState();
+        let tsText = this.getLastState();
         if (tsText != null && !(tsText === '')) {
             this.textareaFc.setValue(this.tsParserUtil.getTSContentToDisplay(tsText));
         } else {
             this.textareaFc.setValue(AppComponent.defaultText());
         }
-        this._propertiesHighlighted = false;
     }
 
-    get propertiesHighlighted(): boolean {
-        return this._propertiesHighlighted;
-    }
 
     ngOnDestroy(): void {
     }
@@ -59,10 +54,10 @@ export class AppComponent implements OnDestroy, OnInit, AfterViewInit {
         if (this.textareaFc.value != null) {
             let content = this.textareaFc.value.trim();
             let isValid = this._validatorService.validateTS(content);
-            if (isValid) {
+            if (isValid.valid) {
                 this.processSourceChange(content)
             } else {
-                alert("Your input is not valid\nPlease check!")
+                alert("The file your are trying to upload is not valid\nMessage:\n" + isValid.message)
             }
         } else {
             alert("Your input is empty\nThis is not allowed!")
@@ -70,19 +65,8 @@ export class AppComponent implements OnDestroy, OnInit, AfterViewInit {
 
     }
 
-    highlightProperties() {
-        if (!this.propertiesHighlighted) {
-            const properties = this.model.getGraphProperties()
-            properties.highlightNonReachableElements()
-            properties.highlightCycles()
-            properties.highlightDeadlocks()
-            properties.highlightMortalTransitions()
-            this.model.highlightStartNode()
-            this._propertiesHighlighted = true
-        } else {
-            this.model.hideProperties()
-            this._propertiesHighlighted = false
-        }
+    showHideProperties() {
+        this.model.showHideProperties();
     }
 
     async onFileDropped($event: any) {
@@ -102,7 +86,7 @@ export class AppComponent implements OnDestroy, OnInit, AfterViewInit {
     private processSourceChange(newSource: string) {
         this.model = this._parserService.parse(newSource.trim());
         this._displayService.display(this.model);
-        this.saveState();
+        this.saveCurrentState();
     }
 
     private async processFile(file: File) {
@@ -116,32 +100,32 @@ export class AppComponent implements OnDestroy, OnInit, AfterViewInit {
     private async processTSFile(file: File) {
         let content = await file.text();
         let isValid = this._validatorService.validateTS(content);
-        if (isValid) {
+        if (isValid.valid) {
             this.textareaFc.setValue(this.tsParserUtil.getTSContentToDisplay(content));
             this.processSourceChange(content);
         } else {
-            alert("The file your are trying to upload is not valid\nPlease check the file!")
+            alert("The file your are trying to upload is not valid\nMessage:\n" + isValid.message)
         }
     }
 
     private async processPNMLFile(file: File) {
         let content = await file.text();
         let isValid = this._validatorService.validatePNML(content);
-        if (isValid) {
-            //TODO import logic of .pnml Files
+        if (isValid.valid) {
+            //TODO import logic of .PNML Files
         } else {
-            alert("The file your are trying to upload is not valid\nPlease check the file!")
+            alert("The file your are trying to upload is not valid\nMessage:\n" + isValid.message)
         }
 
     }
 
-    private saveState() {
+    private saveCurrentState() {
         let tsText = this._exportService.exportTS(this.model);
         localStorage.removeItem('tsText');
         localStorage.setItem('tsText', tsText);
     }
 
-    private getState(): string | null {
+    private getLastState(): string | null {
         return localStorage.getItem('tsText');
     }
 

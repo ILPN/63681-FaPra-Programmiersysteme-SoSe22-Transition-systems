@@ -11,10 +11,12 @@ export class TsModel {
     private readonly _nodes: Array<TsNode>;
     private readonly _edges: Array<TsEdge>;
     private _startNode!: TsNode;
+    private _propertiesHighlighted: boolean;
 
     constructor() {
         this._nodes = new Array<TsNode>();
         this._edges = new Array<TsEdge>();
+        this._propertiesHighlighted = false;
     }
 
     get nodes(): Array<TsNode> {
@@ -39,6 +41,14 @@ export class TsModel {
 
     get startNode(): TsNode{
         return this._startNode
+    }
+
+    get propertiesHighlighted(): boolean {
+        return this._propertiesHighlighted;
+    }
+
+    set propertiesHighlighted(value: boolean) {
+        this._propertiesHighlighted = value;
     }
 
     public getNode(id: String): TsNode | undefined {
@@ -355,6 +365,7 @@ export class TsModel {
             each.hideProperties()
         for (const each of this._edges)
             each.hideProperties()
+        this._propertiesHighlighted = false
     }
 
     makeStartNodeBold() {
@@ -371,6 +382,24 @@ export class TsModel {
         let shift_y = ((SVGElementWithLabel.FULL_Y - min_y - max_y ) /2);
         for (let each of this.nodes){
             each.position = each.position.add(new Vector(shift_x,shift_y));
+        }
+    }
+
+    highlightProperties():void {
+        const properties = this.getGraphProperties();
+        properties.highlightNonReachableElements();
+        properties.highlightCycles();
+        properties.highlightDeadlocks();
+        properties.highlightMortalTransitions();
+        this.highlightStartNode();
+        this.propertiesHighlighted = true;
+    }
+
+    showHideProperties() {
+        if (!this.propertiesHighlighted) {
+            this.highlightProperties();
+        } else {
+            this.hideProperties();
         }
     }
 }
