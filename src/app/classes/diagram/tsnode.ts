@@ -26,6 +26,7 @@ export class TsNode extends TsElement {
             this._svgElement.setPosition(this.position.x, this.position.y)
         }
         this._connectedEdges.forEach(e => {
+            e.removeDragpoint()
             e.updateSVG()
         })
     }
