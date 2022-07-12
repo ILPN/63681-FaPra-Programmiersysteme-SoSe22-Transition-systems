@@ -1,3 +1,5 @@
+import {SVGElementWithLabel} from "../../diagram/SVGElementWithLabel";
+
 export class Vector {
     x: number;
     y: number;
@@ -52,14 +54,11 @@ export class Vector {
 
     static atRandomPosition(): Vector {
         return new Vector(
-            Math.random() * Vector.RANGE_X + Vector.OFFSET,
-            Math.random() * Vector.RANGE_Y + Vector.OFFSET
+            Math.random() * (SVGElementWithLabel.FULL_X - 2 * SVGElementWithLabel.circleRadius) + SVGElementWithLabel.circleRadius,
+            Math.random() * (SVGElementWithLabel.FULL_Y - 2 * SVGElementWithLabel.circleRadius) + SVGElementWithLabel.circleRadius
         );
     }
 
-    private static readonly OFFSET = 20;
-    private static readonly RANGE_X = 800;
-    private static readonly RANGE_Y = 300;
 
     //TODO: take FULL_X from .canvas how does that work?
 
@@ -132,5 +131,19 @@ export class Vector {
             return 0;
         const y = vectors.map(vector => vector.y);
         return Math.min(...y);
+    }
+
+    static atCircularPosition(anInteger: number): Array<Vector> {
+        let result = new Array<Vector>();
+        let start = new Vector(SVGElementWithLabel.FULL_X / 2, SVGElementWithLabel.FULL_Y / 2);
+        let radius = 200;
+        for (let i = 0; i < anInteger; i++) {
+            result.push(start.add(Vector.byAngle(2 * Math.PI * i / anInteger, radius)))
+        }
+        return result;
+    }
+
+    private static byAngle(phi: number, norm: number) {
+        return new Vector(Math.cos(phi) * norm, Math.sin(phi) * norm);
     }
 }

@@ -53,35 +53,44 @@ export class FRSpringEmbedder {
         if (!(this.nodes.length > 0)) {
             return
         }
-        this._computeInitialPositions();
+        for (let i = 0; i < this.maxRetries(); i++) {
+        this.initializeRandomPositions();
+        //this.initializeRandomPositions();
         // The forces moving the nodes
         const forces: Array<Vector> = [];
         let iteration = 1;
-        while (iteration < maxIterations && (this.normIsToHigh(forces, epsilon) || !this.distancesOk())) {
-            //console.log(`${iteration}. iteration, Max Norm Of Forces: ${this._getMaxNorm(forces)}`)
-            let index = 0;
-            for (const node of this.nodes) {
-                let repulsiveForce = this._computeRepulsiveForce(node);
-                const attractiveForce = this._computeAttractiveForce(node);
-                repulsiveForce = repulsiveForce.add(attractiveForce);
-                forces[index] = repulsiveForce;
-                index++;
-            }
+            while (iteration < maxIterations && (this.normIsToHigh(forces, epsilon) || !this.distancesOk())) {
+                //console.log(`${iteration}. iteration, Max Norm Of Forces: ${this._getMaxNorm(forces)}`)
+                let index = 0;
+                for (const node of this.nodes) {
+                    let repulsiveForce = this._computeRepulsiveForce(node);
+                    const attractiveForce = this._computeAttractiveForce(node);
+                    repulsiveForce = repulsiveForce.add(attractiveForce);
+                    forces[index] = repulsiveForce;
+                    index++;
+                }
 
-            index = 0;
-            for (const node of this.nodes) {
-                // Apply the cooling to the displacement vector
-                const force = forces[index];
-                const coolingFactor = this.cooling(iteration);
-                force.divideBy(coolingFactor);
-                // Apply the displacement vector to the position
-                node.position = node.position.add(force);
-                node.limitPostionToScreen();
-                index++;
+                index = 0;
+                for (const node of this.nodes) {
+                    // Apply the cooling to the displacement vector
+                    const force = forces[index];
+                    const coolingFactor = this.cooling(iteration);
+                    force.divideBy(coolingFactor);
+                    // Apply the displacement vector to the position
+                    node.position = node.position.add(force);
+                    node.limitPostionToScreen();
+                    index++;
+                }
+                iteration++;
             }
-            iteration++;
+            if (iteration < maxIterations){
+                console.log(`Computed embedding after ${iteration} iterations, Max Norm Of Forces: ${Vector.getMaxNorm(forces)}`);
+                break;
+            }
+            else
+                console.log(`Computation failed. Retry ${i+1} of ${this.maxRetries()}`);
         }
-        console.log(`Computed embedding after ${iteration} iterations, Max Norm Of Forces: ${Vector.getMaxNorm(forces)}`);
+
     }
 
     /**
@@ -108,7 +117,7 @@ export class FRSpringEmbedder {
         const scalar = Math.pow(this.idealSpringLength, 2) / repulsiveVector.norm();
         repulsiveVector.normalize();
         repulsiveVector.multiplyWith(scalar);
-        if(repulsiveVector.isWellFormed())
+        if (repulsiveVector.isWellFormed())
             return repulsiveVector;
         else
             return new Vector(0, 0);
@@ -138,7 +147,7 @@ export class FRSpringEmbedder {
         const scalar = Math.pow(attractiveVector.norm(), 2) / this.idealSpringLength;
         attractiveVector.normalize();
         attractiveVector = attractiveVector.multiplyWith(scalar);
-        if(attractiveVector.isWellFormed())
+        if (attractiveVector.isWellFormed())
             return attractiveVector;
         else
             return new Vector(0, 0);
@@ -159,11 +168,18 @@ export class FRSpringEmbedder {
      * Computes the initial positions of the embedding. The positions
      * are set randomly.
      */
-    private _computeInitialPositions(): void {
+    private initializeRandomPositions(): void {
         // Create a random position for each node in the graph.
         for (const node of this.nodes) {
             node.position = Vector.atRandomPosition();
         }
+    }
+
+    private initializeCircularPositions(): void {
+        let positions = Vector.atCircularPosition(this.nodes.length);
+        this.nodes.forEach((node, index) => {
+            node.position = positions[index];
+        })
     }
 
     private distancesOk() {
@@ -176,5 +192,9 @@ export class FRSpringEmbedder {
             }
         }
         return true;
+    }
+
+    private maxRetries() {
+        return 10;
     }
 }
