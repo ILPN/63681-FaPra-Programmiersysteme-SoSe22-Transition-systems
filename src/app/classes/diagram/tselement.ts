@@ -7,29 +7,16 @@ export abstract class TsElement {
     abstract setPosition(x: number, y: number): void;
 
     protected _svgElement!: CircleElementWithLabel|CurvedPathElementWithLabel;
-    protected _dragged: boolean
     protected _id: string;
     protected readonly _label: string;
 
     protected constructor(id: string, label: string) {
         this._id = id;
         this._label = label;
-        this._dragged = false;
-
     }
 
     public registerSvg(svg: CircleElementWithLabel|CurvedPathElementWithLabel) {
         this._svgElement = svg;
-        this._svgElement.svgElement.onmousedown = (event) => {
-            this.processMouseDown();
-        }
-        this._svgElement.labelElement.onmousedown = (event) => {
-            this.processMouseDown();
-        }
-    }
-
-    private processMouseDown(): void {
-        this._dragged = true;
     }
 
     get id(): string {
@@ -45,11 +32,11 @@ export abstract class TsElement {
     }
 
     get isDragged(): boolean {
-        return this._dragged;
+        return this._svgElement.isDragged;
     }
 
     set isDragged(value: boolean) {
-        this._dragged = value;
+        this._svgElement.isDragged = value;
     }
 
     getSvgElement(): SVGElement {

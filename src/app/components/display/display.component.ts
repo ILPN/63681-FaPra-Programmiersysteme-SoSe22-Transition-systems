@@ -61,10 +61,10 @@ export class DisplayComponent implements OnDestroy {
         if (drawingArea === undefined) {
             return;
         }
-        drawingArea.onmousedown = (event) => {
+        drawingArea.onmousedown = () => {
             this.processMouseDown();
         };
-        drawingArea.onmouseup = (event) => {
+        drawingArea.onmouseup = () => {
             this.processMouseUp();
         };
         drawingArea.onmousemove = (event) => {
