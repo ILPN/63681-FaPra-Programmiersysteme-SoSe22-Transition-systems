@@ -4,7 +4,7 @@
     <h2>Show a transition system</h2>
 
     <!--    Main content    -->
-    <app-display class="padding full-size"></app-display>
+    <app-display class="padding full-size" id="canvasDisplay"></app-display>
 
     <div fxLayout="row" fxLayoutAlign="space-evenly start">
         <app-upload-button appDnd (fileDropped)="onFileDropped($event)" (click)="fileInput.click()" buttonIcon="upload"></app-upload-button>

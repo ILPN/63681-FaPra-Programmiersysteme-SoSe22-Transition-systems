@@ -1,8 +1,8 @@
 export abstract class SVGElementWithLabel {
 
     public static circleRadius: number = 25;
-    public static readonly FULL_X = 1296;
-    public static readonly FULL_Y = 400;
+    public static  FULL_X = window.innerWidth/1.1;
+    public static  FULL_Y = window.innerHeight/3;
     private _dragged!: boolean;
     private _svgElement: SVGElement;
     private _labelElement: SVGElement;
@@ -12,6 +12,14 @@ export abstract class SVGElementWithLabel {
         this._labelElement = <SVGElement>document.createElementNS(SVGElementWithLabel.svgNamespace(), 'text');
         let textNode = document.createTextNode(label);
         this._labelElement.appendChild(textNode);
+
+        let xSize = document.getElementById('canvasDisplay')!.offsetWidth;
+        let ySize = document.getElementById('canvasDisplay')!.offsetHeight;
+        if(xSize != null && ySize != null){
+            SVGElementWithLabel.FULL_X = xSize;
+            SVGElementWithLabel.FULL_Y = ySize;
+        }
+
         this.setUpMouseEvents();
         this.setUpSVGAttributes();
         this.setUpTextAttributes();
