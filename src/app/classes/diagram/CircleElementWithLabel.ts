@@ -31,10 +31,8 @@ export class CircleElementWithLabel extends SVGElementWithLabel {
         // set label-position
         let xTxt = x - 0.9 * CircleElementWithLabel.circleRadius;
         let yTxt = y + 0.3 * CircleElementWithLabel.labelFontSize;
-        for (let l of this.labelElements) {
-            l.setAttribute("x", xTxt.toString());
-            l.setAttribute("y", yTxt.toString());
-        }
+        this.setLabelAttribute("x", xTxt.toString());
+        this.setLabelAttribute("y", yTxt.toString());
     }
 
 }
