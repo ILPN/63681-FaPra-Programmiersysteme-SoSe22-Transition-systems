@@ -310,8 +310,16 @@ export class TsModel {
     getSvgElements(): Array<SVGElement> {
         const svgEdges = this._edges.map(e => (e.getSvgElement()));
         const svgNodes = this._nodes.map(e => (e.getSvgElement()));
-        const svgNodeLabel = this._nodes.map(e => (e.getSvgLabelElement()));
-        const svgEdgeLabel = this._edges.map(e => (e.getSvgLabelElement()));
+        const svgNodeLabel: SVGElement[] = [];
+        for (let n of this.nodes){
+            for (let nn of n.getSvgLabelElement())
+                svgNodeLabel.push(nn);
+        }
+        const svgEdgeLabel: SVGElement[] = [];
+        for (let e of this.edges){
+            for (let ee of e.getSvgLabelElement())
+                svgNodeLabel.push(ee);
+        }
         return svgNodeLabel.concat(svgNodes).concat(svgEdges).concat(svgEdgeLabel);
     }
 

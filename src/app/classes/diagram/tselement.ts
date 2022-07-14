@@ -43,8 +43,8 @@ export abstract class TsElement {
         return this._svgElement.svgElement;
     }
 
-    getSvgLabelElement(): SVGElement {
-        return this._svgElement.labelElement;
+    getSvgLabelElement(): SVGElement[] {
+        return this._svgElement.labelElements;
     }
 
 
@@ -62,6 +62,7 @@ export abstract class TsElement {
         this._svgElement.setAttribute('stroke', 'black');
         this._svgElement.setLabelAttribute('fill', 'black');
     }
+
 
 }
 

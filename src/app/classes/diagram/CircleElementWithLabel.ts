@@ -15,12 +15,14 @@ export class CircleElementWithLabel extends SVGElementWithLabel {
     }
 
     setUpTextAttributes(): void {
-        this.labelElement.setAttribute("stroke-width", "1");
-        this.labelElement.setAttribute("fill", "black");
-        this.labelElement.setAttribute("font-size", CircleElementWithLabel.labelFontSize + "px");
-        this.labelElement.setAttribute("textLength", 1.85 * CircleElementWithLabel.circleRadius + "px");
-        this.labelElement.setAttribute("lengthAdjust", "spacingAndGlyphs");
-        this.labelElement.setAttribute("font-family", "Arial, Helvetica, sans-serif");
+        for (let l of this.labelElements) {
+            l.setAttribute("stroke-width", "1");
+            l.setAttribute("fill", "black");
+            l.setAttribute("font-size", CircleElementWithLabel.labelFontSize + "px");
+            l.setAttribute("textLength", 1.85 * CircleElementWithLabel.circleRadius + "px");
+            l.setAttribute("lengthAdjust", "spacingAndGlyphs");
+            l.setAttribute("font-family", "Arial, Helvetica, sans-serif");
+        }
     }
 
     setPosition(x: number, y: number) {
@@ -29,8 +31,10 @@ export class CircleElementWithLabel extends SVGElementWithLabel {
         // set label-position
         let xTxt = x - 0.9 * CircleElementWithLabel.circleRadius;
         let yTxt = y + 0.3 * CircleElementWithLabel.labelFontSize;
-        this.labelElement.setAttribute("x", xTxt.toString());
-        this.labelElement.setAttribute("y", yTxt.toString());
+        for (let l of this.labelElements) {
+            l.setAttribute("x", xTxt.toString());
+            l.setAttribute("y", yTxt.toString());
+        }
     }
 
 }

@@ -17,10 +17,12 @@ export class CurvedPathElementWithLabel extends SVGElementWithLabel {
     }
 
     setUpTextAttributes(): void {
-        this.labelElement.setAttribute("stroke-width", "1");
-        this.labelElement.setAttribute("fill", "black");
-        this.labelElement.setAttribute("font-size", 0.8 * SVGElementWithLabel.circleRadius + "px");
-        this.labelElement.setAttribute("font-family", "Arial, Helvetica, sans-serif");
+        for (let l of this.labelElements) {
+            l.setAttribute("stroke-width", "1");
+            l.setAttribute("fill", "black");
+            l.setAttribute("font-size", 0.8 * SVGElementWithLabel.circleRadius + "px");
+            l.setAttribute("font-family", "Arial, Helvetica, sans-serif");
+        }
     }
 
     setPosition(pos1: Vector, pos2: Vector, controlpoint: Vector | undefined = undefined, isSelfLoop: boolean): void {
@@ -53,8 +55,10 @@ export class CurvedPathElementWithLabel extends SVGElementWithLabel {
         //TODO TRAN-62 Position verbessern
         //Mitte von Controlpunkt und Mitte der Knoten
         posTxt = Vector.midOf(posTxt, cp)
-        this.labelElement.setAttribute("x", posTxt.x.toString());
-        this.labelElement.setAttribute("y", posTxt.y.toString());
+        for (let l of this.labelElements) {
+            l.setAttribute("x", posTxt.x.toString());
+            l.setAttribute("y", posTxt.y.toString());
+        }
     }
 
     public selfLoopShift() {

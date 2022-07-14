@@ -73,7 +73,7 @@ export class TsGraphProperties {
                 me.highlightMortalEdge();
                 for (let t of me.getTransitions()){
                     if (this._mortalTransitions.includes(t))
-                        me.highlightMortalTransition()}
+                        me.highlightMortalTransition(t)}
             }
         }
     }

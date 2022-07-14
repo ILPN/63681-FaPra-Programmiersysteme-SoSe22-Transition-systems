@@ -5,13 +5,27 @@ export abstract class SVGElementWithLabel {
     public static  FULL_Y = window.innerHeight/3;
     private _dragged!: boolean;
     private _svgElement: SVGElement;
-    private _labelElement: SVGElement;
+    private _labelElements: SVGElement[];
 
     protected constructor(qualifiedName: string, label: string) {
         this._svgElement = <SVGElement>document.createElementNS(SVGElementWithLabel.svgNamespace(), qualifiedName);
-        this._labelElement = <SVGElement>document.createElementNS(SVGElementWithLabel.svgNamespace(), 'text');
-        let textNode = document.createTextNode(label);
-        this._labelElement.appendChild(textNode);
+        this._svgElement = <SVGElement>document.createElementNS(SVGElementWithLabel.svgNamespace(), qualifiedName);
+        this._labelElements = [];
+        let labelAsArray = label.split(",");
+        labelAsArray.reverse();
+
+        let tran = labelAsArray.pop()
+        let labelElement = <SVGElement>document.createElementNS(SVGElementWithLabel.svgNamespace(), 'text');
+        if (tran) {
+            let textNode = document.createTextNode(tran);
+            labelElement.appendChild(textNode);
+            this._labelElements.push(labelElement);
+        }
+        while (labelAsArray.length > 0){
+            this.createElement(", ");
+            let t = labelAsArray.pop()
+            this.createElement(t!);
+        }
 
         let xSize = document.getElementById('canvasDisplay')!.offsetWidth;
         let ySize = document.getElementById('canvasDisplay')!.offsetHeight;
@@ -19,10 +33,17 @@ export abstract class SVGElementWithLabel {
             SVGElementWithLabel.FULL_X = xSize;
             SVGElementWithLabel.FULL_Y = ySize;
         }
-
         this.setUpMouseEvents();
         this.setUpSVGAttributes();
         this.setUpTextAttributes();
+
+    }
+
+    private createElement(t: string) {
+        let labelElement = <SVGElement>document.createElementNS(SVGElementWithLabel.svgNamespace(), 'text');
+        let textNode = document.createTextNode(t!);
+        labelElement.appendChild(textNode);
+        this._labelElements.push(labelElement);
     }
 
     private static svgNamespace(): string {
@@ -33,8 +54,8 @@ export abstract class SVGElementWithLabel {
 
     abstract setUpTextAttributes(): void;
 
-    get labelElement(): SVGElement {
-        return this._labelElement;
+    get labelElements(): SVGElement[] {
+        return this._labelElements;
     }
 
     get svgElement(): SVGElement {
@@ -46,7 +67,9 @@ export abstract class SVGElementWithLabel {
     }
 
     setLabelAttribute(qualifiedName: string, value: string) {
-        this.labelElement.setAttribute(qualifiedName, value);
+        for (let l of this.labelElements) {
+            l.setAttribute(qualifiedName, value);
+        }
     }
 
     private setUpMouseEvents() {
@@ -54,8 +77,10 @@ export abstract class SVGElementWithLabel {
         this._svgElement.onmousedown = () => {
             this.processMouseDown();
         }
-        this._labelElement.onmousedown = () => {
-            this.processMouseDown();
+        for (let l of this._labelElements) {
+            l.onmousedown = () => {
+                this.processMouseDown();
+            }
         }
     }
 
