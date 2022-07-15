@@ -54,8 +54,14 @@ export class CurvedPathElementWithLabel extends SVGElementWithLabel {
         let posTxt = Vector.midOf(new Vector(x1,y1), new Vector(x2,y2))
         //TODO TRAN-62 Position verbessern
         //Mitte von Controlpunkt und Mitte der Knoten
-        posTxt = Vector.midOf(posTxt, cp)
-        this.setLabelAttribute("x", posTxt.x.toString());
+        for (let le of this.labelElements){
+            posTxt = Vector.midOf(posTxt, cp)
+            le.setAttribute("x", posTxt.x.toString());
+            posTxt.x = posTxt.x + 30;
+        }
+        if ((isSelfLoop) && (this.labelElements.length > 1)){
+            posTxt.y = posTxt.y + (22 * ((this.labelElements.length - 1)/2))
+        }
         this.setLabelAttribute("y", posTxt.y.toString());
     }
 
