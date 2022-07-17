@@ -47,7 +47,7 @@ export class AppComponent implements OnDestroy, OnInit, AfterViewInit {
     resetToDefault() {
         let content = AppComponent.defaultText().trim() + "\n";
         this.textareaFc.setValue(content);
-        this.processSourceChange(content)
+        this.processSourceChange(content, false)
     }
 
     refreshGraph() {
@@ -55,7 +55,7 @@ export class AppComponent implements OnDestroy, OnInit, AfterViewInit {
             let content = this.textareaFc.value.trim();
             let isValid = this._validatorService.validateTS(content);
             if (isValid.valid) {
-                this.processSourceChange(content)
+                this.processSourceChange(content, false)
             } else {
                 alert("The file your are trying to upload is not valid\nMessage:\n" + isValid.message)
             }
@@ -83,8 +83,8 @@ export class AppComponent implements OnDestroy, OnInit, AfterViewInit {
         }
     }
 
-    private processSourceChange(newSource: string) {
-        this.model = this._parserService.parse(newSource.trim());
+    private processSourceChange(newSource: string, fromFile: boolean) {
+        this.model = this._parserService.parse(newSource.trim(), fromFile);
         this._displayService.display(this.model);
         this.saveCurrentState();
     }
@@ -102,7 +102,7 @@ export class AppComponent implements OnDestroy, OnInit, AfterViewInit {
         let isValid = this._validatorService.validateTS(content);
         if (isValid.valid) {
             this.textareaFc.setValue(this.tsParserUtil.getTSContentToDisplay(content));
-            this.processSourceChange(content);
+            this.processSourceChange(content, true);
         } else {
             alert("The file your are trying to upload is not valid\nMessage:\n" + isValid.message)
         }

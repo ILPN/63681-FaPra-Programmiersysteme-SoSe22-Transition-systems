@@ -12,11 +12,21 @@ export class TsModel {
     private readonly _edges: Array<TsEdge>;
     private _startNode!: TsNode;
     private _propertiesHighlighted: boolean;
+    private _fromFileImport: boolean;
 
     constructor() {
         this._nodes = new Array<TsNode>();
         this._edges = new Array<TsEdge>();
         this._propertiesHighlighted = false;
+        this._fromFileImport = false;
+    }
+
+    get fromFileImport(): boolean {
+        return this._fromFileImport;
+    }
+
+    set fromFileImport(value: boolean) {
+        this._fromFileImport = value;
     }
 
     get nodes(): Array<TsNode> {
@@ -324,8 +334,10 @@ export class TsModel {
     }
 
     public layoutBySpringEmbedder() {
-        new FRSpringEmbedder(this._nodes, this._edges).run();
-        this.centerToScreen();
+        if(!this._fromFileImport || !this.nodePositionsOK()){
+            new FRSpringEmbedder(this._nodes, this._edges).run();
+            this.centerToScreen();
+        }
         this.updateSVG();
     }
 
@@ -409,5 +421,17 @@ export class TsModel {
         } else {
             this.hideProperties();
         }
+    }
+
+    private nodePositionsOK(){
+        for (const node of this._nodes){
+            if(node.position == null){
+                return false;
+            }
+            if(node.position.x == 0 && node.position.y == 0){
+                return false;
+            }
+        }
+        return true;
     }
 }

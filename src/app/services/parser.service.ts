@@ -11,10 +11,11 @@ export class ParserService {
     constructor() {
     }
 
-    parse(text: string): TsModel {
+    parse(text: string, fromFileImport: boolean): TsModel {
         const lines = text.split('\n');
 
         const tsModel = new TsModel();
+        tsModel.fromFileImport = fromFileImport;
         let currentLineType = TSLineType.UNDEFINED;
 
         lines.forEach(line => {
