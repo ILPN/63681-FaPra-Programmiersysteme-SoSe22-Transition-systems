@@ -85,13 +85,23 @@ export class ValidatorService {
             let targets = this.toArray(arcs, "target")
             let transitionIds = this.toArray(transitions, "id")
             for (let id of transitionIds) {
-                if (targets.indexOf(id) < 0 || targets.indexOf(id) != targets.lastIndexOf(id)) {
-                    let message = "The transition " + id + " must have exactly one outgoing edge";
+                if (targets.indexOf(id) < 0) {
+                    let message = "The transition " + id + " has no outgoing edge\nThis is not allowed";
                     isValid = new IsValid(false, message);
                     return isValid;
                 }
-                if (sources.indexOf(id) < 0 || sources.indexOf(id) != sources.lastIndexOf(id)) {
-                    let message = "The transition " + id + " must have exactly one incoming edge";
+                if (targets.indexOf(id) != targets.lastIndexOf(id)) {
+                    let message = "The transition " + id + " has more than one outgoing edge\nOnly one is allowed";
+                    isValid = new IsValid(false, message);
+                    return isValid;
+                }
+                if (sources.indexOf(id) < 0) {
+                    let message = "The transition " + id + " has no incoming edge\nThis is not allowed";
+                    isValid = new IsValid(false, message);
+                    return isValid;
+                }
+                if (sources.indexOf(id) != sources.lastIndexOf(id)) {
+                    let message = "The transition " + id + " has more than one incoming edge\nOnly one is allowed";
                     isValid = new IsValid(false, message);
                     return isValid;
                 }
