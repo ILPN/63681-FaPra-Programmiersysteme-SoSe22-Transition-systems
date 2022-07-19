@@ -10,19 +10,18 @@ export class TsEdge extends TsElement {
     private readonly _nodeTo: TsNode;
     protected dragpoint: Vector | undefined;
 
-
     constructor(id: string, label: string, weighting: number, from: TsNode, to: TsNode) {
         super(id, label);
         this._weighting = weighting;
         this._nodeFrom = from;
-        from._connectedEdges.add(this);
+        from.addConnectedEdge(this);
         this._nodeTo = to;
-        to._connectedEdges.add(this);
+        to.addConnectedEdge(this);
         this.initializeSvg();
 
     }
 
-    getTransitions(): String[]{
+    getTransitions(): String[] {
         return this.label.split(",");
     }
 
@@ -49,7 +48,7 @@ export class TsEdge extends TsElement {
     }
 
     private initializeSvg(): void {
-        this.registerSvg(new CurvedPathElementWithLabel(this._label));
+        this.registerSvg(new CurvedPathElementWithLabel(this._label, this));
         this.updateSVG();
     }
 
@@ -57,9 +56,9 @@ export class TsEdge extends TsElement {
         this._svgElement.svgElement.setAttribute('stroke', 'orange');
     }
 
-    highlightMortalTransition(transition: String){
+    highlightMortalTransition(transition: String) {
         // toDo: Kann jemand nur den übergebenen String, also möglicherweise nur einen Teil des Labels highlighten?
-        this._svgElement.labelElement.setAttribute('fill','orange');
+        this._svgElement.labelElement.setAttribute('fill', 'orange');
     }
 
     writeOn(result: string): string {
@@ -67,13 +66,13 @@ export class TsEdge extends TsElement {
         return result;
     }
 
-    public setDragpoint (position: Vector): void{
+    public setDragpoint(position: Vector): void {
         this.dragpoint = position;
         this.updateSVG();
     }
 
-    setPosition(x: number , y: number ):void {
-        this.setDragpoint(new Vector(x,y));
+    setPosition(x: number, y: number): void {
+        this.setDragpoint(new Vector(x, y));
     }
 }
 
