@@ -4,6 +4,8 @@ import {TsEdge} from "./tsedge";
 
 export class CurvedPathElementWithLabel extends SVGElementWithLabel {
 
+    private static BIDIRECTIONAL_EDGES_CURVE_RADIUS: number = 25;
+
     private edge: TsEdge;
 
     // Zeigt an, ob eine bidirektionale Kante gebogen angezeigt wird.
@@ -43,32 +45,15 @@ export class CurvedPathElementWithLabel extends SVGElementWithLabel {
         let midPosition: Vector = Vector.midOf(pos1, pos2);
         let cp = controlpoint ?? midPosition;
         let postitionsString = `M ${x1.toString()},${y1.toString()} `;
-
+        // Check if edge is bidirectional
         let otherBiDirEdge: TsEdge | null = this.edge.getBidirectionalEdge();
         if (otherBiDirEdge != null) {
-            //console.log("Edge " + this.edge.id + " is bidirectional!");
-            if(this._bidirectionalCurveCounter === 0) {
-                //Set curve-counter to distinguish between the two bidirectional edges
-                let otherBiDirSvgElement: CurvedPathElementWithLabel = <CurvedPathElementWithLabel>otherBiDirEdge.svgElement;
-                if (otherBiDirSvgElement._bidirectionalCurveCounter === 0 || otherBiDirSvgElement._bidirectionalCurveCounter === -1) {
-                    this._bidirectionalCurveCounter = 1;
-                } else {
-                    this._bidirectionalCurveCounter = -1;
-                }
-            }
             let shiftVector: Vector = this.bidirectionalEdgeShift(pos1, pos2);
-            //console.log("Length of shift-vector: " + shiftVector.norm());
-            // set curved path
-            if(this._bidirectionalCurveCounter === 1){
-                cp = Vector.add(midPosition, shiftVector);
-            }
-            if(this._bidirectionalCurveCounter === -1){
-                cp = Vector.add(midPosition, shiftVector);
-            }
+            // bend bidirectional edges
+            cp = Vector.add(midPosition, shiftVector);
         }
         postitionsString += `Q ${cp.x.toString()},${cp.y.toString()},${x2.toString()},${y2.toString()}`;
         this.svgElement.setAttribute('d', postitionsString);
-        //console.log("Position-string: " + postitionsString);
         // set label-position
         let posTxt = Vector.midOf(pos1, pos2)
         //TODO TRAN-62 Position verbessern
@@ -79,17 +64,15 @@ export class CurvedPathElementWithLabel extends SVGElementWithLabel {
     }
 
     /**
-     * Calculates a drag-point by which bidirectional edges should be curved to not overlap each other.
+     * Calculates a shift-point by which bidirectional edges should be curved to not overlap each other.
      * @param pos1 The starting-point of the edge to be curved.
      * @param pos2 The end-point of the edge to be curved.
      */
     private bidirectionalEdgeShift(pos1: Vector, pos2: Vector): Vector {
-        const shiftGap: number = 25;
         let edge: Vector = Vector.subtract(pos1, pos2);
-        let angleToXAxis: number = edge.angleToXAxis();
-        let antiAngle = 0.5 * Math.PI - angleToXAxis;
-        let dy = shiftGap * Math.sin(antiAngle);
-        let dx = shiftGap * Math.cos(antiAngle);
+        let radiusAngle = 0.5 * Math.PI - edge.angleToXAxis();
+        let dy = CurvedPathElementWithLabel.BIDIRECTIONAL_EDGES_CURVE_RADIUS * Math.sin(radiusAngle);
+        let dx = CurvedPathElementWithLabel.BIDIRECTIONAL_EDGES_CURVE_RADIUS * Math.cos(radiusAngle);
         return new Vector(-dx, dy);
     }
 
