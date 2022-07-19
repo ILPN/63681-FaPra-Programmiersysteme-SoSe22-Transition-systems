@@ -36,6 +36,15 @@ export class Vector {
     }
 
     /**
+     * Creates a new vector from the passed vector multiplied by the given scalar.
+     * @param vector The vector to be multiplied.
+     * @param scalar The value to multiply the given vector with.
+     */
+    public static multiply(vector: Vector, scalar: number){
+        return new Vector(vector.x * scalar, vector.y * scalar);
+    }
+
+    /**
      * Computes a vector running though the given points.
      */
     static byPoints(point1: Vector, point2: Vector): Vector {
@@ -71,8 +80,27 @@ export class Vector {
         return this;
     }
 
+    /**
+     * Creates a new vector that is the sum of the two given vectors.
+     */
+    public static add(vector1: Vector, vector2: Vector): Vector {
+        return new Vector(vector1.x + vector2.x, vector1.y + vector2.y);
+    }
+
+    /**
+     * Creates a new vector that is the subtraction of the first from the second vector:
+     * @param vector2 minus @param vector1
+     */
+    public static subtract(vector1: Vector, vector2: Vector): Vector {
+        return new Vector(vector2.x - vector1.x, vector2.y - vector1.y);
+    }
+
     public angle(otherVector: Vector): number {
         return Math.atan2((otherVector.y - this.y), (otherVector.x - this.x))
+    }
+
+    public angleToXAxis(): number {
+        return Math.atan2(this.y, this.x);
     }
 
     public equals(otherPoint: Vector): boolean {
