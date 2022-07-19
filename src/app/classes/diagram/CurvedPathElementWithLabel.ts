@@ -8,9 +8,6 @@ export class CurvedPathElementWithLabel extends SVGElementWithLabel {
 
     private edge: TsEdge;
 
-    // Zeigt an, ob eine bidirektionale Kante gebogen angezeigt wird.
-    private _bidirectionalCurveCounter: number = 0;
-
     //TODO Use edge-properties to set label?
     constructor(label: string, edge: TsEdge) {
         super('path', label);
@@ -76,8 +73,4 @@ export class CurvedPathElementWithLabel extends SVGElementWithLabel {
         return new Vector(-dx, dy);
     }
 
-
-    get bidirectionalCurveCounter(): number {
-        return this._bidirectionalCurveCounter;
-    }
 }
