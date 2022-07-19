@@ -1,12 +1,18 @@
 import {SVGElementWithLabel} from "./SVGElementWithLabel";
 import {Vector} from "../spring_embedder/models/vector";
+import {TsEdge} from "./tsedge";
 import {CircleElementWithLabel} from "./CircleElementWithLabel";
 
 export class CurvedPathElementWithLabel extends SVGElementWithLabel {
 
+    private static BIDIRECTIONAL_EDGES_CURVE_RADIUS: number = 25;
 
-    constructor(label: string) {
+    private edge: TsEdge;
+
+    //TODO Use edge-properties to set label?
+    constructor(label: string, edge: TsEdge) {
         super('path', label);
+        this.edge = edge;
     }
 
     setUpSVGAttributes(): void {
@@ -46,7 +52,13 @@ export class CurvedPathElementWithLabel extends SVGElementWithLabel {
         y2 = y2 + SVGElementWithLabel.circleRadius * Math.sin(phi2);
         const cp = controlpoint ?? this.defaultDragPoint(pos1, pos2, isSelfLoop);
         let postitionsString = `M ${x1.toString()},${y1.toString()} `;
-
+        // Check if edge is bidirectional
+        let otherBiDirEdge: TsEdge | null = this.edge.getBidirectionalEdge();
+        if (otherBiDirEdge != null) {
+            let shiftVector: Vector = this.bidirectionalEdgeShift(pos1, pos2);
+            // bend bidirectional edges
+            cp = Vector.add(midPosition, shiftVector);
+        }
         postitionsString += `Q ${cp.x.toString()},${cp.y.toString()},${x2.toString()},${y2.toString()}`;
         this.svgElement.setAttribute('d', postitionsString);
 
@@ -75,4 +87,18 @@ export class CurvedPathElementWithLabel extends SVGElementWithLabel {
         else
             return Vector.midOf(pos1, pos2);
     }
+
+    /**
+     * Calculates a shift-point by which bidirectional edges should be curved to not overlap each other.
+     * @param pos1 The starting-point of the edge to be curved.
+     * @param pos2 The end-point of the edge to be curved.
+     */
+    private bidirectionalEdgeShift(pos1: Vector, pos2: Vector): Vector {
+        let edge: Vector = Vector.subtract(pos1, pos2);
+        let radiusAngle = 0.5 * Math.PI - edge.angleToXAxis();
+        let dy = CurvedPathElementWithLabel.BIDIRECTIONAL_EDGES_CURVE_RADIUS * Math.sin(radiusAngle);
+        let dx = CurvedPathElementWithLabel.BIDIRECTIONAL_EDGES_CURVE_RADIUS * Math.cos(radiusAngle);
+        return new Vector(-dx, dy);
+    }
+
 }

@@ -65,16 +65,12 @@ export class TsNode extends TsElement {
         return this._position.y;
     }
 
-    get position(): Vector {
+    public get position(): Vector {
         return this._position;
     }
 
-    getConnectedEdges() {
-        return Array.from(this._connectedEdges);
-    }
-
-    addConnectedEdge(edge: TsEdge) {
-        this._connectedEdges.add(edge);
+    public get connectedEdges(): Set<TsEdge> {
+        return this._connectedEdges;
     }
 
     limitPostionToScreen() {
@@ -91,5 +87,13 @@ export class TsNode extends TsElement {
 
     makeStartNodeBold() {
         this._svgElement.setAttribute('stroke-width', '3');
+    }
+
+    getConnectedEdges() {
+        return Array.from(this._connectedEdges);
+    }
+
+    public addConnectedEdge(edge: TsEdge): void {
+        this._connectedEdges.add(edge);
     }
 }
