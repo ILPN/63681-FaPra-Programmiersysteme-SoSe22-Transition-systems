@@ -74,5 +74,23 @@ export class TsEdge extends TsElement {
     setPosition(x: number, y: number): void {
         this.setDragpoint(new Vector(x, y));
     }
+
+    /**
+     * If this edge is bidirectional then returns the corresponding bidirectional edge, otherwise returns null.
+     */
+    public getBidirectionalEdge(): TsEdge | null {
+        // Untersucht, ob es eine andere Kante gibt, die this._nodeFrom als End- und this._nodeTo als Startknoten hat.
+        let result: TsEdge | null = null;
+        let edgesOfNodeFrom: Set<TsEdge> = this._nodeFrom.connectedEdges;
+        for (let edgeOfNodeFrom of edgesOfNodeFrom) {
+            //TODO: Zur Optimierung könnte man noch ausschließen, die aktuelle Kante zu untersuchen.
+            // TODO Prüfe auf Objekt-Identität statt auf Id?
+            if (edgeOfNodeFrom._nodeTo.id === this._nodeFrom.id && edgeOfNodeFrom._nodeFrom.id === this._nodeTo.id) {
+                result = edgeOfNodeFrom;
+                break;
+            }
+        }
+        return result;
+    }
 }
 
