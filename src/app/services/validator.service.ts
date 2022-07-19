@@ -111,11 +111,11 @@ export class ValidatorService {
 
     }
 
-    private toArray(collection: HTMLCollectionOf<Element>, attribut: string): Array<string> {
+    private toArray(collection: HTMLCollectionOf<Element>, attribute: string): Array<string> {
         let result = new Array<string>();
         for (let index: number = 0; index < collection.length; index++) {
             let elem = collection[index];
-            let e = elem.getAttribute(attribut);
+            let e = elem.getAttribute(attribute);
             if (e != null) {
                 result[index] = e;
             }
