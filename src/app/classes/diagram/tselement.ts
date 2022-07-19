@@ -1,5 +1,3 @@
-import {CircleElementWithLabel} from "./CircleElementWithLabel";
-import {CurvedPathElementWithLabel} from "./CurvedPathElementWithLabel";
 import {SVGElementWithLabel} from "./SVGElementWithLabel";
 
 export abstract class TsElement {
@@ -19,7 +17,7 @@ export abstract class TsElement {
 
     }
 
-    public registerSvg(svg: CircleElementWithLabel|CurvedPathElementWithLabel) {
+    public registerSvg(svg: SVGElementWithLabel) {
         this._svgElement = svg;
         this._svgElement.svgElement.onmousedown = (event) => {
             this.processMouseDown();
