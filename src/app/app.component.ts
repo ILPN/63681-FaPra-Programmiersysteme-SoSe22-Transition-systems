@@ -146,6 +146,7 @@ e2 t2 1 n2 n3
 e3 t3 1 n3 n4
 e4 t4 1 n3 n5
 e5 t5 1 n4 n2
+e6 t6 1 n2 n1
 `;
     }
 
