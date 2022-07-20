@@ -22,7 +22,7 @@ export class DisplayComponent implements OnDestroy {
     constructor(private _displayService: DisplayService) {
         this._sub = this._displayService.model$.subscribe(diagram => {
             this._model = diagram;
-            this._model.layoutBySpringEmbedder();
+            this._model.layoutBySpringEmbedder(true);
             this.draw();
         });
     }
@@ -80,6 +80,7 @@ export class DisplayComponent implements OnDestroy {
     private processMouseUp() {
         this._model.removeAllDragedMarker()
         this.draggedElement = undefined;
+        this._model.layoutBySpringEmbedder(false);
     }
 
     private processMouseMoving(event: MouseEvent) {

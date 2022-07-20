@@ -46,19 +46,23 @@ export class FRSpringEmbedder {
     /**
      * Computes the embedding of the graph
      */
-    public run(maxIterations: number = 100000, epsilon: number = 5): void {
+    public run(fromRandomPositions: Boolean = true, maxIterations: number = 100000, epsilon: number = 5): void {
         // The positions of the nodes. The initial positons are choosen
         // randomly.
         //empty nodes-> no sense
         if (!(this.nodes.length > 0)) {
             return
         }
+        let originalPosition = [...this.nodes];
         for (let i = 0; i < this.maxRetries(); i++) {
-        this.initializeRandomPositions();
-        //this.initializeRandomPositions();
-        // The forces moving the nodes
-        const forces: Array<Vector> = [];
-        let iteration = 1;
+
+            if (fromRandomPositions)
+                this.initializeRandomPositions();
+            else
+                this.nodes = [...originalPosition]
+            // The forces moving the nodes
+            const forces: Array<Vector> = [];
+            let iteration = 1;
             while (iteration < maxIterations && (this.normIsToHigh(forces, epsilon) || !this.distancesOk())) {
                 //console.log(`${iteration}. iteration, Max Norm Of Forces: ${this._getMaxNorm(forces)}`)
                 let index = 0;
@@ -83,12 +87,11 @@ export class FRSpringEmbedder {
                 }
                 iteration++;
             }
-            if (iteration < maxIterations){
+            if (iteration < maxIterations) {
                 console.log(`Computed embedding after ${iteration} iterations, Max Norm Of Forces: ${Vector.getMaxNorm(forces)}`);
                 break;
-            }
-            else
-                console.log(`Computation failed. Retry ${i+1} of ${this.maxRetries()}`);
+            } else
+                console.log(`Computation failed. Retry ${i + 1} of ${this.maxRetries()}`);
         }
 
     }

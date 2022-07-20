@@ -333,9 +333,9 @@ export class TsModel {
         return svgNodeLabel.concat(svgNodes).concat(svgEdges).concat(svgEdgeLabel);
     }
 
-    public layoutBySpringEmbedder() {
+    public layoutBySpringEmbedder(fromRandomPositions: Boolean) {
         if(!this._fromFileImport || !this.nodePositionsOK()){
-            new FRSpringEmbedder(this._nodes, this._edges).run();
+            new FRSpringEmbedder(this._nodes, this._edges).run(fromRandomPositions);
             this.centerToScreen();
         }
         this.updateSVG();
