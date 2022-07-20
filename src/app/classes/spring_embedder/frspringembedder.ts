@@ -53,13 +53,9 @@ export class FRSpringEmbedder {
         if (!(this.nodes.length > 0)) {
             return
         }
-        let originalPosition = [...this.nodes];
-        for (let i = 0; i < this.maxRetries(); i++) {
-
+        for (let i = 0; i < this.maxRetries(fromRandomPositions); i++) {
             if (fromRandomPositions)
                 this.initializeRandomPositions();
-            else
-                this.nodes = [...originalPosition]
             // The forces moving the nodes
             const forces: Array<Vector> = [];
             let iteration = 1;
@@ -91,7 +87,7 @@ export class FRSpringEmbedder {
                 console.log(`Computed embedding after ${iteration} iterations, Max Norm Of Forces: ${Vector.getMaxNorm(forces)}`);
                 break;
             } else
-                console.log(`Computation failed. Retry ${i + 1} of ${this.maxRetries()}`);
+                console.log(`Computation failed. Retry ${i + 1} of ${this.maxRetries(fromRandomPositions)}`);
         }
 
     }
@@ -197,7 +193,11 @@ export class FRSpringEmbedder {
         return true;
     }
 
-    private maxRetries() {
-        return 10;
+    private maxRetries(fromRandomPositions:Boolean) {
+        if(fromRandomPositions)
+            return 10;
+        else
+            //no sense to Retry.. will fail again (same positions)
+            return 1
     }
 }

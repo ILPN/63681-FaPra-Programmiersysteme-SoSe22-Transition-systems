@@ -29,7 +29,7 @@ e3 t3 1 n3 n4
 e4 t4 1 n3 n5
 e5 t5 1 n4 n2
 `;
-        expect(service.validateTS(file)).toBeTrue();
+        expect(service.validateTS(file).valid).toBeTrue();
     });
     it('missing node id in edges should be invalid', () => {
         let file =`.type ts
@@ -40,6 +40,6 @@ n2 (01000)
     .edges
 e1 t1 1 n1 n3
 `;
-        expect(service.validateTS(file)).toBeFalse();
+        expect(service.validateTS(file).valid).toBeFalse();
     });
 });
