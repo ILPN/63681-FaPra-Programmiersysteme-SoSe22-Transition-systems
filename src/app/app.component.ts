@@ -118,7 +118,10 @@ export class AppComponent implements OnDestroy, OnInit, AfterViewInit {
         let isValid = this._validatorService.validatePNML(content);
         if (isValid.valid) {
             this.model = this._pnmlImporter.import(content);
-            this.textareaFc.setValue(content);
+            //convert in .ts Format for display
+            let tsText = this._exportService.exportTS(this.model);
+            this.textareaFc.setValue(this.tsParserUtil.getTSContentToDisplay(tsText));
+            this.processSourceChange(tsText, true);
         } else {
             alert("The file your are trying to upload is not valid\nMessage:\n" + isValid.message)
         }

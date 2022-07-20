@@ -1,32 +1,33 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 
-import { TsModel } from '../classes/diagram/tsmodel';
-import { TsEdge } from '../classes/diagram/tsedge';
-import { TsNode } from '../classes/diagram/tsnode';
-import { Vector } from '../classes/spring_embedder/models/vector';
+import {TsModel} from '../classes/diagram/tsmodel';
+import {TsEdge} from '../classes/diagram/tsedge';
+import {TsNode} from '../classes/diagram/tsnode';
+import {Vector} from '../classes/spring_embedder/models/vector';
 
 interface PNMLPlace {
-    id:             string,
-    name:           string,
+    id: string,
+    name: string,
     initialMarking: string
-    position:       Vector
+    position: Vector
 }
 
 interface PNMLTransition {
-    id:   string
+    id: string
     name: string,
     position: Vector
 }
 
 interface PNMLArc {
-    id:     string,
+    id: string,
     source: string,
     target: string
 }
 
 interface Edge {
+    id: string,
     from: string,
-    to:   string,
+    to: string,
     name: string
 }
 
@@ -37,14 +38,15 @@ export class PNMLService {
 
     private parser = new DOMParser();
 
-    constructor() { }
+    constructor() {
+    }
 
     public parsePlaces(places: HTMLCollectionOf<Element>): PNMLPlace[] {
         const parsedPlaces: PNMLPlace[] = []
         for (let i = 0; i < places.length; i++) {
             const place = places[i];
             const name = place.getElementsByTagName('name')[0].textContent?.trim();
-            const initialMarking = place.getElementsByTagName('initialMarking')[0].textContent?.trim();
+            const initialMarking = place.getElementsByTagName('initialMarking')[0]?.textContent?.trim() ;
             const position = place.getElementsByTagName('position')[0]
             const positionX = position.getAttribute('x')?.trim();
             const positionY = position.getAttribute('y')?.trim();
@@ -66,9 +68,8 @@ export class PNMLService {
         for (let i = 0; i < transitions.length; i++) {
             const trans = transitions[i];
             const name = trans.getElementsByTagName('name')[0].textContent?.trim();
-            const position = trans.getElementsByTagName('position')[0]
-            const positionX = position.getAttribute('x')?.trim();
-            const positionY = position.getAttribute('y')?.trim();
+            const positionX = trans.getElementsByTagName('position')[0]?.getAttribute('x')?.trim();
+            const positionY = trans.getElementsByTagName('position')[0]?.getAttribute('y')?.trim();
 
             parsedTransitions.push({
                 id: trans.getAttribute('id') || '',
@@ -87,7 +88,7 @@ export class PNMLService {
         for (let i = 0; i < arcs.length; i++) {
             const arc = arcs[i];
             parsedArcs.push({
-                id:     arc.getAttribute('id') || '',
+                id: arc.getAttribute('id') || '',
                 source: arc.getAttribute('source') || '',
                 target: arc.getAttribute('target') || ''
             });
@@ -134,6 +135,7 @@ export class PNMLService {
                 return trans.id === pnmlArc.target;
             });
             edges.push({
+                id: transition[0].id,
                 from: pnmlArc.source,
                 to: pnmlArc.target,
                 name: transition[0].name
@@ -163,7 +165,7 @@ export class PNMLService {
             const toNode = model.nodes.filter(node => node.id === edge.to)[0];
             model.addEdge(
                 new TsEdge(
-                    'id',    // Find a better string to put here
+                    edge.id,    // Find a better string to put here
                     edge.name,
                     1.0,   // I din't know what to put here
                     fromNode,
