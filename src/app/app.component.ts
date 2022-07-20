@@ -5,6 +5,7 @@ import {DisplayService} from './services/display.service';
 import {TsModel} from "./classes/diagram/tsmodel";
 import {ExportService} from "./services/export.service";
 import {ValidatorService} from "./services/validator.service";
+import {PNMLService} from './services/pnml.service';
 import {TSParserUtil} from "./util/tsparser-util";
 import {FileType} from "./util/file-type";
 
@@ -21,7 +22,11 @@ export class AppComponent implements OnDestroy, OnInit, AfterViewInit {
     tsParserUtil: TSParserUtil;
 
     constructor(private _parserService: ParserService,
-                private _displayService: DisplayService, private _exportService: ExportService, private _validatorService: ValidatorService) {
+                private _displayService: DisplayService,
+                private _exportService: ExportService,
+                private _validatorService: ValidatorService,
+                private _pnmlImporter: PNMLService
+                ) {
         this.textareaFc = new FormControl();
         this.model = new TsModel();
         this.tsParserUtil = new TSParserUtil();
@@ -112,11 +117,11 @@ export class AppComponent implements OnDestroy, OnInit, AfterViewInit {
         let content = await file.text();
         let isValid = this._validatorService.validatePNML(content);
         if (isValid.valid) {
-            //TODO import logic of .PNML Files
+            this.model = this._pnmlImporter.import(content);
+            this.textareaFc.setValue(content);
         } else {
             alert("The file your are trying to upload is not valid\nMessage:\n" + isValid.message)
         }
-
     }
 
     private saveCurrentState() {
