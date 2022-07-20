@@ -50,14 +50,14 @@ export class CurvedPathElementWithLabel extends SVGElementWithLabel {
         x2 = x2 + SVGElementWithLabel.circleRadius * Math.cos(phi2);
         y1 = y1 + SVGElementWithLabel.circleRadius * Math.sin(phi1);
         y2 = y2 + SVGElementWithLabel.circleRadius * Math.sin(phi2);
-        const cp = controlpoint ?? this.defaultDragPoint(pos1, pos2, isSelfLoop);
+        let cp = controlpoint ?? this.defaultDragPoint(pos1, pos2, isSelfLoop);
         let postitionsString = `M ${x1.toString()},${y1.toString()} `;
         // Check if edge is bidirectional
         let otherBiDirEdge: TsEdge | null = this.edge.getBidirectionalEdge();
         if (otherBiDirEdge != null) {
             let shiftVector: Vector = this.bidirectionalEdgeShift(pos1, pos2);
             // bend bidirectional edges
-            cp = Vector.add(midPosition, shiftVector);
+            cp = Vector.add(Vector.midOf(pos1, pos2), shiftVector);
         }
         postitionsString += `Q ${cp.x.toString()},${cp.y.toString()},${x2.toString()},${y2.toString()}`;
         this.svgElement.setAttribute('d', postitionsString);
