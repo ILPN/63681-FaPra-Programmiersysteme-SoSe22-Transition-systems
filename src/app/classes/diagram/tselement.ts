@@ -1,12 +1,11 @@
-import {CircleElementWithLabel} from "./CircleElementWithLabel";
-import {CurvedPathElementWithLabel} from "./CurvedPathElementWithLabel";
+import {SVGElementWithLabel} from "./SVGElementWithLabel";
 
 export abstract class TsElement {
 
     abstract updateSVG(): void;
     abstract setPosition(x: number, y: number): void;
 
-    protected _svgElement!: CircleElementWithLabel|CurvedPathElementWithLabel;
+    protected _svgElement!: SVGElementWithLabel;
     protected _id: string;
     protected readonly _label: string;
 
@@ -15,7 +14,7 @@ export abstract class TsElement {
         this._label = label;
     }
 
-    public registerSvg(svg: CircleElementWithLabel|CurvedPathElementWithLabel) {
+    public registerSvg(svg: SVGElementWithLabel) {
         this._svgElement = svg;
     }
 
@@ -47,6 +46,9 @@ export abstract class TsElement {
         return this._svgElement.labelElements;
     }
 
+    get svgElement(): SVGElementWithLabel {
+        return this._svgElement;
+    }
 
     highlightCycleElement() {
         this._svgElement.setAttribute('stroke', 'lightblue');
