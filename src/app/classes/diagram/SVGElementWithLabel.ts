@@ -27,16 +27,20 @@ export abstract class SVGElementWithLabel {
             this.createElement(t!);
         }
 
-        let xSize = document.getElementById('canvasDisplay')!.offsetWidth;
-        let ySize = document.getElementById('canvasDisplay')!.offsetHeight;
-        if(xSize != null && ySize != null){
-            SVGElementWithLabel.FULL_X = xSize;
-            SVGElementWithLabel.FULL_Y = ySize;
-        }
+        this.getScreenSizeFromCanvas();
         this.setUpMouseEvents();
         this.setUpSVGAttributes();
         this.setUpTextAttributes();
 
+    }
+
+    private getScreenSizeFromCanvas() {
+        let xSize = document.getElementById('canvasDisplay')!.offsetWidth;
+        let ySize = document.getElementById('canvasDisplay')!.offsetHeight;
+        if (xSize != null && ySize != null) {
+            SVGElementWithLabel.FULL_X = xSize;
+            SVGElementWithLabel.FULL_Y = ySize;
+        }
     }
 
     private createElement(t: string) {
