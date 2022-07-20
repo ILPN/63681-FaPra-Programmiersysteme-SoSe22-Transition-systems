@@ -64,7 +64,9 @@ export abstract class TsElement {
         this._svgElement.setAttribute('stroke', 'black');
         this._svgElement.setLabelAttribute('fill', 'black');
     }
-
+    isNode():Boolean{
+        return false;
+    }
 
 }
 

@@ -18,8 +18,10 @@ export class DisplayComponent implements OnDestroy {
     private _sub: Subscription;
     private _model!: TsModel;
     private draggedElement: TsNode|TsEdge|undefined;
+    private springEmbedderModus: Boolean;
 
     constructor(private _displayService: DisplayService) {
+        this.springEmbedderModus = true;
         this._sub = this._displayService.model$.subscribe(diagram => {
             this._model = diagram;
             this._model.layoutBySpringEmbedder(true);
@@ -79,8 +81,9 @@ export class DisplayComponent implements OnDestroy {
 
     private processMouseUp() {
         this._model.removeAllDragedMarker()
+        if(this.draggedElement?.isNode() && this.springEmbedderModus)
+            this._model.layoutBySpringEmbedder(false);
         this.draggedElement = undefined;
-        this._model.layoutBySpringEmbedder(false);
     }
 
     private processMouseMoving(event: MouseEvent) {

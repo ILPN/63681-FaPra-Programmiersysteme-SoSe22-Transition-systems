@@ -96,4 +96,7 @@ export class TsNode extends TsElement {
     public addConnectedEdge(edge: TsEdge): void {
         this._connectedEdges.add(edge);
     }
+    public override isNode():Boolean{
+        return true;
+    }
 }
