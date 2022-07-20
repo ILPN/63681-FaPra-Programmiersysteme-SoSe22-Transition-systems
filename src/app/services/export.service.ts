@@ -3,6 +3,14 @@ import {TsModel} from "../classes/diagram/tsmodel";
 import {TsNode} from "../classes/diagram/tsnode";
 import {TsEdge} from "../classes/diagram/tsedge";
 
+interface PNMLEdge {
+    id: string,
+    label: string,
+    from: TsNode,
+    to: TsNode
+
+}
+
 @Injectable({
     providedIn: 'root'
 })
@@ -26,6 +34,7 @@ export class ExportService {
     }
 
     exportPNML(model: TsModel): string {
+        let PNMLEdges = this.generatePNMLEdges(model);
         let result = '';
         let arcIndex = 1;
         result += '<?xml version="1.0" encoding="UTF-8"?>\n';
@@ -34,10 +43,10 @@ export class ExportService {
         for (let node of model.nodes) {
             result += this.generatePNMLPlace(node)
         }
-        for (let edge of model.edges) {
+        for (let edge of PNMLEdges) {
             result += this.generatePNMLTransition(edge);
         }
-        for (let edge of model.edges) {
+        for (let edge of PNMLEdges) {
             result += this.generatePNMLArc(edge, arcIndex);
             arcIndex = Number(arcIndex) + 2;
         }
@@ -62,7 +71,7 @@ export class ExportService {
         return result;
     }
 
-    private generatePNMLTransition(edge: TsEdge): string {
+    private generatePNMLTransition(edge: PNMLEdge): string {
         let result = '<transition  id=\"' + edge.id + '\">\n';
         result += '<name>\n';
         result += '<text>' + edge.label + '</text>\n';
@@ -74,17 +83,46 @@ export class ExportService {
         return result;
     }
 
-    private generatePNMLArc(edge: TsEdge, index: Number): string {
+    private generatePNMLArc(edge: PNMLEdge, index: Number): string {
         let result = '<arc  id=\"a' + index + '\" ';
         let index2 = Number(index) + 1;
-        result += 'source=\"' + edge.nodeFrom.id + '\" ';
+        result += 'source=\"' + edge.from.id + '\" ';
         result += 'target=\"' + edge.id + '\" ';
         result += '/>\n';
         result += '<arc  id=\"a' + index2 + '\" ';
         result += 'source=\"' + edge.id + '\" ';
-        result += 'target=\"' + edge.nodeTo.id + '\" ';
+        result += 'target=\"' + edge.to.id + '\" ';
         result += '/>\n';
         return result;
+    }
+
+    private generatePNMLEdges(model: TsModel): PNMLEdge[] {
+        let PNMLEdges: PNMLEdge[] = [];
+        for (let edge of model.edges) {
+            let labels = edge.label.split(',');
+            if (labels.length > 1) {
+                labels.forEach((value, index) => {
+                    PNMLEdges.push(
+                        {
+                            id: edge.id + (index+1),
+                            label: value,
+                            from: edge.nodeFrom,
+                            to:edge.nodeTo
+                        }
+                    )
+                })
+            } else {
+                PNMLEdges.push(
+                    {
+                        id: edge.id,
+                        label: edge.label,
+                        from: edge.nodeFrom,
+                        to:edge.nodeTo
+                    }
+                )
+            }
+        }
+        return PNMLEdges;
     }
 
     private formatXML(xml: string): string {
