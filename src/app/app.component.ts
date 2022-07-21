@@ -32,7 +32,8 @@ export class AppComponent implements OnDestroy, OnInit, AfterViewInit {
         this.tsParserUtil = new TSParserUtil();
         let tsText = this.getLastState();
         if (tsText != null && !(tsText === '')) {
-            this.textareaFc.setValue(this.tsParserUtil.getTSContentToDisplay(tsText));
+            //this.textareaFc.setValue(AppComponent.defaultText());
+           this.textareaFc.setValue(this.tsParserUtil.getTSContentToDisplay(tsText));
         } else {
             this.textareaFc.setValue(AppComponent.defaultText());
         }
@@ -137,6 +138,10 @@ export class AppComponent implements OnDestroy, OnInit, AfterViewInit {
         return localStorage.getItem('tsText');
     }
 
+    private removeState() {
+        localStorage.removeItem('tsText');
+    }
+
     private getFileType(file: File): FileType {
         if (file.name.toUpperCase().endsWith("PNML")) {
             return FileType.PNML;
@@ -154,12 +159,12 @@ n3 (00100)
 n4 (00001)
 n5 (00010)
 .edges
-e1 t1 1 n1 n2
-e2 t2 1 n2 n3
-e3 t3 1 n3 n4
-e4 t4 1 n3 n5
-e5 t5 1 n4 n2
-e6 t6 1 n2 n1
+n1 n2 t1
+n2 n3 t2
+n3 n4 t4
+n3 n5 t5
+n4 n2 t6
+n2 n1 t7
 `;
     }
 

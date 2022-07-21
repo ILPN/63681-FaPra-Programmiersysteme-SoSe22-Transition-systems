@@ -2,6 +2,7 @@ import {Injectable} from '@angular/core';
 import {TsModel} from "../classes/diagram/tsmodel";
 import {TsNode} from "../classes/diagram/tsnode";
 import {TsEdge} from "../classes/diagram/tsedge";
+import {EdgeLineParser} from "../util/edge-line-parser";
 
 interface PNMLEdge {
     id: string,
@@ -76,9 +77,9 @@ export class ExportService {
         result += '<name>\n';
         result += '<text>' + edge.label + '</text>\n';
         result += '</name>\n';
-        // result += '<graphics>\n';
-        // result += '<position x=\"' + "" + '\" y=\"' + "" + '\"/>\n';
-        // result += '</graphics>\n';
+        result += '<graphics>\n';
+        result += '<position x=\"' + "" + '\" y=\"' + "" + '\"/>\n';
+        result += '</graphics>\n';
         result += '</transition>\n';
         return result;
     }
@@ -98,28 +99,31 @@ export class ExportService {
 
     private generatePNMLEdges(model: TsModel): PNMLEdge[] {
         let PNMLEdges: PNMLEdge[] = [];
+        let edgeIndex = 1;
         for (let edge of model.edges) {
             let labels = edge.label.split(',');
             if (labels.length > 1) {
                 labels.forEach((value, index) => {
                     PNMLEdges.push(
                         {
-                            id: edge.id + (index+1),
+                            id: 't' + edgeIndex,
                             label: value,
                             from: edge.nodeFrom,
                             to:edge.nodeTo
                         }
                     )
+                    edgeIndex++;
                 })
             } else {
                 PNMLEdges.push(
                     {
-                        id: edge.id,
+                        id: 't' + edgeIndex,
                         label: edge.label,
                         from: edge.nodeFrom,
                         to:edge.nodeTo
                     }
                 )
+                edgeIndex++;
             }
         }
         return PNMLEdges;

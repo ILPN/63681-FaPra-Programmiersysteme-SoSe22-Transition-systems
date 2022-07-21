@@ -42,8 +42,8 @@ export class TSValidatorUtil {
             case TSLineType.EDGE: {
                 let edgeLineParser = new EdgeLineParser(line);
                 let elems = line.trim().split(" ");
-                if (elems.length != 5 && elems.length != 6) {
-                    let message = "Line \"" + line + "\" not valid\nThe number of elements should be 5 or 6 but was " + elems.length;
+                if (elems.length < 3) {
+                    let message = "Line \"" + line + "\" not valid\nAn edge must have at least 3 elements " + elems.length;
                     isValid = new IsValid(false, message);
                     break;
                 }
@@ -54,11 +54,6 @@ export class TSValidatorUtil {
                 }
                 if (!nodeIDs.some(e => (e === edgeLineParser.getNodeFrom())) || !nodeIDs.some(e => (e === edgeLineParser.getNodeTo()))) {
                     let message = "Line \"" + line + "\"\nOne of the nodes is not defined";
-                    isValid = new IsValid(false, message);
-                    break;
-                }
-                if (!this.regExEdgeWeighting.test(elems[2])) {
-                    let message = "Line \"" + line + "\"\nWeighting must be a number";
                     isValid = new IsValid(false, message);
                     break;
                 }

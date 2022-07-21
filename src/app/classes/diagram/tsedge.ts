@@ -65,7 +65,7 @@ export class TsEdge extends TsElement {
     }
 
     writeOn(result: string): string {
-        result += `${this._id} ${this._label} ${this._weighting} ${this.nodeFrom.id} ${this.nodeTo.id}\n`;
+        result += `${this.nodeFrom.id} ${this.nodeTo.id} ${this._label}  \n`;
         return result;
     }
 

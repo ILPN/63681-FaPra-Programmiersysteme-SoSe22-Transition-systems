@@ -24,9 +24,9 @@ export class TSParserUtil {
             throw new Error("Impossible; should be caught by validator. Could not find a node with the ID " + edgeLineParser.getNodeFrom());
         }
         if (!nodeTo) {
-            throw new Error("Impossible; should be caught by validator. Could not find a node with the ID " + edgeLineParser.getNodeTo());
+            throw new Error("Impossible; should be caught by validator. Could not find a node with the ID   " + edgeLineParser.getNodeTo());
         }
-        let tsEdge: TsEdge = new TsEdge(edgeLineParser.getID(), edgeLineParser.getLabel(), edgeLineParser.getWeight(), nodeFrom, nodeTo);
+        let tsEdge: TsEdge = new TsEdge('', edgeLineParser.getTransitions()[0], 0, nodeFrom, nodeTo);
         if (edgeLineParser.hasDragPoint()) {
             tsEdge.setDragpoint(edgeLineParser.getDragPoint());
         }

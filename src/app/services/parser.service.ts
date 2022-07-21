@@ -19,6 +19,7 @@ export class ParserService {
         let currentLineType = TSLineType.UNDEFINED;
 
         lines.forEach(line => {
+            //replace multiple spaces with one space
             line = line.replace(/\s\s+/g, ' ').trim();
             if (line.length > 0) {
                 if (line.trim() === ".nodes") {

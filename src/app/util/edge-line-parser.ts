@@ -9,24 +9,25 @@ export class EdgeLineParser {
         this.lineElems = line.split(" ");
     }
 
-    getID(): string {
-        return this.lineElems[0].trim();
-    }
+    //TODO Should return transition objects as soon as the class is created
+    getTransitions() : string[]{
+        let transitions : string[] = [];
+        for (let i = 2; i < this.lineElems.length; i++) {
+            if(this.lineElems[i].trim().startsWith("(") && this.lineElems[i].trim().endsWith(")")){
+                continue;
+            }
+            transitions.push(this.lineElems[i]);
+        }
+        return transitions;
 
-    getLabel(): string {
-        return this.lineElems[1].trim();
-    }
-
-    getWeight(): number {
-        return Number(this.lineElems[2].trim());
     }
 
     getNodeFrom(): string {
-        return this.lineElems[3].trim();
+        return this.lineElems[0].trim();
     }
 
     getNodeTo(): string {
-        return this.lineElems[4].trim();
+        return this.lineElems[1].trim();
     }
 
     getDragPointX(): number {
@@ -55,6 +56,7 @@ export class EdgeLineParser {
     }
 
     hasDragPoint(): Boolean {
-        return this.lineElems.length > 5;
+        //TODO return false until it s clarified how drag points should be define
+        return false;
     }
 }
