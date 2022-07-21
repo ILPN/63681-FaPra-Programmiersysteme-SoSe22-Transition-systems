@@ -3,35 +3,13 @@ export abstract class SVGElementWithLabel {
     public static circleRadius: number = 25;
     public static  FULL_X = window.innerWidth/1.1;
     public static  FULL_Y = window.innerHeight/3;
-    private _dragged!: boolean;
+    protected _dragged!: boolean;
     private _svgElement: SVGElement;
-    private _labelElements: SVGElement[];
 
-    protected constructor(qualifiedName: string, label: string) {
+
+    constructor(qualifiedName: string) {
         this._svgElement = <SVGElement>document.createElementNS(SVGElementWithLabel.svgNamespace(), qualifiedName);
-        this._svgElement = <SVGElement>document.createElementNS(SVGElementWithLabel.svgNamespace(), qualifiedName);
-        this._labelElements = [];
-        let labelAsArray = label.split(",");
-        labelAsArray.reverse();
-
-        let tran = labelAsArray.pop()
-        let labelElement = <SVGElement>document.createElementNS(SVGElementWithLabel.svgNamespace(), 'text');
-        if (tran) {
-            let textNode = document.createTextNode(tran);
-            labelElement.appendChild(textNode);
-            this._labelElements.push(labelElement);
-        }
-        while (labelAsArray.length > 0){
-            this.createElement(", ");
-            let t = labelAsArray.pop()
-            this.createElement(t!);
-        }
-
         this.getScreenSizeFromCanvas();
-        this.setUpMouseEvents();
-        this.setUpSVGAttributes();
-        this.setUpTextAttributes();
-
     }
 
     private getScreenSizeFromCanvas() {
@@ -43,14 +21,8 @@ export abstract class SVGElementWithLabel {
         }
     }
 
-    private createElement(t: string) {
-        let labelElement = <SVGElement>document.createElementNS(SVGElementWithLabel.svgNamespace(), 'text');
-        let textNode = document.createTextNode(t!);
-        labelElement.appendChild(textNode);
-        this._labelElements.push(labelElement);
-    }
 
-    private static svgNamespace(): string {
+    protected static svgNamespace(): string {
         return 'http://www.w3.org/2000/svg';
     }
 
@@ -58,9 +30,7 @@ export abstract class SVGElementWithLabel {
 
     abstract setUpTextAttributes(): void;
 
-    get labelElements(): SVGElement[] {
-        return this._labelElements;
-    }
+    abstract setLabelAttribute(qualifiedName: string, value: string):void;
 
     get svgElement(): SVGElement {
         return this._svgElement;
@@ -70,25 +40,16 @@ export abstract class SVGElementWithLabel {
         this.svgElement.setAttribute(qualifiedName, value);
     }
 
-    setLabelAttribute(qualifiedName: string, value: string) {
-        for (let l of this.labelElements) {
-            l.setAttribute(qualifiedName, value);
-        }
-    }
-
-    private setUpMouseEvents() {
+    protected setUpMouseEvents() {
         this._dragged = false;
         this._svgElement.onmousedown = () => {
             this.processMouseDown();
         }
-        for (let l of this._labelElements) {
-            l.onmousedown = () => {
-                this.processMouseDown();
-            }
-        }
+        this.setUpMouseEventsForLabel()
+
     }
 
-    private processMouseDown(): void {
+    protected processMouseDown(): void {
         this._dragged = true;
     }
 
@@ -99,4 +60,7 @@ export abstract class SVGElementWithLabel {
     set isDragged(value: boolean) {
         this._dragged = value;
     }
+
+    abstract setUpMouseEventsForLabel(): void;
+
 }

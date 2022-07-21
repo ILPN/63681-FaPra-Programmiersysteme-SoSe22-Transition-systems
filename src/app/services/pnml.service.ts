@@ -4,6 +4,7 @@ import {TsModel} from '../classes/diagram/tsmodel';
 import {TsEdge} from '../classes/diagram/tsedge';
 import {TsNode} from '../classes/diagram/tsnode';
 import {Vector} from '../classes/spring_embedder/models/vector';
+import {TsTransition} from "../classes/diagram/tsTransition";
 
 interface PNMLPlace {
     id: string,
@@ -164,13 +165,7 @@ export class PNMLService {
             const fromNode = model.nodes.filter(node => node.id === edge.from)[0];
             const toNode = model.nodes.filter(node => node.id === edge.to)[0];
             model.addEdge(
-                new TsEdge(
-                    edge.id,    // Find a better string to put here
-                    edge.name,
-                    1.0,   // I din't know what to put here
-                    fromNode,
-                    toNode
-                )
+                new TsEdge(Array(new TsTransition(edge.name)), fromNode, toNode)
             );
         }
 

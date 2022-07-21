@@ -1,8 +1,6 @@
 import {Injectable} from '@angular/core';
 import {TsModel} from "../classes/diagram/tsmodel";
 import {TsNode} from "../classes/diagram/tsnode";
-import {TsEdge} from "../classes/diagram/tsedge";
-import {EdgeLineParser} from "../util/edge-line-parser";
 
 interface PNMLEdge {
     id: string,
@@ -101,7 +99,7 @@ export class ExportService {
         let PNMLEdges: PNMLEdge[] = [];
         let edgeIndex = 1;
         for (let edge of model.edges) {
-            let labels = edge.label.split(',');
+            let labels = edge.getTransitionLabels();
             if (labels.length > 1) {
                 labels.forEach((value, index) => {
                     PNMLEdges.push(
@@ -118,7 +116,7 @@ export class ExportService {
                 PNMLEdges.push(
                     {
                         id: 't' + edgeIndex,
-                        label: edge.label,
+                        label: edge.writeTransitionLabelsOn('',','),
                         from: edge.nodeFrom,
                         to:edge.nodeTo
                     }
@@ -137,7 +135,6 @@ export class ExportService {
             formatted += indent + '<' + node + '>\r\n';
             if (node.match( /^<?\w[^>]*[^\/]$/ )) indent += tab;              // increase indent
         });
-        let resultXml = formatted.substring(1, formatted.length-3);
-        return resultXml;
+        return formatted.substring(1, formatted.length - 3);
     }
 }

@@ -26,7 +26,7 @@ export class TSParserUtil {
         if (!nodeTo) {
             throw new Error("Impossible; should be caught by validator. Could not find a node with the ID   " + edgeLineParser.getNodeTo());
         }
-        let tsEdge: TsEdge = new TsEdge('', edgeLineParser.getTransitions()[0], 0, nodeFrom, nodeTo);
+        let tsEdge: TsEdge = new TsEdge(edgeLineParser.getTransitions(), nodeFrom, nodeTo);
         if (edgeLineParser.hasDragPoint()) {
             tsEdge.setDragpoint(edgeLineParser.getDragPoint());
         }

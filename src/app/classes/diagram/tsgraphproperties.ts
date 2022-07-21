@@ -68,10 +68,10 @@ export class TsGraphProperties {
     }
 
     highlightMortalTransitions() {
-        if((this._mortalEdges) && (this._mortalEdges)) {
+        if(this._mortalEdges && this.mortalTransitions) {
             for (let me of this.mortalEdges) {
                 me.highlightMortalEdge();
-                for (let t of me.getTransitions()){
+                for (let t of me.getTransitionLabels()){
                     if (this._mortalTransitions.includes(t))
                         me.highlightMortalTransition(t)}
             }

@@ -1,6 +1,7 @@
 import {TsNode} from '../diagram/tsnode';
 import {TsEdge} from '../diagram/tsedge';
 import {FRSpringEmbedder} from './frspringembedder';
+import {TsTransition} from "../diagram/tsTransition";
 
 describe('SpringEmbedder Test', () => {
     let points: Array<TsNode> = [];
@@ -16,27 +17,9 @@ describe('SpringEmbedder Test', () => {
             new TsNode('4', 'Node 4')
         ];
         edges = [
-            new TsEdge(
-                '1',
-                'Edge 1',
-                1,
-                new TsNode('1', 'Node 1'),
-                new TsNode('2', 'Node 2'),
-            ),
-            new TsEdge(
-                '2',
-                'Edge 2',
-                1,
-                new TsNode('2', 'Node 2'),
-                new TsNode('3', 'Node 3'),
-            ),
-            new TsEdge(
-                '3',
-                'Edge 3',
-                1,
-                new TsNode('3', 'Node 3'),
-                new TsNode('4', 'Node 4')
-            )
+            new TsEdge(Array(new TsTransition('Edge 1')), new TsNode('1', 'Node 1'), new TsNode('2', 'Node 2')),
+            new TsEdge(Array(new TsTransition('Edge 2')), new TsNode('2', 'Node 2'), new TsNode('3', 'Node 3')),
+            new TsEdge(Array(new TsTransition('Edge 3')), new TsNode('3', 'Node 3'), new TsNode('4', 'Node 4'))
         ];
         const embedder = new FRSpringEmbedder(
             points,

@@ -8,16 +8,20 @@ import {CircleElementWithLabel} from "./CircleElementWithLabel";
 export class TsNode extends TsElement {
     private readonly _connectedEdges: Set<TsEdge>;
     protected _position: Vector;
+    protected _id: string;
+    protected readonly _label: string;
 
     constructor(id: string, label: string) {
-        super(id, label);
+        super();
+        this._id=id;
+        this._label = label;
         this._position = new Vector(0, 0);
         this._connectedEdges = new Set<TsEdge>();
         this.initializeSvg();
     }
 
     private initializeSvg() {
-        this.registerSvg(new CircleElementWithLabel(this._id + ":" + this._label));
+        this.registerSvg(new CircleElementWithLabel(this._id + ":" + this._label, this));
         this.updateSVG();
     }
 
@@ -30,11 +34,26 @@ export class TsNode extends TsElement {
             e.updateSVG()
         })
     }
+    get id(): string {
+        return this._id;
+    }
 
+    set id(value: string) {
+        this._id = value;
+    }
+
+    get label(): string {
+        return this._label;
+    }
     public circleRadius(): number {
         return SVGElementWithLabel.circleRadius;
     }
-
+    getSvgLabelElement(): SVGElement {
+        if (this._svgElement instanceof CircleElementWithLabel) {
+            return this._svgElement.labelElement;
+        }
+        return new SVGElement();
+    }
     highlightDeadlock() {
         this._svgElement.setAttribute('stroke', 'red');
         this._svgElement.setLabelAttribute('fill', 'red');

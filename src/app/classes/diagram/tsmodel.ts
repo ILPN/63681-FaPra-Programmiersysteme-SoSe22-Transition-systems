@@ -146,7 +146,6 @@ export class TsModel {
         const acyclic = (tempNodes === []);
 
         tempModel = this.removeNodesWithNoInGoingEdge(tempNodes, tempEdges);
-        tempNodes = tempModel.tempNodes;
         tempEdges = tempModel.tempEdges;
 
         const cycleElements = TsModel.searchCycleElements(tempEdges);
@@ -253,7 +252,7 @@ export class TsModel {
         let transitionArray: String[] = [];
         for (let e of edgeArray) {
             let edgeTransitions: String[];
-            edgeTransitions = e.getTransitions();
+            edgeTransitions = e.getTransitionLabels();
             for (let t of edgeTransitions) {
                 if (!transitionArray.includes(t)) {
                     transitionArray.push(t);
@@ -357,12 +356,11 @@ export class TsModel {
         const svgNodes = this._nodes.map(e => (e.getSvgElement()));
         const svgNodeLabel: SVGElement[] = [];
         for (let n of this.nodes){
-            for (let nn of n.getSvgLabelElement())
-                svgNodeLabel.push(nn);
+            svgNodeLabel.push(n.getSvgLabelElement());
         }
         const svgEdgeLabel: SVGElement[] = [];
         for (let e of this.edges){
-            for (let ee of e.getSvgLabelElement())
+            for (let ee of e.getSvgLabelElements())
                 svgNodeLabel.push(ee);
         }
         return svgNodeLabel.concat(svgNodes).concat(svgEdges).concat(svgEdgeLabel);
@@ -468,5 +466,15 @@ export class TsModel {
             }
         }
         return true;
+    }
+
+    getEdges(transitionLabel: string):TsEdge[] {
+        let result = [];
+        for (let edge of this._edges){
+            let found = edge.getTransitionLabels().find(e => e === transitionLabel);
+            if(found)
+                result.push(edge);
+        }
+       return result;
     }
 }

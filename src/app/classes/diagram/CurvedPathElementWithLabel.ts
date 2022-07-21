@@ -8,11 +8,20 @@ export class CurvedPathElementWithLabel extends SVGElementWithLabel {
     private static BIDIRECTIONAL_EDGES_CURVE_RADIUS: number = 25;
 
     private edge: TsEdge;
+    private _labelElements: SVGElement[];
 
     //TODO Use edge-properties to set label?
-    constructor(label: string, edge: TsEdge) {
-        super('path', label);
+    constructor(labels: string[], edge: TsEdge) {
+        super('path');
         this.edge = edge;
+        this._labelElements = [];
+        labels.reverse();
+        while (labels.length > 0) {
+            this.createLabelElement(`${labels.pop()}`);
+        }
+        this.setUpMouseEvents();
+        this.setUpSVGAttributes();
+        this.setUpTextAttributes();
     }
 
     setUpSVGAttributes(): void {
@@ -30,8 +39,13 @@ export class CurvedPathElementWithLabel extends SVGElementWithLabel {
             l.setAttribute("font-family", "Arial, Helvetica, sans-serif");
         }
     }
+    private createLabelElement(text: string) {
+        let labelElement = <SVGElement>document.createElementNS(SVGElementWithLabel.svgNamespace(), 'text');
+        labelElement.appendChild(document.createTextNode(text));
+        this._labelElements.push(labelElement);
+    }
 
-    setPosition(pos1: Vector, pos2: Vector, controlpoint: Vector | undefined = undefined, isSelfLoop: boolean): void {
+    public setPosition(pos1: Vector, pos2: Vector, controlpoint: Vector | undefined = undefined, isSelfLoop: boolean): void {
         let x1 = pos1.x;
         let x2 = pos2.x;
         let y1 = pos1.y;
@@ -54,7 +68,7 @@ export class CurvedPathElementWithLabel extends SVGElementWithLabel {
         let postitionsString = `M ${x1.toString()},${y1.toString()} `;
         // Check if edge is bidirectional
         let otherBiDirEdge: TsEdge | null = this.edge.getBidirectionalEdge();
-        if (otherBiDirEdge != null) {
+        if (otherBiDirEdge && !controlpoint) {
             let shiftVector: Vector = this.bidirectionalEdgeShift(pos1, pos2);
             // bend bidirectional edges
             cp = Vector.add(Vector.midOf(pos1, pos2), shiftVector);
@@ -63,18 +77,22 @@ export class CurvedPathElementWithLabel extends SVGElementWithLabel {
         this.svgElement.setAttribute('d', postitionsString);
 
         // set label-position
-        let posTxt = Vector.midOf(new Vector(x1,y1), new Vector(x2,y2))
+        let posTxt = Vector.midOf(new Vector(x1, y1), new Vector(x2, y2))
         //TODO TRAN-62 Position verbessern
         //Mitte von Controlpunkt und Mitte der Knoten
-        for (let le of this.labelElements){
+        for (let le of this.labelElements) {
             posTxt = Vector.midOf(posTxt, cp)
             le.setAttribute("x", posTxt.x.toString());
             posTxt.x = posTxt.x + 30;
         }
-        if ((isSelfLoop) && (this.labelElements.length > 1)){
-            posTxt.y = posTxt.y + (22 * ((this.labelElements.length - 1)/2))
+        if ((isSelfLoop) && (this.labelElements.length > 1)) {
+            posTxt.y = posTxt.y + (this.guessedFontSize() * ((this.labelElements.length - 1) / 2))
         }
         this.setLabelAttribute("y", posTxt.y.toString());
+    }
+
+    private guessedFontSize() {
+        return 22;
     }
 
     public selfLoopShift() {
@@ -88,6 +106,16 @@ export class CurvedPathElementWithLabel extends SVGElementWithLabel {
             return Vector.midOf(pos1, pos2);
     }
 
+    get labelElements(): SVGElement[] {
+        return this._labelElements;
+    }
+
+    setLabelAttribute(qualifiedName: string, value: string) {
+        for (let l of this.labelElements) {
+            l.setAttribute(qualifiedName, value);
+        }
+    }
+
     /**
      * Calculates a shift-point by which bidirectional edges should be curved to not overlap each other.
      * @param pos1 The starting-point of the edge to be curved.
@@ -99,6 +127,14 @@ export class CurvedPathElementWithLabel extends SVGElementWithLabel {
         let dy = CurvedPathElementWithLabel.BIDIRECTIONAL_EDGES_CURVE_RADIUS * Math.sin(radiusAngle);
         let dx = CurvedPathElementWithLabel.BIDIRECTIONAL_EDGES_CURVE_RADIUS * Math.cos(radiusAngle);
         return new Vector(-dx, dy);
+    }
+
+    setUpMouseEventsForLabel(): void {
+        for (let l of this._labelElements) {
+            l.onmousedown = () => {
+                this._dragged = true;
+            }
+        }
     }
 
 }

@@ -16,18 +16,19 @@ describe('ValidatorService', () => {
 
     it('Valid File should be valid', () => {
         let file =`.type ts
-    .nodes
+.nodes
 n1 (10000)
 n2 (01000)
 n3 (00100)
 n4 (00001)
 n5 (00010)
-    .edges
-e1 t1 1 n1 n2
-e2 t2 1 n2 n3
-e3 t3 1 n3 n4
-e4 t4 1 n3 n5
-e5 t5 1 n4 n2
+.edges
+n1 n2 t1
+n2 n3 t2
+n3 n4 t4
+n3 n5 t5
+n4 n2 t6
+n2 n1 t7
 `;
         expect(service.validateTS(file).valid).toBeTrue();
     });
@@ -38,7 +39,7 @@ n1 (10000)
 n2 (01000)
 
     .edges
-e1 t1 1 n1 n3
+n1 n3 t1
 `;
         expect(service.validateTS(file).valid).toBeFalse();
     });
