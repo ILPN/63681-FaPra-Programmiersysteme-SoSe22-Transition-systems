@@ -1,4 +1,5 @@
 import {Vector} from "../classes/spring_embedder/models/vector";
+import {TsTransition} from "../classes/diagram/tsTransition";
 
 export class EdgeLineParser {
     line;
@@ -10,13 +11,13 @@ export class EdgeLineParser {
     }
 
     //TODO Should return transition objects as soon as the class is created
-    getTransitions() : string[]{
-        let transitions : string[] = [];
+    getTransitions() : TsTransition[]{
+        let transitions : TsTransition[] = [];
         for (let i = 2; i < this.lineElems.length; i++) {
             if(this.lineElems[i].trim().startsWith("(") && this.lineElems[i].trim().endsWith(")")){
                 continue;
             }
-            transitions.push(this.lineElems[i]);
+            transitions.push(new TsTransition(this.lineElems[i]));
         }
         return transitions;
 
