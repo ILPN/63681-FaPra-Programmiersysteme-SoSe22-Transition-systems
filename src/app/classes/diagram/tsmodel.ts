@@ -6,6 +6,7 @@ import {FRSpringEmbedder} from "../spring_embedder/frspringembedder";
 import {SVGElementWithLabel} from "./SVGElementWithLabel";
 import {Vector} from "../spring_embedder/models/vector";
 
+
 export class TsModel {
 
     private readonly _nodes: Array<TsNode>;
@@ -154,8 +155,13 @@ export class TsModel {
             // if not, all transitions already are in mortalTransitions Array (see above)
 
             // search for non-mortal edges/transitions in remaining edges
-            tempEdges = TsModel.searchForeverReachableEdges(tempEdges);
-            const foreverReachableTransitions = TsModel.getTransitionsFromEdges(tempEdges);
+            let foreverReachableTransitions: String[] = [];
+            let foreverReachableEdgesAndTransitions = TsModel.searchForeverReachableEdgesAndTranstitions(tempEdges);
+            tempEdges = foreverReachableEdgesAndTransitions.edgeArrayOut;
+            foreverReachableTransitions = foreverReachableEdgesAndTransitions.transitionArrayOut;
+            if (foreverReachableTransitions.length === 0) {
+               foreverReachableTransitions = TsModel.getTransitionsFromEdges(tempEdges)
+            }
 
             mortalTransitions = reachableTransitions.filter(t => !foreverReachableTransitions.includes(t));
             mortalEdges = reachableEdges.filter(t => !tempEdges.includes(t));
@@ -257,14 +263,17 @@ export class TsModel {
         return transitionArray
     }
 
-    private static searchForeverReachableEdges(edgeArray: TsEdge[]):TsEdge[] {
+    private static searchForeverReachableEdgesAndTranstitions(edgeArray: TsEdge[]) {
         // create a counter for cycles without exit
         let noExitCycleCounter: number = 0;
+        let edgeArrayOut: TsEdge[] = [];
+        let transitionArrayOut: String[] = [];
 
-        let cycleWithNoExitEdges: TsEdge[] =[];
+        let currentCycleWithNoExitEdges: TsEdge[] =[];
+        let cyclesWithNoExitEdges: Array<TsEdge[]> =[];
 
         for (let e of edgeArray) {
-            if (!cycleWithNoExitEdges.includes(e)) {
+            if (!currentCycleWithNoExitEdges.includes(e)) {
                 // search all edges that are reachable from e (current start)
                 let currentReachableEdges: TsEdge[] = [];
                 currentReachableEdges.push(e);
@@ -274,20 +283,46 @@ export class TsModel {
                     let isCycle = this.isCycle(currentReachableEdges, e);
                     if (isCycle) {
                         noExitCycleCounter++;
-                        cycleWithNoExitEdges = [...currentReachableEdges];
+                        currentCycleWithNoExitEdges = [...currentReachableEdges];
+                        cyclesWithNoExitEdges.push(currentCycleWithNoExitEdges);
                     }
                 }
             }
         }
         if (noExitCycleCounter === 0){
-            return edgeArray;
+            edgeArrayOut = edgeArray;
         } else {
             if (noExitCycleCounter === 1){
-                return cycleWithNoExitEdges;
+                edgeArrayOut = currentCycleWithNoExitEdges;
             } else {
-                return [];
+                transitionArrayOut = TsModel.searchIdenticalTransitions(cyclesWithNoExitEdges);
             }
         }
+        return {edgeArrayOut, transitionArrayOut}
+    }
+
+    private static searchIdenticalTransitions(cycleArray: Array<TsEdge[]>): String[] {
+        let identicalTransitions: String[] = [];
+        let cycle1: TsEdge[] = cycleArray.pop()!;
+        let cycle1Transitions: String[] = this.getTransitionsFromEdges(cycle1);
+        let cycle2: TsEdge[] = cycleArray.pop()!;
+        let cycle2Transitions: String[] = this.getTransitionsFromEdges(cycle2);
+        for (let t of cycle1Transitions){
+            if ((cycle2Transitions.includes(t))
+                && (! identicalTransitions.includes(t))){
+                identicalTransitions.push(t)
+            }
+        }
+        while (cycleArray.length !== 0) {
+            let cycleX: TsEdge[] = cycleArray.pop()!;
+            let cycleXTransitions: String[] = this.getTransitionsFromEdges(cycleX);
+            for (let t of cycleXTransitions){
+                if (! identicalTransitions.includes(t)){
+                    identicalTransitions = identicalTransitions.filter(e => e !== t)
+                }
+            }
+        }
+        return identicalTransitions;
     }
 
     private static isCycle(edgeArray: TsEdge[], startEdge: TsEdge) {
