@@ -47,7 +47,7 @@ export class PNMLService {
         for (let i = 0; i < places.length; i++) {
             const place = places[i];
             const name = place.getElementsByTagName('name')[0].textContent?.trim();
-            const initialMarking = place.getElementsByTagName('initialMarking')[0]?.textContent?.trim() ;
+            const initialMarking = place.getElementsByTagName('initialMarking')[0]?.textContent?.trim();
             const position = place.getElementsByTagName('position')[0]
             const positionX = position.getAttribute('x')?.trim();
             const positionY = position.getAttribute('y')?.trim();
@@ -152,6 +152,7 @@ export class PNMLService {
             edge.to = pnmlArc.target;
         });
 
+
         // Fill the parsed data into our model
         const model = new TsModel();
         // Add the nodes
@@ -161,14 +162,39 @@ export class PNMLService {
             model.addNode(node);
         });
 
+        let tsEdges: TsEdge[] = [];
         for (const edge of edges) {
             const fromNode = model.nodes.filter(node => node.id === edge.from)[0];
             const toNode = model.nodes.filter(node => node.id === edge.to)[0];
-            model.addEdge(
-                new TsEdge(Array(new TsTransition(edge.name)), fromNode, toNode)
-            );
+            if (this.alreadyAdded(edge, tsEdges)) {
+                this.addTransition(edge, tsEdges);
+            } else {
+                tsEdges.push(
+                    new TsEdge(Array(new TsTransition(edge.name)), fromNode, toNode)
+                );
+            }
         }
 
+        tsEdges.forEach(tsEdge => {
+            model.addEdge(tsEdge);
+        })
         return model;
+    }
+
+    private alreadyAdded(edge: Edge, tsEdges: TsEdge[]) {
+        for (const e of tsEdges) {
+            if (e.nodeFrom.id === edge.from && e.nodeTo.id === edge.to) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private addTransition(edge: Edge, tsEdges: TsEdge[]) {
+        tsEdges.forEach(tsEdge => {
+            if (tsEdge.nodeFrom.id === edge.from && tsEdge.nodeTo.id === edge.to) {
+                tsEdge.addTransition(new TsTransition(edge.name));
+            }
+        })
     }
 }

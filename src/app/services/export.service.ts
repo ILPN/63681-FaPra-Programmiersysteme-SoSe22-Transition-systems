@@ -1,14 +1,7 @@
 import {Injectable} from '@angular/core';
 import {TsModel} from "../classes/diagram/tsmodel";
 import {TsNode} from "../classes/diagram/tsnode";
-
-interface PNMLEdge {
-    id: string,
-    label: string,
-    from: TsNode,
-    to: TsNode
-
-}
+import {TsEdge} from "../classes/diagram/tsedge";
 
 @Injectable({
     providedIn: 'root'
@@ -33,22 +26,36 @@ export class ExportService {
     }
 
     exportPNML(model: TsModel): string {
-        let PNMLEdges = this.generatePNMLEdges(model);
         let result = '';
+        let arcs = '';
+        let transitions = '';
+        let places = '';
         let arcIndex = 1;
+        let transitionIndex = 1;
         result += '<?xml version="1.0" encoding="UTF-8"?>\n';
         result += '<pnml>\n';
         result += '<net>\n';
+
+        //Generate places
         for (let node of model.nodes) {
-            result += this.generatePNMLPlace(node)
+            places += this.generatePNMLPlace(node)
         }
-        for (let edge of PNMLEdges) {
-            result += this.generatePNMLTransition(edge);
+
+        //generates transitions and arcs
+        for (let edge of model.edges) {
+            for(let label of edge.getTransitionLabels()){
+                let transitionsId :string = "t" + transitionIndex;
+                transitions += this.generatePNMLTransition(transitionsId, label);
+                arcs += this.generatePNMLArc(edge, arcIndex, transitionsId);
+                transitionIndex++;
+                arcIndex = Number(arcIndex) + 2;
+
+            }
         }
-        for (let edge of PNMLEdges) {
-            result += this.generatePNMLArc(edge, arcIndex);
-            arcIndex = Number(arcIndex) + 2;
-        }
+        result += places;
+        result += transitions;
+        result += arcs;
+
         result += '</net>\n';
         result += '</pnml>\n';
         return this.formatXML(result);
@@ -70,10 +77,10 @@ export class ExportService {
         return result;
     }
 
-    private generatePNMLTransition(edge: PNMLEdge): string {
-        let result = '<transition  id=\"' + edge.id + '\">\n';
+    private generatePNMLTransition(id: string, label:string): string {
+        let result = '<transition  id=\"' + id + '\">\n';
         result += '<name>\n';
-        result += '<text>' + edge.label + '</text>\n';
+        result += '<text>' + label + '</text>\n';
         result += '</name>\n';
         result += '<graphics>\n';
         result += '<position x=\"' + "" + '\" y=\"' + "" + '\"/>\n';
@@ -82,50 +89,19 @@ export class ExportService {
         return result;
     }
 
-    private generatePNMLArc(edge: PNMLEdge, index: Number): string {
-        let result = '<arc  id=\"a' + index + '\" ';
-        let index2 = Number(index) + 1;
-        result += 'source=\"' + edge.from.id + '\" ';
-        result += 'target=\"' + edge.id + '\" ';
+    private generatePNMLArc(edge: TsEdge, arcIndex: number, tansitionId: string): string {
+        let result = '<arc  id=\"a' + arcIndex + '\" ';
+        let arcIndex2 = Number(arcIndex) + 1;
+        result += 'source=\"' + edge.nodeFrom.id + '\" ';
+        result += 'target=\"' + tansitionId + '\" ';
         result += '/>\n';
-        result += '<arc  id=\"a' + index2 + '\" ';
-        result += 'source=\"' + edge.id + '\" ';
-        result += 'target=\"' + edge.to.id + '\" ';
+        result += '<arc  id=\"a' + arcIndex2 + '\" ';
+        result += 'source=\"' + tansitionId + '\" ';
+        result += 'target=\"' + edge.nodeTo.id + '\" ';
         result += '/>\n';
         return result;
     }
 
-    private generatePNMLEdges(model: TsModel): PNMLEdge[] {
-        let PNMLEdges: PNMLEdge[] = [];
-        let edgeIndex = 1;
-        for (let edge of model.edges) {
-            let labels = edge.getTransitionLabels();
-            if (labels.length > 1) {
-                labels.forEach((value, index) => {
-                    PNMLEdges.push(
-                        {
-                            id: 't' + edgeIndex,
-                            label: value,
-                            from: edge.nodeFrom,
-                            to:edge.nodeTo
-                        }
-                    )
-                    edgeIndex++;
-                })
-            } else {
-                PNMLEdges.push(
-                    {
-                        id: 't' + edgeIndex,
-                        label: edge.writeTransitionLabelsOn('',','),
-                        from: edge.nodeFrom,
-                        to:edge.nodeTo
-                    }
-                )
-                edgeIndex++;
-            }
-        }
-        return PNMLEdges;
-    }
 
     private formatXML(xml: string): string {
         let formatted = '', indent= '';

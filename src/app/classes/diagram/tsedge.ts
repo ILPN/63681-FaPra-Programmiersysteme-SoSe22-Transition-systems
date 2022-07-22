@@ -75,6 +75,10 @@ export class TsEdge extends TsElement {
         this.updateSVG();
     }
 
+    public addTransition(transition :TsTransition){
+        this.transitions.push(transition);
+    }
+
     setPosition(x: number, y: number): void {
         this.setDragpoint(new Vector(x, y));
     }
