@@ -155,7 +155,7 @@ export class TsModel {
 
             // search for non-mortal edges/transitions in remaining edges
             let foreverReachableTransitions: String[] = [];
-            let foreverReachableEdgesAndTransitions = TsModel.searchForeverReachableEdgesAndTranstitions(tempEdges);
+            let foreverReachableEdgesAndTransitions = TsModel.searchForeverReachableEdgesAndTransitions(tempEdges);
             tempEdges = foreverReachableEdgesAndTransitions.edgeArrayOut;
             foreverReachableTransitions = foreverReachableEdgesAndTransitions.transitionArrayOut;
             if (foreverReachableTransitions.length === 0) {
@@ -262,7 +262,7 @@ export class TsModel {
         return transitionArray
     }
 
-    private static searchForeverReachableEdgesAndTranstitions(edgeArray: TsEdge[]) {
+    private static searchForeverReachableEdgesAndTransitions(edgeArray: TsEdge[]) {
         // create a counter for cycles without exit
         let noExitCycleCounter: number = 0;
         let edgeArrayOut: TsEdge[] = [];
