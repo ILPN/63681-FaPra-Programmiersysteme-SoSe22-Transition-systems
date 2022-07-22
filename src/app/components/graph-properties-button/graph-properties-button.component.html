@@ -10,9 +10,17 @@
     <h3 style="text-align: center">{{buttonText}}</h3>
     <a style="text-align: center">----------Color legend-----------</a><br>
     <a style="text-align: center"></a><br>
-    <label style ="background-color: yellow; alignment: left"></label>&nbsp;Start node<br>
-    <label style ="background-color: red"></label>&nbsp;Deadlock<br>
-    <label style ="background-color: skyblue"></label>&nbsp;Cycle element<br>
-    <label style ="background-color: orange"></label>&nbsp;Mortal transition/label<br>
-    <label style ="background-color: lightgray"></label>&nbsp;Not reachable element<br>
+    <label style ="background-color: yellow; alignment: left"></label>&nbsp;
+    <mat-label matTooltip="Initial state." matTooltipPosition="after">Start node</mat-label><br>
+    <label style ="background-color: skyblue"></label>&nbsp;
+    <mat-label matTooltip="Reachable cycle. If there is a reachable cycle, the corresponding petrinet does not terminate." matTooltipPosition="after"> Cycle</mat-label><br>
+    <label style ="background-color: red"></label>&nbsp;
+    <mat-label matTooltip="Reachable state without enabled transition." matTooltipPosition="after"> Deadlock
+    </mat-label><br>
+    <label style ="background-color: orange"></label>&nbsp;
+    <mat-label matTooltip="Can't be visited arbitrary often. If there is any mortal label, the corresponding petrinet is not live." matTooltipPosition="after"> Mortal transition/label
+    </mat-label><br>
+    <label style ="background-color: lightgray"></label>&nbsp;
+    <mat-label matTooltip="Not reachable from start node." matTooltipPosition="after"> Not reachable element
+    </mat-label><br>
 </div>
