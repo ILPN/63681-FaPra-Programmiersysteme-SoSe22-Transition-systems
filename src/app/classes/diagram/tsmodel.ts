@@ -444,7 +444,7 @@ export class TsModel {
         }
     }
 
-    private nodePositionsOK() {
+    public nodePositionsOK() {
         for (const node of this._nodes) {
             if (node.position == null) {
                 return false;

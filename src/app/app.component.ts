@@ -91,7 +91,7 @@ export class AppComponent implements OnDestroy, OnInit, AfterViewInit {
 
     private processSourceChange(newSource: string, fromFile: boolean) {
         this.model = this._parserService.parse(newSource.trim());
-        if(!fromFile)
+        if(!fromFile || !this.model.nodePositionsOK)
             this.model.layoutBySpringEmbedder(true);
         this._displayService.display(this.model);
         this.saveCurrentState();
