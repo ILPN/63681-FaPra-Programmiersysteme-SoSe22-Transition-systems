@@ -13,23 +13,12 @@ export class TsModel {
     private readonly _edges: Array<TsEdge>;
     private _startNode!: TsNode;
     private _propertiesHighlighted: boolean;
-    private _fromFileImport: boolean;
 
     constructor() {
         this._nodes = new Array<TsNode>();
         this._edges = new Array<TsEdge>();
-        this._propertiesHighlighted = false;
-        this._fromFileImport = false;
+        this._propertiesHighlighted = false
     }
-
-    get fromFileImport(): boolean {
-        return this._fromFileImport;
-    }
-
-    set fromFileImport(value: boolean) {
-        this._fromFileImport = value;
-    }
-
     get nodes(): Array<TsNode> {
         return this._nodes;
     }
@@ -46,11 +35,11 @@ export class TsModel {
         this._edges.push(aEdge);
     }
 
-    set startNode(aNode: TsNode){
+    set startNode(aNode: TsNode) {
         this._startNode = aNode;
     }
 
-    get startNode(): TsNode{
+    get startNode(): TsNode {
         return this._startNode
     }
 
@@ -159,7 +148,7 @@ export class TsModel {
             tempEdges = foreverReachableEdgesAndTransitions.edgeArrayOut;
             foreverReachableTransitions = foreverReachableEdgesAndTransitions.transitionArrayOut;
             if (foreverReachableTransitions.length === 0) {
-               foreverReachableTransitions = TsModel.getTransitionsFromEdges(tempEdges)
+                foreverReachableTransitions = TsModel.getTransitionsFromEdges(tempEdges)
             }
 
             mortalTransitions = reachableTransitions.filter(t => !foreverReachableTransitions.includes(t));
@@ -178,7 +167,7 @@ export class TsModel {
             arrayWithE.push(e);
             TsModel.searchEdgesReachableFromDefinedEdges(arrayWithE, tempEdges);
             //
-            let isCycle: boolean = TsModel.isCycle(arrayWithE,e)
+            let isCycle: boolean = TsModel.isCycle(arrayWithE, e)
             if (isCycle) {
                 cycleElements.push(e);
                 cycleElements.push(e.nodeFrom)
@@ -268,8 +257,8 @@ export class TsModel {
         let edgeArrayOut: TsEdge[] = [];
         let transitionArrayOut: String[] = [];
 
-        let currentCycleWithNoExitEdges: TsEdge[] =[];
-        let cyclesWithNoExitEdges: Array<TsEdge[]> =[];
+        let currentCycleWithNoExitEdges: TsEdge[] = [];
+        let cyclesWithNoExitEdges: Array<TsEdge[]> = [];
 
         for (let e of edgeArray) {
             if (!currentCycleWithNoExitEdges.includes(e)) {
@@ -288,10 +277,10 @@ export class TsModel {
                 }
             }
         }
-        if (noExitCycleCounter === 0){
+        if (noExitCycleCounter === 0) {
             edgeArrayOut = edgeArray;
         } else {
-            if (noExitCycleCounter === 1){
+            if (noExitCycleCounter === 1) {
                 edgeArrayOut = currentCycleWithNoExitEdges;
             } else {
                 transitionArrayOut = TsModel.searchIdenticalTransitions(cyclesWithNoExitEdges);
@@ -306,17 +295,17 @@ export class TsModel {
         let cycle1Transitions: String[] = this.getTransitionsFromEdges(cycle1);
         let cycle2: TsEdge[] = cycleArray.pop()!;
         let cycle2Transitions: String[] = this.getTransitionsFromEdges(cycle2);
-        for (let t of cycle1Transitions){
+        for (let t of cycle1Transitions) {
             if ((cycle2Transitions.includes(t))
-                && (! identicalTransitions.includes(t))){
+                && (!identicalTransitions.includes(t))) {
                 identicalTransitions.push(t)
             }
         }
         while (cycleArray.length !== 0) {
             let cycleX: TsEdge[] = cycleArray.pop()!;
             let cycleXTransitions: String[] = this.getTransitionsFromEdges(cycleX);
-            for (let t of cycleXTransitions){
-                if (! identicalTransitions.includes(t)){
+            for (let t of cycleXTransitions) {
+                if (!identicalTransitions.includes(t)) {
                     identicalTransitions = identicalTransitions.filter(e => e !== t)
                 }
             }
@@ -355,11 +344,11 @@ export class TsModel {
         const svgEdges = this._edges.map(e => (e.getSvgElement()));
         const svgNodes = this._nodes.map(e => (e.getSvgElement()));
         const svgNodeLabel: SVGElement[] = [];
-        for (let n of this.nodes){
+        for (let n of this.nodes) {
             svgNodeLabel.push(n.getSvgLabelElement());
         }
         const svgEdgeLabel: SVGElement[] = [];
-        for (let e of this.edges){
+        for (let e of this.edges) {
             for (let ee of e.getSvgLabelElements())
                 svgNodeLabel.push(ee);
         }
@@ -367,10 +356,9 @@ export class TsModel {
     }
 
     public layoutBySpringEmbedder(fromRandomPositions: Boolean) {
-        if(!this._fromFileImport || !this.nodePositionsOK()){
-            new FRSpringEmbedder(this._nodes, this._edges).run(fromRandomPositions);
-            this.centerToScreen();
-        }
+        new FRSpringEmbedder(this._nodes, this._edges).run(fromRandomPositions);
+        this.centerToScreen();
+
         this.updateSVG();
     }
 
@@ -394,24 +382,24 @@ export class TsModel {
         }
         TsModel.searchEdgesReachableFromDefinedEdges(reachableEdges, this.edges);
         return reachableEdges;
-        }
+    }
 
 
     getDraggedElement() {
-        return this._nodes.find(e => e.isDragged)?? this._edges.find(e => e.isDragged);
+        return this._nodes.find(e => e.isDragged) ?? this._edges.find(e => e.isDragged);
     }
 
     removeAllDragedMarker() {
         for (const each of this._nodes)
-            each.isDragged= false;
+            each.isDragged = false;
         for (const each of this._edges)
-            each.isDragged= false;
+            each.isDragged = false;
     }
 
     highlightStartNode() {
-        if(this._startNode)
-                this.startNode.highlightStartNode()
-        }
+        if (this._startNode)
+            this.startNode.highlightStartNode()
+    }
 
     hideProperties() {
         for (const each of this._nodes)
@@ -422,7 +410,7 @@ export class TsModel {
     }
 
     makeStartNodeBold() {
-        if(this._startNode)
+        if (this._startNode)
             this.startNode.makeStartNodeBold()
     }
 
@@ -431,14 +419,14 @@ export class TsModel {
         let min_x = Vector.getMinX(this.nodes.map(e => e.position));
         let max_y = Vector.getMaxY(this.nodes.map(e => e.position));
         let min_y = Vector.getMinY(this.nodes.map(e => e.position));
-        let shift_x = ((SVGElementWithLabel.FULL_X - min_x - max_x ) /2);
-        let shift_y = ((SVGElementWithLabel.FULL_Y - min_y - max_y ) /2);
-        for (let each of this.nodes){
-            each.position = each.position.add(new Vector(shift_x,shift_y));
+        let shift_x = ((SVGElementWithLabel.FULL_X - min_x - max_x) / 2);
+        let shift_y = ((SVGElementWithLabel.FULL_Y - min_y - max_y) / 2);
+        for (let each of this.nodes) {
+            each.position = each.position.add(new Vector(shift_x, shift_y));
         }
     }
 
-    highlightProperties():void {
+    highlightProperties(): void {
         const properties = this.getGraphProperties();
         properties.highlightNonReachableElements();
         properties.highlightCycles();
@@ -456,25 +444,25 @@ export class TsModel {
         }
     }
 
-    private nodePositionsOK(){
-        for (const node of this._nodes){
-            if(node.position == null){
+    private nodePositionsOK() {
+        for (const node of this._nodes) {
+            if (node.position == null) {
                 return false;
             }
-            if(node.position.x == 0 && node.position.y == 0){
+            if (node.position.x == 0 && node.position.y == 0) {
                 return false;
             }
         }
         return true;
     }
 
-    getEdges(transitionLabel: string):TsEdge[] {
+    getEdges(transitionLabel: string): TsEdge[] {
         let result = [];
-        for (let edge of this._edges){
+        for (let edge of this._edges) {
             let found = edge.getTransitionLabels().find(e => e === transitionLabel);
-            if(found)
+            if (found)
                 result.push(edge);
         }
-       return result;
+        return result;
     }
 }

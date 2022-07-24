@@ -28,7 +28,7 @@ n3 n5 t5
 n4 n2 t6
 n2 n1 t7
 `;
-        let model = service.parse(file,false);
+        let model = service.parse(file);
         expect(model.nodes.length).toBe(5);
         expect(model.edges.length).toBe(6);
         expect(model.getNode("n1")).toBeTruthy();

@@ -64,7 +64,7 @@ n4 n3 Y
 n5 n6 X
 n6 n5 Y
 `;
-            let model = new ParserService().parse(file,true);
+            let model = new ParserService().parse(file);
             let properties = model.getGraphProperties();
             let edgeX = model.getEdges('X');
             let edgeY = model.getEdges('Y');

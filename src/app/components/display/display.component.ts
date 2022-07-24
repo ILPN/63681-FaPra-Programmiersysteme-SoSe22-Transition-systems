@@ -24,7 +24,6 @@ export class DisplayComponent implements OnDestroy {
         this.springEmbedderModus = false;
         this._sub = this._displayService.model$.subscribe(model => {
             this._model = model;
-            this._model.layoutBySpringEmbedder(true);
             this.draw();
         });
     }
