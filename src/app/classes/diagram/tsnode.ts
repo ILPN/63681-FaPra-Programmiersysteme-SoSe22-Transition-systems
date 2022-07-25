@@ -21,7 +21,7 @@ export class TsNode extends TsElement {
     }
 
     private initializeSvg() {
-        this.registerSvg(new CircleElementWithLabel(this._id + ":" + this._label, this));
+        this.registerSvg(new CircleElementWithLabel(this));
         this.updateSVG();
     }
 
