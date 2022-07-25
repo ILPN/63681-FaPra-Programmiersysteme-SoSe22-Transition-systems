@@ -10,12 +10,12 @@ export class TsEdge extends TsElement {
     private readonly _nodeFrom: TsNode;
     private readonly _nodeTo: TsNode;
     protected dragpoint: Vector | undefined;
-    private transitions: TsTransition[];
+    private _transitions: TsTransition[];
 
-    constructor(labels: TsTransition[] , from: TsNode, to: TsNode) {
+    constructor(transitions: TsTransition[] , from: TsNode, to: TsNode) {
         super();
         this._nodeFrom = from;
-        this.transitions = labels
+        this._transitions = transitions
         from.addConnectedEdge(this);
         this._nodeTo = to;
         to.addConnectedEdge(this);
@@ -46,7 +46,7 @@ export class TsEdge extends TsElement {
     }
 
     private initializeSvg(): void {
-        this.registerSvg(new CurvedPathElementWithLabel(this.getTransitionLabels(), this));
+        this.registerSvg(new CurvedPathElementWithLabel(this));
         this.updateSVG();
     }
 
@@ -76,7 +76,11 @@ export class TsEdge extends TsElement {
     }
 
     public addTransition(transition :TsTransition){
-        this.transitions.push(transition);
+        this._transitions.push(transition);
+    }
+
+    get transitions(): TsTransition[] {
+        return this._transitions;
     }
 
     setPosition(x: number, y: number): void {
@@ -111,7 +115,7 @@ export class TsEdge extends TsElement {
     }
 
     getTransitionLabels():string[] {
-        return this.transitions.map(e => e.label);
+        return this._transitions.map(e => e.label);
     }
 
     writeTransitionLabelsOn(result: string, separator: string):string {
