@@ -10,11 +10,11 @@ export class CurvedPathElementWithLabel extends SVGElementWithLabel {
     private edge: TsEdge;
     private _labelElements: SVGElement[];
 
-    //TODO Use edge-properties to set label?
-    constructor(labels: string[], edge: TsEdge) {
+    constructor(edge: TsEdge) {
         super('path');
         this.edge = edge;
         this._labelElements = [];
+        let labels: string[] = edge.getTransitionLabels();
         labels.reverse();
         while (labels.length > 0) {
             this.createLabelElement(`${labels.pop()}`);
