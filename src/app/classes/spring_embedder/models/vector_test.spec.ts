@@ -38,11 +38,12 @@ describe('Vector', () => {
 
     it('A vector can be created that runy through two points', () => {
         const point1 = new Vector(1, 0);
-        const point2 = new Vector(3, 2);
-        const vector = Vector.byPoints(point1, point2);
-        expect(vector.x).toEqual(3 - 1);
-        expect(vector.y).toEqual(2);
+        const point2 = new Vector(0, 1);
+        const expectedVector = new Vector(-1 ,1);
+        const givenVector = Vector.byPoints(point1, point2);
+        expect(givenVector).toEqual(expectedVector);
     });
+
     it('Can be compared to be equal', () => {
         const secondPoint = new Vector(3, 4);
         expect(vector.equals(secondPoint)).toBeTruthy();
@@ -63,5 +64,13 @@ describe('Vector', () => {
         // existence of the 'random' metod.
         const randomPoint = Vector.atRandomPosition();
         expect(randomPoint).toBeInstanceOf(Vector)
+    });
+
+    it('Vectors can be substracted', () => {
+        const firstVector = new Vector(1, 0);
+        const secondVector = new Vector(0, 1);
+        const result = firstVector.subtract(secondVector);
+        const expected = new Vector(1, -1);
+        expect(result.equals(expected)).toBeTruthy();
     });
 });

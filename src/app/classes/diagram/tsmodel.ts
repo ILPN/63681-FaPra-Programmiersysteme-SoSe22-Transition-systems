@@ -355,10 +355,20 @@ export class TsModel {
         return svgNodeLabel.concat(svgNodes).concat(svgEdges).concat(svgEdgeLabel);
     }
 
-    public layoutBySpringEmbedder(fromRandomPositions: Boolean) {
-        new FRSpringEmbedder(this._nodes, this._edges).run(fromRandomPositions);
-        this.centerToScreen();
+    /**
+     * Computes the embedding of the TS using the SpringEmbedder algorithmn.
+     */
+    public computeEmbedding(useRandomPositions: Boolean): void {
+        const embedder = new FRSpringEmbedder(this);
+            embedder.cooling = (iteration: number) => 1.0 / (100 * iteration) ;
+            embedder.springLength = 180;
+            embedder.fromRandomPositions = useRandomPositions;
+            embedder.run(1000, 1);
+    }
 
+    public layoutBySpringEmbedder(fromRandomPositions: Boolean) {
+        this.computeEmbedding(fromRandomPositions);
+        this.centerToScreen();
         this.updateSVG();
     }
 

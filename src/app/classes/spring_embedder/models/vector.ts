@@ -61,13 +61,16 @@ export class Vector {
         return new Vector(point1.x + point2.x, point1.y + point2.y).divideBy(2)
     }
 
+    /**
+     * Return a new vector at a random position. The coordinates are in the
+     * intervall (0, 1).
+     */
     static atRandomPosition(): Vector {
         return new Vector(
-            Math.random() * (SVGElementWithLabel.FULL_X - 2 * SVGElementWithLabel.circleRadius) + SVGElementWithLabel.circleRadius,
-            Math.random() * (SVGElementWithLabel.FULL_Y - 2 * SVGElementWithLabel.circleRadius) + SVGElementWithLabel.circleRadius
+            Math.random(),
+            Math.random()
         );
     }
-
 
     //TODO: take FULL_X from .canvas how does that work?
 
@@ -77,6 +80,14 @@ export class Vector {
      */
     public add(otherVector: Vector): Vector {
         return new Vector(this.x + otherVector.x, this.y + otherVector.y);
+    }
+
+    /**
+     * Substracts a given vector from the current one. This is applied to every
+     * coordinate.
+     */
+    public subtract(otherVector: Vector): Vector {
+        return new Vector(this.x - otherVector.x, this.y - otherVector.y);
     }
 
     /**
@@ -116,8 +127,11 @@ export class Vector {
         return new Vector(this.x, this.y);
     }
 
-    isWellFormed(): boolean {
-        return !isNaN(this.x) && !isNaN(this.y);
+    /**
+     * Returns ture if at least one of the coordinates is None.
+     */
+    isNaN(): boolean {
+        return isNaN(this.x) || isNaN(this.y);
     }
 
     static getMaxNorm(vectors: Array<Vector>): number {
