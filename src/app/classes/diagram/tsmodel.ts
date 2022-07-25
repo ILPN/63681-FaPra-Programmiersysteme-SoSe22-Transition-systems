@@ -350,7 +350,7 @@ export class TsModel {
         const svgEdgeLabel: SVGElement[] = [];
         for (let e of this.edges) {
             for (let ee of e.getSvgLabelElements())
-                svgNodeLabel.push(ee);
+                svgEdgeLabel.push(ee);
         }
         return svgNodeLabel.concat(svgNodes).concat(svgEdges).concat(svgEdgeLabel);
     }
