@@ -118,4 +118,9 @@ export class TsNode extends TsElement {
     public override isNode():Boolean{
         return true;
     }
+
+    public equals(otherNode: TsNode): Boolean {
+        return this.id === otherNode.id
+            && this.position.equals(otherNode.position);
+    }
 }
