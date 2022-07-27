@@ -134,15 +134,20 @@ export class Vector {
         return isNaN(this.x) || isNaN(this.y);
     }
 
+    /**
+     * Returns the maximal norm from an array of vectors
+     */
     static getMaxNorm(vectors: Array<Vector>): number {
-        /**
-         * Returns the maximal norm from an array of vectors
-         */
         if (vectors.length <= 0) {
             return 0;
         }
         // Find the maximal norm on array.
         const norms = vectors.map(vector => vector.norm());
+        console.group('norms')
+        for(const norm of norms) {
+            console.log(norm);
+        }
+        console.groupEnd()
         return Math.max(...norms);
 
     }

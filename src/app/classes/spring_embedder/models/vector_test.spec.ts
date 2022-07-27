@@ -26,6 +26,12 @@ describe('Vector', () => {
         expect(vector.norm()).toEqual(5);
     });
 
+    it('Norm works correctly for small numbers', () => {
+        const vector = new Vector(0.0734019826461727, 0.20727594621982298);
+        const expectedNorm = 0.219889;
+        expect(vector.norm() - expectedNorm).toBeLessThanOrEqual(1 / 10000);
+    });
+
     it('Vector can be normalized', () => {
         vector.normalize();
         expect(vector.norm()).toEqual(1)

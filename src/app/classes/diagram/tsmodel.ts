@@ -360,7 +360,7 @@ export class TsModel {
      */
     public computeEmbedding(useRandomPositions: Boolean): void {
         const embedder = new FRSpringEmbedder(this);
-            embedder.cooling = (iteration: number) => 1.0 / (100 * iteration) ;
+            embedder.cooling = (iteration: number) => 1.0 / (50 * iteration) ;
             embedder.springLength = 180;
             embedder.fromRandomPositions = useRandomPositions;
             embedder.run(1000, 1);

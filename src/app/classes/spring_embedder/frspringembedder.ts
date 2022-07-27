@@ -97,7 +97,9 @@ export class FRSpringEmbedder {
      * Computes the embedding of the graph
      */
     public run(maxIterations: number = 1000, epsilon: number = 0.1): void {
+        console.group('Starting SpringEmbedder')
         if (this._model.nodes.length <= 0) {
+            console.log('No nodes found');
             return
         }
         if (this._fromRandomPositions)
@@ -108,6 +110,7 @@ export class FRSpringEmbedder {
         let iteration = 1;
         //while (iteration < maxIterations && (this.normIsToHigh(forces, epsilon) || !this.distancesOk())) {
         while (iteration < maxIterations && this.normIsToHigh(epsilon) ) {
+            this.printNodePositions(iteration);
             this.computeForces();
             const coolingFactor = this._cooling(iteration);
             this.moveNodesByForces(coolingFactor);
@@ -116,6 +119,7 @@ export class FRSpringEmbedder {
         (iteration < maxIterations)
             ? console.log(`Computed embedding after ${iteration} iterations`)
             : console.log(`Max number of iterations reached: ${maxIterations}`);
+        console.groupEnd();
     }
 
     /**
@@ -161,7 +165,7 @@ export class FRSpringEmbedder {
             return true;
         }
         const maxNorm = Vector.getMaxNorm(this._forces);
-        console.log(`Max norm of forces: ${maxNorm}`);
+        console.log(`Num of forces: ${this._forces.length}, max norm: ${maxNorm}`);
         return maxNorm > epsilon;
     }
 
@@ -240,5 +244,29 @@ export class FRSpringEmbedder {
         for (const node of this._model.nodes) {
             node.position = Vector.atRandomPosition();
         }
+    }
+
+    private printNodePositions(numOfInteration: number = -1): void {
+        console.group(`Node positions at iteration ${numOfInteration}`)
+        for (const node of this._model.nodes) {
+            console.log(`Id: ${node.id}, x: ${node.x}, y: ${node.y}`)
+            if (this._forces.length > 0) {
+                const force = this.getForceOfNode(node.id);
+                console.log(`   force: x ${force.x}, y: ${force.y}`);
+                console.log(' ')
+            }
+        }
+        console.groupEnd()
+    }
+
+    private getForceOfNode(nodeId: string): Vector {
+        let index = 0;
+        for (const node of this._model.nodes) {
+            if (node.id === nodeId) {
+                return this._forces[index];
+            }
+            index++;
+        }
+        throw Error(`Node ${nodeId} has no force`)
     }
 }
