@@ -21,7 +21,7 @@ export class DisplayComponent implements OnDestroy {
     private springEmbedderModus: Boolean;
 
     constructor(private _displayService: DisplayService) {
-        this.springEmbedderModus = false;
+        this.springEmbedderModus = true;
         this._sub = this._displayService.model$.subscribe(model => {
             this._model = model;
             this.draw();
@@ -92,4 +92,7 @@ export class DisplayComponent implements OnDestroy {
     }
 
 
+    toggleSpringEmbedderModus() {
+        this.springEmbedderModus = !this.springEmbedderModus;
+    }
 }
