@@ -14,6 +14,7 @@ import { UploadButtonComponent } from './components/upload-button/upload-button.
 import { DownloadButtonComponent } from './components/download-button/download-button.component';
 import { GraphPropertiesButtonComponent } from './components/graph-properties-button/graph-properties-button.component';
 import { DndDirective } from './directives/dnd.directive';
+import {MatTooltipModule} from "@angular/material/tooltip";
 
 @NgModule({
     declarations: [
@@ -34,6 +35,7 @@ import { DndDirective } from './directives/dnd.directive';
         MatButtonModule,
         MatIconModule,
         ReactiveFormsModule,
+        MatTooltipModule,
     ],
     providers: [],
     bootstrap: [AppComponent]

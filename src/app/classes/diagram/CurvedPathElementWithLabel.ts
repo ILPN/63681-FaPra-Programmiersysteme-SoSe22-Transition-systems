@@ -40,6 +40,12 @@ export class CurvedPathElementWithLabel extends SVGElementWithLabel {
         }
     }
     private createLabelElement(text: string) {
+        if (this.labelElements.length > 0){
+            let separator: string = ", ";
+            let labelElement = <SVGElement>document.createElementNS(SVGElementWithLabel.svgNamespace(), 'text');
+            labelElement.appendChild(document.createTextNode(separator));
+            this._labelElements.push(labelElement);
+        }
         let labelElement = <SVGElement>document.createElementNS(SVGElementWithLabel.svgNamespace(), 'text');
         labelElement.appendChild(document.createTextNode(text));
         this._labelElements.push(labelElement);
