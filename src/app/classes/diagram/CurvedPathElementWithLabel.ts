@@ -35,7 +35,7 @@ export class CurvedPathElementWithLabel extends SVGElementWithLabel {
         for (let l of this.labelElements) {
             l.setAttribute("stroke-width", "1");
             l.setAttribute("fill", "black");
-            l.setAttribute("font-size", 0.8 * SVGElementWithLabel.circleRadius + "px");
+            l.setAttribute("font-size", this.fontSize() + "px");
             l.setAttribute("font-family", "Arial, Helvetica, sans-serif");
         }
     }
@@ -83,22 +83,30 @@ export class CurvedPathElementWithLabel extends SVGElementWithLabel {
         this.svgElement.setAttribute('d', postitionsString);
 
         // set label-position
-        let posTxt = Vector.midOf(new Vector(x1, y1), new Vector(x2, y2))
         //TODO TRAN-62 Position verbessern
         //Mitte von Controlpunkt und Mitte der Knoten
+        let posTxt = Vector.midOf(new Vector(x1, y1), new Vector(x2, y2))
+        posTxt = Vector.midOf(posTxt, cp)
+        let index = 1;
         for (let le of this.labelElements) {
-            posTxt = Vector.midOf(posTxt, cp)
             le.setAttribute("x", posTxt.x.toString());
-            posTxt.x = posTxt.x + 30;
-        }
-        if ((isSelfLoop) && (this.labelElements.length > 1)) {
-            posTxt.y = posTxt.y + (this.guessedFontSize() * ((this.labelElements.length - 1) / 2))
+            if (index%2 !== 0) {
+                posTxt.x = posTxt.x + (le.childNodes[0].textContent!.length * this.fontSize()/2);
+                //posTxt.x = posTxt.x + this.posTxtXEvenOffset();
+            } else {
+                posTxt.x = posTxt.x + this.posTxtXOddOffset();
+            }
+            index++;
         }
         this.setLabelAttribute("y", posTxt.y.toString());
     }
 
-    private guessedFontSize() {
-        return 22;
+    private fontSize(){
+        return (0.8 * SVGElementWithLabel.circleRadius);
+    }
+
+    private posTxtXOddOffset() {
+        return 10;
     }
 
     public selfLoopShift() {
