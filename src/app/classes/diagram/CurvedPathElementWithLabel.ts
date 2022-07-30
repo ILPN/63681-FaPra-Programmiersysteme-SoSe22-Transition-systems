@@ -39,6 +39,7 @@ export class CurvedPathElementWithLabel extends SVGElementWithLabel {
             l.setAttribute("font-family", "Arial, Helvetica, sans-serif");
         }
     }
+
     private createLabelElement(text: string) {
         if (this.labelElements.length > 0){
             let separator: string = ", ";
@@ -137,10 +138,9 @@ export class CurvedPathElementWithLabel extends SVGElementWithLabel {
      */
     private bidirectionalEdgeShift(pos1: Vector, pos2: Vector): Vector {
         let edge: Vector = Vector.subtract(pos1, pos2);
-        let radiusAngle = 0.5 * Math.PI - edge.angleToXAxis();
-        let dy = CurvedPathElementWithLabel.BIDIRECTIONAL_EDGES_CURVE_RADIUS * Math.sin(radiusAngle);
-        let dx = CurvedPathElementWithLabel.BIDIRECTIONAL_EDGES_CURVE_RADIUS * Math.cos(radiusAngle);
-        return new Vector(-dx, dy);
+        return edge
+            .orthogonalVector()
+            .multiplyWith(CurvedPathElementWithLabel.BIDIRECTIONAL_EDGES_CURVE_RADIUS);
     }
 
     setUpMouseEventsForLabel(): void {
