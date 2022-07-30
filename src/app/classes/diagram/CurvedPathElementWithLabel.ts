@@ -41,7 +41,7 @@ export class CurvedPathElementWithLabel extends SVGElementWithLabel {
     }
 
     private createLabelElement(text: string) {
-        if (this.labelElements.length > 0){
+        if (this.labelElements.length > 0) {
             let separator: string = ", ";
             let labelElement = <SVGElement>document.createElementNS(SVGElementWithLabel.svgNamespace(), 'text');
             labelElement.appendChild(document.createTextNode(separator));
@@ -91,8 +91,8 @@ export class CurvedPathElementWithLabel extends SVGElementWithLabel {
         let index = 1;
         for (let le of this.labelElements) {
             le.setAttribute("x", posTxt.x.toString());
-            if (index%2 !== 0) {
-                posTxt.x = posTxt.x + (le.childNodes[0].textContent!.length * this.fontSize()/2);
+            if (index % 2 !== 0) {
+                posTxt.x = posTxt.x + (le.childNodes[0].textContent!.length * this.fontSize() / 2);
                 //posTxt.x = posTxt.x + this.posTxtXEvenOffset();
             } else {
                 posTxt.x = posTxt.x + this.posTxtXOddOffset();
@@ -102,7 +102,7 @@ export class CurvedPathElementWithLabel extends SVGElementWithLabel {
         this.setLabelAttribute("y", posTxt.y.toString());
     }
 
-    private fontSize(){
+    private fontSize() {
         return (0.8 * SVGElementWithLabel.circleRadius);
     }
 
@@ -138,9 +138,7 @@ export class CurvedPathElementWithLabel extends SVGElementWithLabel {
      */
     private bidirectionalEdgeShift(pos1: Vector, pos2: Vector): Vector {
         let edge: Vector = Vector.subtract(pos1, pos2);
-        return edge
-            .orthogonalVector()
-            .multiplyWith(CurvedPathElementWithLabel.BIDIRECTIONAL_EDGES_CURVE_RADIUS);
+        return edge.orthogonalVector(CurvedPathElementWithLabel.BIDIRECTIONAL_EDGES_CURVE_RADIUS);
     }
 
     setUpMouseEventsForLabel(): void {
