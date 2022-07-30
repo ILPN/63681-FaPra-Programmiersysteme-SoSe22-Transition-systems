@@ -114,12 +114,13 @@ export class Vector {
     }
 
     /**
-     * Returns a vector of length 1 that is orthogonal to this vector.
+     * Returns a vector of the given length which is orthogonal to this vector.
+     * @param vectorLength The length of the returned vector
      */
-    public orthogonalVector(): Vector {
+    public orthogonalVector(vectorLength: number): Vector {
         let orthVectorAngle = 0.5 * Math.PI - this.angleToXAxis();
-        let yResult = Math.sin(orthVectorAngle);
-        let xResult = Math.cos(orthVectorAngle);
+        let yResult = vectorLength * Math.sin(orthVectorAngle);
+        let xResult = vectorLength * Math.cos(orthVectorAngle);
         return new Vector(-xResult, yResult);
     }
 
