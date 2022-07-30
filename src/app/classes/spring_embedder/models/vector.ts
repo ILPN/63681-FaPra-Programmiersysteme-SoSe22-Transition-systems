@@ -113,6 +113,16 @@ export class Vector {
         return Math.atan2(this.y, this.x);
     }
 
+    /**
+     * Returns a vector of length 1 that is orthogonal to this vector.
+     */
+    public orthogonalVector(): Vector {
+        let orthVectorAngle = 0.5 * Math.PI - this.angleToXAxis();
+        let yResult = Math.sin(orthVectorAngle);
+        let xResult = Math.cos(orthVectorAngle);
+        return new Vector(-xResult, yResult);
+    }
+
     public equals(otherPoint: Vector): boolean {
         return this.x === otherPoint.x && this.y === otherPoint.y
     }
