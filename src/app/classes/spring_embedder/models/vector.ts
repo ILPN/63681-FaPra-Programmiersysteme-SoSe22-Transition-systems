@@ -193,4 +193,12 @@ export class Vector {
     private static byAngle(phi: number, norm: number) {
         return new Vector(Math.cos(phi) * norm, Math.sin(phi) * norm);
     }
+
+    /**
+     * Returns the distance to the given vector.
+     */
+    public distanceTo(otherVector: Vector): number {
+        const vector = Vector.byPoints(this, otherVector);
+        return vector.norm();
+    }
 }
