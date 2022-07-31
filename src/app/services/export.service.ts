@@ -2,6 +2,7 @@ import {Injectable} from '@angular/core';
 import {TsModel} from "../classes/diagram/tsmodel";
 import {TsNode} from "../classes/diagram/tsnode";
 import {TsEdge} from "../classes/diagram/tsedge";
+import {Vector} from "../classes/spring_embedder/models/vector";
 
 @Injectable({
     providedIn: 'root'
@@ -43,12 +44,15 @@ export class ExportService {
 
         //generates transitions and arcs
         for (let edge of model.edges) {
+            let tranLabelCount = 0;
             for(let label of edge.getTransitionLabels()){
+                let pos = this.calculateTransitionPosition(edge, tranLabelCount);
                 let transitionsId :string = "t" + transitionIndex;
-                transitions += this.generatePNMLTransition(transitionsId, label);
+                transitions += this.generatePNMLTransition(transitionsId, label, pos);
                 arcs += this.generatePNMLArc(edge, arcIndex, transitionsId);
                 transitionIndex++;
                 arcIndex = Number(arcIndex) + 2;
+                tranLabelCount++;
 
             }
         }
@@ -60,6 +64,14 @@ export class ExportService {
         result += '</pnml>\n';
         return this.formatXML(result);
 
+    }
+
+
+    calculateTransitionPosition(edge: TsEdge, tranLabelCount: number) {
+        let offSet = tranLabelCount * 20;
+        let x = ((edge.nodeFrom.x + edge.nodeTo.x)/2).toFixed(2)
+        let y = ((edge.nodeFrom.y + edge.nodeTo.y)/2).toFixed(2)
+        return new Vector(Number(x)+offSet,Number(y));
     }
 
     private generatePNMLPlace(node: TsNode): string {
@@ -77,13 +89,13 @@ export class ExportService {
         return result;
     }
 
-    private generatePNMLTransition(id: string, label:string): string {
+    private generatePNMLTransition(id: string, label:string, position:Vector): string {
         let result = '<transition  id=\"' + id + '\">\n';
         result += '<name>\n';
         result += '<text>' + label + '</text>\n';
         result += '</name>\n';
         result += '<graphics>\n';
-        result += '<position x=\"' + "" + '\" y=\"' + "" + '\"/>\n';
+        result += '<position x=\"' + position.x + '\" y=\"' + position.y + '\"/>\n';
         result += '</graphics>\n';
         result += '</transition>\n';
         return result;
