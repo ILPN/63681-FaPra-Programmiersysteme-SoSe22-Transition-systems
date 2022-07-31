@@ -363,7 +363,7 @@ export class TsModel {
             embedder.cooling = (iteration: number) => 1.0 / (50 * iteration) ;
             embedder.springLength = 180;
             embedder.fromRandomPositions = useRandomPositions;
-            embedder.run(1000, 1);
+            embedder.run(1000, 10);
     }
 
     public layoutBySpringEmbedder(fromRandomPositions: Boolean) {

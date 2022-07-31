@@ -42,16 +42,10 @@ export class FRSpringEmbedder {
     private _forces: Vector[] = [];
 
     /**
-     * Weight applied to each repulsive force that is computed. A value < 1
-     * would lead to a dumping of the force and a value > 1 would boost it.
+     * The minimal distance of two nodes to have. This is used to avaoid nodes
+     * being too close together.
      */
-    private _replusiveForceWeigth: number = 1.0 / 5.0;
-
-    /**
-     * Weight applied to each attractive force that is computed. A value < 1
-     * would lead to a dumping of the force and a value > 1 would boost it.
-     */
-    private _attractiveForceWeigth: number = 5.0;
+    private readonly MIN_NODE_DISTANCE = 150;
 
     constructor(
         model: TsModel,
@@ -105,21 +99,27 @@ export class FRSpringEmbedder {
         if (this._fromRandomPositions)
             console.log('Using random start positions')
             this.initializeRandomPositions();
-        // The forces moving the nodes
+
         this._forces = [];
         let iteration = 1;
-        //while (iteration < maxIterations && (this.normIsToHigh(forces, epsilon) || !this.distancesOk())) {
         while (iteration < maxIterations && this.normIsToHigh(epsilon) ) {
             this.printNodePositions(iteration);
             this.computeForces();
-            const coolingFactor = this._cooling(iteration);
-            this.moveNodesByForces(coolingFactor);
+            this.moveNodesByForces(iteration);
             iteration++;
         }
         (iteration < maxIterations)
             ? console.log(`Computed embedding after ${iteration} iterations`)
             : console.log(`Max number of iterations reached: ${maxIterations}`);
         console.groupEnd();
+    }
+
+    public computeCoolingFactor(node: TsNode, iteration: number): number {
+        const minDistance = this.minDistanceToOtherNodes(node);
+        if (minDistance <= this.MIN_NODE_DISTANCE) {
+            return 1.0 / iteration;
+        }
+        return this._cooling(iteration);
     }
 
     /**
@@ -129,9 +129,7 @@ export class FRSpringEmbedder {
         let index = 0;
         for (const node of this._model.nodes) {
             let repulsiveForce = this.computeRepulsiveForce(node);
-            repulsiveForce.multiplyWith(this._replusiveForceWeigth);
             const attractiveForce = this._computeAttractiveForce(node);
-            attractiveForce.multiplyWith(this._attractiveForceWeigth)
             repulsiveForce = repulsiveForce.add(attractiveForce);
             this._forces[index] = repulsiveForce;
             index++;
@@ -142,14 +140,14 @@ export class FRSpringEmbedder {
      * Moves all nodes by the given forces. The given cooling is applied before
      * the force is applied.
      */
-    public moveNodesByForces(coolingFactor: number): void {
+    public moveNodesByForces(iteration: number): void {
         let index = 0;
         for (const node of this._model.nodes) {
             // Apply the cooling to the displacement vector
             const force = this._forces[index];
-            console.log(`coolingFactor: ${coolingFactor}`)
-            force.multiplyWith(coolingFactor);
+            const coolingFactor = this.computeCoolingFactor(node, iteration);
             // Apply the displacement vector to the position
+            force.multiplyWith(coolingFactor);
             node.position = node.position.add(force);
             node.limitPostionToScreen();
             index++;
@@ -250,11 +248,15 @@ export class FRSpringEmbedder {
         console.group(`Node positions at iteration ${numOfInteration}`)
         for (const node of this._model.nodes) {
             console.log(`Id: ${node.id}, x: ${node.x}, y: ${node.y}`)
+            // Print info regarding the used forces
             if (this._forces.length > 0) {
                 const force = this.getForceOfNode(node.id);
                 console.log(`   force: x ${force.x}, y: ${force.y}`);
-                console.log(' ')
             }
+            // Print forces about the minimal distance to the remaining nodes
+            const minDistance = this.minDistanceToOtherNodes(node);
+            console.log(`   min. distance: ${minDistance}`)
+            console.log(' ');
         }
         console.groupEnd()
     }
@@ -268,5 +270,22 @@ export class FRSpringEmbedder {
             index++;
         }
         throw Error(`Node ${nodeId} has no force`)
+    }
+
+    /**
+     * Returns the smallest distance of the given node to the other onces.
+     */
+    public minDistanceToOtherNodes(node: TsNode): number {
+        let minDistnace = Number.MAX_VALUE;
+        const positonsToCheck = this._model.nodes
+            .filter(n => n.id !== node.id)
+            .map(node => node.position);
+        for (const position of positonsToCheck) {
+            const distance = position.distanceTo(node.position);
+            if (distance <= minDistnace) {
+                minDistnace = distance;
+            }
+        }
+        return minDistnace;
     }
 }
