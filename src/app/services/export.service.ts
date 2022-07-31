@@ -68,10 +68,10 @@ export class ExportService {
 
 
     calculateTransitionPosition(edge: TsEdge, tranLabelCount: number) {
-        let offSet = tranLabelCount * 20;
+        let offSet = tranLabelCount * 30;
         let x = ((edge.nodeFrom.x + edge.nodeTo.x)/2).toFixed(2)
         let y = ((edge.nodeFrom.y + edge.nodeTo.y)/2).toFixed(2)
-        return new Vector(Number(x)+offSet,Number(y));
+        return new Vector(Number(x),Number(y)+offSet);
     }
 
     private generatePNMLPlace(node: TsNode): string {
