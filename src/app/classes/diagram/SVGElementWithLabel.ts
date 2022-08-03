@@ -13,8 +13,8 @@ export abstract class SVGElementWithLabel {
     }
 
     private getScreenSizeFromCanvas() {
-        let xSize = document.getElementById('canvasDisplay')?.offsetWidth;
-        let ySize = document.getElementById('canvasDisplay')?.offsetHeight;
+        let xSize = document.getElementById('canvasDisplay')?.children[1].clientWidth;
+        let ySize = document.getElementById('canvasDisplay')?.children[1].clientHeight;
         if (xSize != null && ySize != null) {
             SVGElementWithLabel.FULL_X = xSize;
             SVGElementWithLabel.FULL_Y = ySize;
