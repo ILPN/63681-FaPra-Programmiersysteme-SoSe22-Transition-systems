@@ -3,16 +3,18 @@ import {TsNode} from "./tsnode";
 import {Vector} from "../spring_embedder/models/vector";
 import {CurvedPathElementWithLabel} from "./CurvedPathElementWithLabel";
 import {TsTransition} from "./tsTransition";
+import {SVGElementWithLabel} from "./SVGElementWithLabel";
+import {CircleElementWithLabel} from "./CircleElementWithLabel";
 
 export class TsEdge extends TsElement {
-
+    private static BIDIRECTIONAL_EDGES_CURVE_RADIUS: number = 25;
 
     private readonly _nodeFrom: TsNode;
     private readonly _nodeTo: TsNode;
-    protected dragpoint: Vector | undefined;
+    private _dragpoint: Vector | undefined;
     private _transitions: TsTransition[];
 
-    constructor(transitions: TsTransition[] , from: TsNode, to: TsNode) {
+    constructor(transitions: TsTransition[], from: TsNode, to: TsNode) {
         super();
         this._nodeFrom = from;
         this._transitions = transitions
@@ -32,16 +34,26 @@ export class TsEdge extends TsElement {
     }
 
     get position_from(): Vector {
-        return this._nodeFrom.position;
+        if (this.isSelfLoop()) {
+            return this._nodeFrom.position.shiftAlongAngle(SVGElementWithLabel.circleRadius, -Math.PI / 4);
+        } else {
+            return this._nodeFrom.position.shiftAlongAngle(SVGElementWithLabel.circleRadius,
+                this._nodeFrom.position.angle(this._nodeTo.position));
+        }
     }
 
     get position_to(): Vector {
-        return this._nodeTo.position;
+        if (this.isSelfLoop()) {
+            return this._nodeTo.position.shiftAlongAngle(SVGElementWithLabel.circleRadius, -3 * Math.PI / 4);
+        } else {
+            return this._nodeTo.position.shiftAlongAngle(SVGElementWithLabel.circleRadius,
+                this._nodeTo.position.angle(this._nodeFrom.position));
+        }
     }
 
     public updateSVG() {
         if (this._svgElement instanceof CurvedPathElementWithLabel) {
-            this._svgElement.setPosition(this.position_from, this.position_to, this.dragpoint,this.isSelfLoop());
+            this._svgElement.update();
         }
     }
 
@@ -54,28 +66,28 @@ export class TsEdge extends TsElement {
         this._svgElement.svgElement.setAttribute('stroke', 'orange');
     }
 
-    highlightMortalTransition(text: String){
+    highlightMortalTransition(text: String) {
         let transitionsElements: SVGElement[] = this.getSvgLabelElements();
-        for (let t of transitionsElements){
-            if (t.textContent === text){
-                t.setAttribute('fill','orange');
+        for (let t of transitionsElements) {
+            if (t.textContent === text) {
+                t.setAttribute('fill', 'orange');
             }
         }
     }
 
     writeOn(result: string): string {
         result += `${this.nodeFrom.id} ${this.nodeTo.id} `
-        result = this.writeTransitionLabelsOn(result,' ');
+        result = this.writeTransitionLabelsOn(result, ' ');
         result += '\n';
         return result;
     }
 
     public setDragpoint(position: Vector): void {
-        this.dragpoint = position;
+        this._dragpoint = position;
         this.updateSVG();
     }
 
-    public addTransition(transition :TsTransition){
+    public addTransition(transition: TsTransition) {
         this._transitions.push(transition);
     }
 
@@ -92,7 +104,7 @@ export class TsEdge extends TsElement {
      */
     public getBidirectionalEdge(): TsEdge | null {
         // Untersucht, ob es eine andere Kante gibt, die this._nodeFrom als End- und this._nodeTo als Startknoten hat.
-        if(this.isSelfLoop())
+        if (this.isSelfLoop())
             return null;
         let result: TsEdge | null = null;
         for (let edgeOfNodeFrom of this._nodeFrom.connectedEdges) {
@@ -107,28 +119,55 @@ export class TsEdge extends TsElement {
     }
 
     isSelfLoop() {
-        return this._nodeFrom===this._nodeTo;
+        return this._nodeFrom === this._nodeTo;
     }
 
     removeDragpoint() {
-        this.dragpoint = undefined;
+        this._dragpoint = undefined;
     }
 
-    getTransitionLabels():string[] {
+    getTransitionLabels(): string[] {
         return this._transitions.map(e => e.label);
     }
 
-    writeTransitionLabelsOn(result: string, separator: string):string {
+    writeTransitionLabelsOn(result: string, separator: string): string {
         this.getTransitionLabels().forEach(label => result += `${label}${separator}`);
         return result;
     }
 
-    getSvgLabelElements():SVGElement[] {
-        //ts ignore instead?
+    getSvgLabelElements(): SVGElement[] {
         if (this._svgElement instanceof CurvedPathElementWithLabel) {
             return this._svgElement.labelElements;
         }
         return new Array<SVGElement>();
+    }
+
+    getDragpoint(): Vector {
+        return this._dragpoint ?? this.defaultDragPoint();
+    }
+
+    private defaultDragPoint() {
+        if (this.isSelfLoop())
+            return Vector.midOf(this.position_from, this.position_to).add(this.selfLoopShift());
+        else {
+            // Check if edge is bidirectional
+            let otherBiDirEdge: TsEdge | null = this.getBidirectionalEdge();
+            if (otherBiDirEdge) {
+                let shiftVector: Vector = this.bidirectionalEdgeShift();
+                // bend bidirectional edges
+                return Vector.add(Vector.midOf(this.position_from, this.position_to), shiftVector);
+            }
+        }
+        return Vector.midOf(this.position_from, this.position_to);
+    }
+
+    private bidirectionalEdgeShift(): Vector {
+        let edge: Vector = Vector.subtract(this.position_from, this.position_to);
+        return edge.orthogonalVector(TsEdge.BIDIRECTIONAL_EDGES_CURVE_RADIUS);
+    }
+
+    private selfLoopShift() {
+        return new Vector(0, -3 * CircleElementWithLabel.circleRadius);
     }
 }
 

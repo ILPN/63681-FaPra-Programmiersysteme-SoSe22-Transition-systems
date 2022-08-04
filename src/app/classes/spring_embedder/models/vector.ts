@@ -212,4 +212,8 @@ export class Vector {
         const vector = Vector.byPoints(this, otherVector);
         return vector.norm();
     }
+
+    public shiftAlongAngle(shift: number, angle: number):Vector {
+        return new Vector(this.x + shift * Math.cos(angle),this.y + shift * Math.sin(angle));
+    }
 }

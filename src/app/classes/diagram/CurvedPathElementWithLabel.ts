@@ -1,11 +1,8 @@
 import {SVGElementWithLabel} from "./SVGElementWithLabel";
 import {Vector} from "../spring_embedder/models/vector";
 import {TsEdge} from "./tsedge";
-import {CircleElementWithLabel} from "./CircleElementWithLabel";
 
 export class CurvedPathElementWithLabel extends SVGElementWithLabel {
-
-    private static BIDIRECTIONAL_EDGES_CURVE_RADIUS: number = 25;
 
     private edge: TsEdge;
     private _labelElements: SVGElement[];
@@ -52,41 +49,19 @@ export class CurvedPathElementWithLabel extends SVGElementWithLabel {
         this._labelElements.push(labelElement);
     }
 
-    public setPosition(pos1: Vector, pos2: Vector, controlpoint: Vector | undefined = undefined, isSelfLoop: boolean): void {
-        let x1 = pos1.x;
-        let x2 = pos2.x;
-        let y1 = pos1.y;
-        let y2 = pos2.y;
-        //Pfeile beginnen am Kreisrand -> Polarkoordinaten
-        let phi1: number;
-        let phi2: number;
-        if (isSelfLoop) {
-            phi1 = -Math.PI / 4;
-            phi2 = -3 * Math.PI / 4;
-        } else {
-            phi1 = pos1.angle(pos2);
-            phi2 = pos2.angle(pos1)
-        }
-        x1 = x1 + SVGElementWithLabel.circleRadius * Math.cos(phi1);
-        x2 = x2 + SVGElementWithLabel.circleRadius * Math.cos(phi2);
-        y1 = y1 + SVGElementWithLabel.circleRadius * Math.sin(phi1);
-        y2 = y2 + SVGElementWithLabel.circleRadius * Math.sin(phi2);
-        let cp = controlpoint ?? this.defaultDragPoint(pos1, pos2, isSelfLoop);
-        let postitionsString = `M ${x1.toString()},${y1.toString()} `;
-        // Check if edge is bidirectional
-        let otherBiDirEdge: TsEdge | null = this.edge.getBidirectionalEdge();
-        if (otherBiDirEdge && !controlpoint) {
-            let shiftVector: Vector = this.bidirectionalEdgeShift(pos1, pos2);
-            // bend bidirectional edges
-            cp = Vector.add(Vector.midOf(pos1, pos2), shiftVector);
-        }
-        postitionsString += `Q ${cp.x.toString()},${cp.y.toString()},${x2.toString()},${y2.toString()}`;
+    public update(): void {
+        let pos1 = this.edge.position_from;
+        let pos2 = this.edge.position_to;
+        let cp = this.edge.getDragpoint();
+        //Write into d for Bezier Curve
+        let postitionsString = `M ${pos1.x.toString()},${pos1.y.toString()} Q ${cp.x.toString()}
+        ,${cp.y.toString()},${pos2.x.toString()},${pos2.y.toString()}`;
         this.svgElement.setAttribute('d', postitionsString);
 
         // set label-position
         //TODO TRAN-62 Position verbessern
         //Mitte von Controlpunkt und Mitte der Knoten
-        let posTxt = Vector.midOf(new Vector(x1, y1), new Vector(x2, y2))
+        let posTxt = Vector.midOf(pos1, pos2)
         posTxt = Vector.midOf(posTxt, cp)
         let index = 1;
         for (let le of this.labelElements) {
@@ -110,17 +85,6 @@ export class CurvedPathElementWithLabel extends SVGElementWithLabel {
         return 10;
     }
 
-    public selfLoopShift() {
-        return new Vector(0, -3 * CircleElementWithLabel.circleRadius);
-    }
-
-    private defaultDragPoint(pos1: Vector, pos2: Vector, isSelfLoop: boolean) {
-        if (isSelfLoop)
-            return pos1.add(this.selfLoopShift());
-        else
-            return Vector.midOf(pos1, pos2);
-    }
-
     get labelElements(): SVGElement[] {
         return this._labelElements;
     }
@@ -129,16 +93,6 @@ export class CurvedPathElementWithLabel extends SVGElementWithLabel {
         for (let l of this.labelElements) {
             l.setAttribute(qualifiedName, value);
         }
-    }
-
-    /**
-     * Calculates a shift-point by which bidirectional edges should be curved to not overlap each other.
-     * @param pos1 The starting-point of the edge to be curved.
-     * @param pos2 The end-point of the edge to be curved.
-     */
-    private bidirectionalEdgeShift(pos1: Vector, pos2: Vector): Vector {
-        let edge: Vector = Vector.subtract(pos1, pos2);
-        return edge.orthogonalVector(CurvedPathElementWithLabel.BIDIRECTIONAL_EDGES_CURVE_RADIUS);
     }
 
     setUpMouseEventsForLabel(): void {

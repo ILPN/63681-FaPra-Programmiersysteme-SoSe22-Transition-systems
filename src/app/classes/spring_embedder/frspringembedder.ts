@@ -1,6 +1,5 @@
 import {Vector} from './models/vector';
 import {TsNode} from '../diagram/tsnode';
-import {TsEdge} from '../diagram/tsedge';
 import { TsModel } from '../diagram/tsmodel';
 
 /**
@@ -53,7 +52,7 @@ export class FRSpringEmbedder {
         idealSpringLength: number = 200,
         fromRandomPositions: Boolean = true
     ) {
-        this._model = model,
+        this._model = model;
         this._cooling = cooling;
         this._idealSpringLength = idealSpringLength;
         this._fromRandomPositions = fromRandomPositions;
@@ -227,7 +226,7 @@ export class FRSpringEmbedder {
             //.filter(e => !e.isSelfLoop())
             //.filter(e => e.nodeFrom.equals(node));
         for (const edge of edgesToUse) {
-            const force = this.computeSingleAttractiveForce(edge.position_from, edge.position_to);
+            const force = this.computeSingleAttractiveForce(edge.nodeFrom.position, edge.nodeTo.position);
             attractiveForce = attractiveForce.add(force);
         }
         return attractiveForce;
