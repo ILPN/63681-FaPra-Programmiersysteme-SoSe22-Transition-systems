@@ -33,7 +33,7 @@ export class TSValidatorUtil {
                     break
                 }
                 if (nodeLineParser.hasCoordinates() && !this.regExNodeCoordinates.test(elems[2].trim())) {
-                    let message = "Line \"" + line + "\"\nElement 3 must be correct coordinates";
+                    let message = "Line \"" + line + "\"\nElement 3 must have coordinates format (x,y)";
                     isValid = new IsValid(false, message);
                     break
                 }
@@ -43,17 +43,17 @@ export class TSValidatorUtil {
                 let edgeLineParser = new EdgeLineParser(line);
                 let elems = line.trim().split(" ");
                 if (elems.length < 3) {
-                    let message = "Line \"" + line + "\" not valid\nAn edge must have at least 3 elements " + elems.length;
+                    let message = "Line \"" + line + "\" not valid\nAn edge must have at least 3 elements but was " + elems.length;
                     isValid = new IsValid(false, message);
                     break;
                 }
                 if (edgeLineParser.hasDragPoint() && !this.regExNodeCoordinates.test(elems[5])) {
-                    let message = "Line \"" + line + "\"\nElement 5 must be correct coordinates";
+                    let message = "Line \"" + line + "\"\nElement 5 must have coordinates format (x,y)";
                     isValid = new IsValid(false, message);
                     break;
                 }
                 if (!nodeIDs.some(e => (e === edgeLineParser.getNodeFrom())) || !nodeIDs.some(e => (e === edgeLineParser.getNodeTo()))) {
-                    let message = "Line \"" + line + "\"\nOne of the nodes is not defined";
+                    let message = "Line \"" + line + "\"\nOne of the edge nodes is not defined in \".nodes\" sections";
                     isValid = new IsValid(false, message);
                     break;
                 }
