@@ -68,12 +68,16 @@ export class TsNode extends TsElement {
     public setPosition(x: number, y: number) {
         this._position.x = x;
         this._position.y = y;
-        this.updateSVG();
     }
 
     set position(newPosition: Vector) {
         //this is not updating the SVG, thus you can´t see the changes
         this._position = newPosition;
+    }
+
+    public setPositionAndUpdateView(x: number, y: number) {
+        this.setPosition(x, y);
+        this.updateSVG();
     }
 
     get x(): number {
