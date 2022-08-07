@@ -83,6 +83,26 @@ export class Vector {
     }
 
     /**
+     * Manipulates this vector by adding the passed vector. Returns the result afterwards.
+     * @param otherVector
+     */
+    public addToThisVector(otherVector: Vector): Vector{
+        this.x = this.x + otherVector.x;
+        this.y = this.y + otherVector.y
+        return this;
+    }
+
+    /**
+     * Manipulates this vector by subtracting the passed vector. Returns the result afterwards.
+     * @param otherVector
+     */
+    public subtractFromThisVector(otherVector: Vector): Vector{
+        this.x = this.x - otherVector.x;
+        this.y = this.y - otherVector.y;
+        return this;
+    }
+
+    /**
      * Substracts a given vector from the current one. This is applied to every
      * coordinate.
      */
@@ -129,6 +149,9 @@ export class Vector {
     }
 
     divideBy(factor: number): Vector {
+        if(factor === 0){
+            throw new Error("Illegal argument '0' in method Vector#divideBy!");
+        }
         this.x = this.x / factor;
         this.y = this.y / factor;
         return this;
