@@ -5,6 +5,8 @@ import {TsGraphProperties} from "./tsgraphproperties";
 import {FRSpringEmbedder} from "../spring_embedder/frspringembedder";
 import {SVGElementWithLabel} from "./SVGElementWithLabel";
 import {Vector} from "../spring_embedder/models/vector";
+import {RandomGraphCalculator} from "../graph/random-graph-calculator";
+import {FRSpringEmbedder1} from "../spring_embedder/frspring-embedder1";
 
 
 export class TsModel {
@@ -13,11 +15,14 @@ export class TsModel {
     private readonly _edges: Array<TsEdge>;
     private _startNode!: TsNode;
     private _propertiesHighlighted: boolean;
+    private randomGraphCalculator: RandomGraphCalculator = new RandomGraphCalculator;
+    private springEmbederlayout: FRSpringEmbedder1;
 
     constructor() {
         this._nodes = new Array<TsNode>();
         this._edges = new Array<TsEdge>();
         this._propertiesHighlighted = false
+        this.springEmbederlayout = new FRSpringEmbedder1(this);
     }
     get nodes(): Array<TsNode> {
         return this._nodes;
@@ -358,17 +363,41 @@ export class TsModel {
     /**
      * Computes the embedding of the TS using the SpringEmbedder algorithmn.
      */
+    //TODO Layout sollte nicht im Modell erfolgen
     public computeEmbedding(useRandomPositions: Boolean): void {
-        const embedder = new FRSpringEmbedder(this);
-            embedder.cooling = (iteration: number) => 1.0 / (50 * iteration) ;
-            embedder.springLength = 180;
-            embedder.fromRandomPositions = useRandomPositions;
-            embedder.run(1000, 10);
+        if(useRandomPositions){
+            this.randomGraphCalculator.calculateAndSetPositions(this);
+        }
+        this.springEmbederlayout.layoutGraph();
+        // const embedder = new FRSpringEmbedder(this);
+        //     embedder.cooling = (iteration: number) => 1.0 / (50 * iteration) ;
+        //     //TODO Die Spring-length muss an die Zeichenebene angepasst sein
+        //     embedder.springLength = 180;
+        //     embedder.fromRandomPositions = useRandomPositions;
+        //     embedder.run(1000, 10);
     }
 
+    //TODO Layout sollte nicht im Modell erfolgen
     public layoutBySpringEmbedder(fromRandomPositions: Boolean) {
         this.computeEmbedding(fromRandomPositions);
-        this.centerToScreen();
+        //TODO Sollte hier eine Anpassung der Positionen erfolgen?
+        //-> Kontrollieren, ob diese Anpassung das Spring-Embedder-Ergebnis nicht zerstört
+        //this.centerToScreen();
+        this.updateSVG();
+    }
+
+    //TODO Layout sollte nicht im Modell erfolgen
+    //TODO Methode(-name) anpassen, da fixNodeId optional ist
+    /**
+     *
+     * @param fromRandomPositions
+     * @param fixNodeId Id of a node whose position should not be changed.
+     */
+    public layoutBySpringEmbedderAndFixedNode(fromRandomPositions: Boolean, fixNodeId?: string) {
+        if(fromRandomPositions){
+            this.randomGraphCalculator.calculateAndSetPositions(this);
+        }
+        this.springEmbederlayout.layoutGraph(fixNodeId);
         this.updateSVG();
     }
 
