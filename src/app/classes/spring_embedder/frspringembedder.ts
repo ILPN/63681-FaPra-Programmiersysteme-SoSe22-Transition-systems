@@ -95,10 +95,10 @@ export class FRSpringEmbedder {
             console.log('No nodes found');
             return
         }
-        if (this._fromRandomPositions)
+        if (this._fromRandomPositions) {
             console.log('Using random start positions')
             this.initializeRandomPositions();
-
+        }
         this._forces = [];
         let iteration = 1;
         while (iteration < maxIterations && this.normIsToHigh(epsilon) ) {
@@ -113,7 +113,7 @@ export class FRSpringEmbedder {
         console.groupEnd();
     }
 
-    public computeCoolingFactor(node: TsNode, iteration: number): number {
+    private computeCoolingFactor(node: TsNode, iteration: number): number {
         const minDistance = this.minDistanceToOtherNodes(node);
         if (minDistance <= this.MIN_NODE_DISTANCE) {
             return 1.0 / iteration;
@@ -124,7 +124,7 @@ export class FRSpringEmbedder {
     /**
      * Computes the repulsive and attractive forces for each node.
      */
-    public computeForces(): void {
+    private computeForces(): void {
         let index = 0;
         for (const node of this._model.nodes) {
             let repulsiveForce = this.computeRepulsiveForce(node);
@@ -139,7 +139,7 @@ export class FRSpringEmbedder {
      * Moves all nodes by the given forces. The given cooling is applied before
      * the force is applied.
      */
-    public moveNodesByForces(iteration: number): void {
+    private moveNodesByForces(iteration: number): void {
         let index = 0;
         for (const node of this._model.nodes) {
             // Apply the cooling to the displacement vector
@@ -157,7 +157,7 @@ export class FRSpringEmbedder {
      * Catches the case in which the given array of forces is empty. In that
      * case true is returned.
      */
-    public normIsToHigh(epsilon: number): boolean {
+    private normIsToHigh(epsilon: number): boolean {
         if (this._forces.length === 0) {
             return true;
         }
@@ -169,7 +169,7 @@ export class FRSpringEmbedder {
     /**
      * Computes the repulsive force between the two given points.
      */
-    public computeSingleRepulsiveForce(point1: Vector, point2: Vector): Vector {
+    private computeSingleRepulsiveForce(point1: Vector, point2: Vector): Vector {
         // If both points are the same we would face some computation erros
         // and the result would be NaN. To avoid this we need to catch this
         // case before.
@@ -188,7 +188,7 @@ export class FRSpringEmbedder {
     /**
      * Computes the repulsive force for the given node.
      */
-    public computeRepulsiveForce(node: TsNode): Vector {
+    private computeRepulsiveForce(node: TsNode): Vector {
         const currentPosition = node.position
         // The Algorithm of Fruchterman & Reingold uses all nodes to compute
         // the repulsive force. The set of all non-adjacent nodes is only taken
@@ -207,7 +207,7 @@ export class FRSpringEmbedder {
     /**
      * Computes the attractive force, given by the edge.
      */
-    public computeSingleAttractiveForce(point1: Vector, point2: Vector): Vector {
+    private computeSingleAttractiveForce(point1: Vector, point2: Vector): Vector {
         let attractiveForce = Vector.byPoints(point2, point1);
         const scalar = Math.pow(attractiveForce.norm(), 2) / this._idealSpringLength;
         attractiveForce.normalize();
@@ -274,7 +274,7 @@ export class FRSpringEmbedder {
     /**
      * Returns the smallest distance of the given node to the other onces.
      */
-    public minDistanceToOtherNodes(node: TsNode): number {
+    private minDistanceToOtherNodes(node: TsNode): number {
         let minDistnace = Number.MAX_VALUE;
         const positonsToCheck = this._model.nodes
             .filter(n => n.id !== node.id)
