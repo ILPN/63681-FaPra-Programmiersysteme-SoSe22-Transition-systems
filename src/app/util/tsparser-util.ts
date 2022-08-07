@@ -11,7 +11,7 @@ export class TSParserUtil {
         let nodeLineParser = new NodeLineParser(line);
         let node = new TsNode(nodeLineParser.getID(), nodeLineParser.getLabel());
         if (nodeLineParser.hasCoordinates()) {
-            node.setPosition(nodeLineParser.getCoordinateX(), nodeLineParser.getCoordinateY());
+            node.setPositionAndUpdateView(nodeLineParser.getCoordinateX(), nodeLineParser.getCoordinateY());
         }
         return node;
     }
