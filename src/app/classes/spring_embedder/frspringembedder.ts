@@ -169,7 +169,7 @@ export class FRSpringEmbedder {
     /**
      * Computes the repulsive force between the two given points.
      */
-    private computeSingleRepulsiveForce(point1: Vector, point2: Vector): Vector {
+    computeSingleRepulsiveForce(point1: Vector, point2: Vector): Vector {
         // If both points are the same we would face some computation erros
         // and the result would be NaN. To avoid this we need to catch this
         // case before.
@@ -207,7 +207,7 @@ export class FRSpringEmbedder {
     /**
      * Computes the attractive force, given by the edge.
      */
-    private computeSingleAttractiveForce(point1: Vector, point2: Vector): Vector {
+    computeSingleAttractiveForce(point1: Vector, point2: Vector): Vector {
         let attractiveForce = Vector.byPoints(point2, point1);
         const scalar = Math.pow(attractiveForce.norm(), 2) / this._idealSpringLength;
         attractiveForce.normalize();
