@@ -5,6 +5,7 @@ import {SvgService} from '../../services/svg.service';
 import {TsModel} from '../../classes/diagram/tsmodel';
 import {TsEdge} from "../../classes/diagram/tsedge";
 import {TsNode} from "../../classes/diagram/tsnode";
+import {Vector} from "../../classes/spring_embedder/models/vector";
 
 @Component({
     selector: 'app-display',
@@ -13,12 +14,14 @@ import {TsNode} from "../../classes/diagram/tsnode";
 })
 export class DisplayComponent implements OnDestroy {
 
+    // Repräsentiert die Zeichenebene des Graphen in Form eines Haupt-SVG-Elements
     @ViewChild('drawingArea') drawingArea: ElementRef<SVGElement> | undefined;
 
     private _sub: Subscription;
     private _model!: TsModel;
-    private draggedElement: TsNode|TsEdge|undefined;
+    private draggedElement: TsNode | TsEdge | undefined;
     private springEmbedderModus: Boolean;
+    private mouseMoveReferencePoint: Vector | undefined;
 
     constructor(private _displayService: DisplayService) {
         this.springEmbedderModus = true;
@@ -76,21 +79,49 @@ export class DisplayComponent implements OnDestroy {
 
     private processMouseDown() {
         this.draggedElement = this._model.getDraggedElement();
+        if (this.draggedElement?.isNode() && this.springEmbedderModus) {
+            let node: TsNode = <TsNode>this.draggedElement;
+            //TODO this.mouseMoveReferencePoint = node.position;
+        }
     }
 
     private processMouseUp() {
         this._model.removeAllDragedMarker()
-        if(this.draggedElement?.isNode() && this.springEmbedderModus)
-            this._model.layoutBySpringEmbedder(false);
+        if (this.draggedElement?.isNode() && this.springEmbedderModus) {
+            let node: TsNode = <TsNode>this.draggedElement;
+            this._model.layoutBySpringEmbedderAndFixedNode(false, node.id);
+            //this._model.layoutBySpringEmbedder(false);
+        }
         this.draggedElement = undefined;
+        this.mouseMoveReferencePoint = undefined;
     }
 
     private processMouseMoving(event: MouseEvent) {
-        if(this.draggedElement){
-            this.draggedElement.setPosition(event.offsetX, event.offsetY)
+        if (this.draggedElement) {
+            //TODO Bei einer flüssigen Spring-Embedder-Darstellung sollte hier auch per Spring-Embedder gerendert werden
+            if (this.draggedElement?.isNode() && this.springEmbedderModus) {
+                let node: TsNode = <TsNode>this.draggedElement;
+                let mousePosition: Vector = new Vector(event.offsetX, event.offsetY);
+                if (this.mouseMoveReferencePoint) {
+                    let distToRefPoint = mousePosition.distanceTo(this.mouseMoveReferencePoint);
+                    console.log("distToRefPoint: " + distToRefPoint);
+                    //TODO choose appropriate value
+                    if (distToRefPoint > 3) {
+                        //TODO Der bewegte Knoten sollte durch diesen Aufruf nicht gerendert werden, da er fixiert wird.
+                        /*
+                        TODO Hier sollte die Anzahl an Iterationen kleiner sein als bei der initialen Anzeige - z.B. 10.
+                         Dadurch wird das Layout dynamischer.
+                         */
+                        this._model.layoutBySpringEmbedderAndFixedNode(false, node.id);
+                        this.mouseMoveReferencePoint = mousePosition;
+                    }
+                } else {
+                    this.mouseMoveReferencePoint = mousePosition;
+                }
+            }
+            this.draggedElement.setPositionAndUpdateView(event.offsetX, event.offsetY)
         }
     }
-
 
     toggleSpringEmbedderModus() {
         this.springEmbedderModus = !this.springEmbedderModus;
