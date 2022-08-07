@@ -96,7 +96,13 @@ export class TsEdge extends TsElement {
         return this._transitions;
     }
 
+    //TODO Warum ist die Position des Dragpoints gleich der Position der Kante?
     setPosition(x: number, y: number): void {
+        this.setDragpoint(new Vector(x, y));
+    }
+
+    //TODO Warum ist die Position des Dragpoints gleich der Position der Kante?
+    setPositionAndUpdateView(x: number, y: number): void {
         this.setDragpoint(new Vector(x, y));
     }
 
