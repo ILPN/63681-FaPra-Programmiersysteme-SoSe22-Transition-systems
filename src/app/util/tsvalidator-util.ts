@@ -9,7 +9,6 @@ export class TSValidatorUtil {
     }
 
     regExNodeCoordinates: RegExp = /^\(?([+-]?(?=\.\d|\d)(?:\d+)?(?:\.?\d*))(?:[eE]([+-]?\d+))?,([+-]?(?=\.\d|\d)(?:\d+)?(?:\.?\d*))(?:[eE]([+-]?\d+))?\)?$/;
-    regExEdgeWeighting: RegExp = /^[0-9]+$/;
 
 
     validateTSLine(type: TSLineType, line: string, nodeIDs: Array<string>): IsValid {
@@ -43,7 +42,7 @@ export class TSValidatorUtil {
                 let edgeLineParser = new EdgeLineParser(line);
                 let elems = line.trim().split(" ");
                 if (elems.length < 3) {
-                    let message = "Line \"" + line + "\" not valid\nAn edge must have at least 3 elements but was " + elems.length;
+                    let message = "Line \"" + line + "\" not valid\nEdge line must have at least 3 elements but was " + elems.length;
                     isValid = new IsValid(false, message);
                     break;
                 }
@@ -52,8 +51,13 @@ export class TSValidatorUtil {
                     isValid = new IsValid(false, message);
                     break;
                 }
-                if (!nodeIDs.some(e => (e === edgeLineParser.getNodeFrom())) || !nodeIDs.some(e => (e === edgeLineParser.getNodeTo()))) {
-                    let message = "Line \"" + line + "\"\nOne of the edge nodes is not defined in \".nodes\" sections";
+                if (!nodeIDs.some(e => (e === edgeLineParser.getNodeTo()))) {
+                    let message = "Line \"" + line + "\"\nNode \"" + edgeLineParser.getNodeTo() + "\" is not defined in \".nodes\" sections";
+                    isValid = new IsValid(false, message);
+                    break;
+                }
+                if (!nodeIDs.some(e => (e === edgeLineParser.getNodeFrom()))) {
+                    let message = "Line \"" + line + "\"\nNode \"" + edgeLineParser.getNodeFrom() + "\" is not defined in \".nodes\" sections";
                     isValid = new IsValid(false, message);
                     break;
                 }
