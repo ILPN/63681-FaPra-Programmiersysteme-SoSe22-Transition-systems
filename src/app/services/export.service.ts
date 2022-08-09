@@ -3,6 +3,7 @@ import {TsModel} from "../classes/diagram/tsmodel";
 import {TsNode} from "../classes/diagram/tsnode";
 import {TsEdge} from "../classes/diagram/tsedge";
 import {Vector} from "../classes/spring_embedder/models/vector";
+import {TsTransition} from "../classes/diagram/tsTransition";
 
 @Injectable({
     providedIn: 'root'
@@ -45,10 +46,9 @@ export class ExportService {
         //generates transitions and arcs
         for (let edge of model.edges) {
             let tranLabelCount = 0;
-            for(let label of edge.getTransitionLabels()){
-                let pos = this.calculateTransitionPosition(edge, tranLabelCount);
-                let transitionsId :string = "t" + transitionIndex;
-                transitions += this.generatePNMLTransition(transitionsId, label, pos);
+            for (let transition of edge.transitions) {
+                let transitionsId: string = "t" + transitionIndex;
+                transitions += this.generatePNMLTransition(transitionsId, transition);
                 arcs += this.generatePNMLArc(edge, arcIndex, transitionsId);
                 transitionIndex++;
                 arcIndex = Number(arcIndex) + 2;
@@ -66,14 +66,6 @@ export class ExportService {
 
     }
 
-
-    calculateTransitionPosition(edge: TsEdge, tranLabelCount: number) {
-        let offSet = tranLabelCount * 30;
-        let x = ((edge.nodeFrom.x + edge.nodeTo.x)/2).toFixed(2)
-        let y = ((edge.nodeFrom.y + edge.nodeTo.y)/2).toFixed(2)
-        return new Vector(Number(x),Number(y)+offSet);
-    }
-
     private generatePNMLPlace(node: TsNode): string {
         let result = '<place id=\"' + node.id + '\">\n';
         result += '<name>\n';
@@ -89,13 +81,13 @@ export class ExportService {
         return result;
     }
 
-    private generatePNMLTransition(id: string, label:string, position:Vector): string {
+    private generatePNMLTransition(id: string, transition: TsTransition): string {
         let result = '<transition  id=\"' + id + '\">\n';
         result += '<name>\n';
-        result += '<text>' + label + '</text>\n';
+        result += '<text>' + transition.label + '</text>\n';
         result += '</name>\n';
         result += '<graphics>\n';
-        result += '<position x=\"' + position.x + '\" y=\"' + position.y + '\"/>\n';
+        result += '<position x=\"' + transition.position.x.toFixed(2) + '\" y=\"' + transition.position.y.toFixed(2) + '\"/>\n';
         result += '</graphics>\n';
         result += '</transition>\n';
         return result;
@@ -116,12 +108,12 @@ export class ExportService {
 
 
     private formatXML(xml: string): string {
-        let formatted = '', indent= '';
+        let formatted = '', indent = '';
         let tab = '\t';
-        xml.split(/>\s*</).forEach(function(node) {
-            if (node.match( /^\/\w/ )) indent = indent.substring(tab.length); // decrease indent by one 'tab'
+        xml.split(/>\s*</).forEach(function (node) {
+            if (node.match(/^\/\w/)) indent = indent.substring(tab.length); // decrease indent by one 'tab'
             formatted += indent + '<' + node + '>\r\n';
-            if (node.match( /^<?\w[^>]*[^\/]$/ )) indent += tab;              // increase indent
+            if (node.match(/^<?\w[^>]*[^\/]$/)) indent += tab;              // increase indent
         });
         return formatted.substring(1, formatted.length - 3);
     }
