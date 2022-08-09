@@ -53,6 +53,7 @@ export class TsEdge extends TsElement {
 
     public updateSVG() {
         if (this._svgElement instanceof CurvedPathElementWithLabel) {
+            this.updateTransionsPositions();
             this._svgElement.update();
         }
     }
@@ -124,6 +125,7 @@ export class TsEdge extends TsElement {
 
     removeDragpoint() {
         this._dragpoint = undefined;
+        this.updateSVG();
     }
 
     getTransitionLabels(): string[] {
@@ -168,6 +170,23 @@ export class TsEdge extends TsElement {
 
     private selfLoopShift() {
         return new Vector(0, -3 * CircleElementWithLabel.circleRadius);
+    }
+
+    private updateTransionsPositions() {
+        let posTxt = Vector.midOf(this.position_from, this.position_to)
+        posTxt = Vector.midOf(posTxt, this.getDragpoint())
+        for (let le of this.transitions) {
+            le.position = posTxt;
+            let commaShift = 0;
+            if (!(le === this.transitions[0]))
+                commaShift = 1
+            posTxt = new Vector(posTxt.x + ((le.label.length + commaShift) * CurvedPathElementWithLabel.fontSize() / 2), posTxt.y);
+
+        }
+    }
+
+    getTransitionsPositions(): Vector[] {
+        return this._transitions.map(e => e.position);
     }
 }
 

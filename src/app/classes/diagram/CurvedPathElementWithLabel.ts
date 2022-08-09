@@ -1,5 +1,4 @@
 import {SVGElementWithLabel} from "./SVGElementWithLabel";
-import {Vector} from "../spring_embedder/models/vector";
 import {TsEdge} from "./tsedge";
 
 export class CurvedPathElementWithLabel extends SVGElementWithLabel {
@@ -32,20 +31,17 @@ export class CurvedPathElementWithLabel extends SVGElementWithLabel {
         for (let l of this.labelElements) {
             l.setAttribute("stroke-width", "1");
             l.setAttribute("fill", "black");
-            l.setAttribute("font-size", this.fontSize() + "px");
+            l.setAttribute("font-size", CurvedPathElementWithLabel.fontSize() + "px");
             l.setAttribute("font-family", "Arial, Helvetica, sans-serif");
         }
     }
 
     private createLabelElement(text: string) {
-        if (this.labelElements.length > 0) {
-            let separator: string = ", ";
-            let labelElement = <SVGElement>document.createElementNS(SVGElementWithLabel.svgNamespace(), 'text');
-            labelElement.appendChild(document.createTextNode(separator));
-            this._labelElements.push(labelElement);
-        }
+        let separator = "";
+        if (this.labelElements.length > 0)
+            separator = ", ";
         let labelElement = <SVGElement>document.createElementNS(SVGElementWithLabel.svgNamespace(), 'text');
-        labelElement.appendChild(document.createTextNode(text));
+        labelElement.appendChild(document.createTextNode(separator.concat(text)));
         this._labelElements.push(labelElement);
     }
 
@@ -61,28 +57,19 @@ export class CurvedPathElementWithLabel extends SVGElementWithLabel {
         // set label-position
         //TODO TRAN-62 Position verbessern
         //Mitte von Controlpunkt und Mitte der Knoten
-        let posTxt = Vector.midOf(pos1, pos2)
-        posTxt = Vector.midOf(posTxt, cp)
-        let index = 1;
+        let index = 0;
+        let positions = this.edge.getTransitionsPositions();
         for (let le of this.labelElements) {
-            le.setAttribute("x", posTxt.x.toString());
-            if (index % 2 !== 0) {
-                posTxt.x = posTxt.x + (le.childNodes[0].textContent!.length * this.fontSize() / 2);
-                //posTxt.x = posTxt.x + this.posTxtXEvenOffset();
-            } else {
-                posTxt.x = posTxt.x + this.posTxtXOddOffset();
-            }
+            let pos = positions[index];
+            le.setAttribute("x", pos.x.toString());
+            le.setAttribute("y", pos.y.toString());
             index++;
         }
-        this.setLabelAttribute("y", posTxt.y.toString());
+
     }
 
-    private fontSize() {
+    static fontSize() {
         return (0.8 * SVGElementWithLabel.circleRadius);
-    }
-
-    private posTxtXOddOffset() {
-        return 10;
     }
 
     get labelElements(): SVGElement[] {
