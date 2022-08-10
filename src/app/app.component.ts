@@ -14,7 +14,7 @@ import {FileType} from "./util/file-type";
     templateUrl: './app.component.html',
     styleUrls: ['./app.component.scss']
 })
-export class AppComponent implements OnDestroy, OnInit, AfterViewInit {
+export class AppComponent implements AfterViewInit {
 
     public textareaFc: FormControl;
     private model!: TsModel;
@@ -40,12 +40,6 @@ export class AppComponent implements OnDestroy, OnInit, AfterViewInit {
     }
 
 
-    ngOnDestroy(): void {
-    }
-
-    ngOnInit() {
-    }
-
     ngAfterViewInit() {
         this.refreshGraph();
     }
@@ -57,16 +51,16 @@ export class AppComponent implements OnDestroy, OnInit, AfterViewInit {
     }
 
     refreshGraph() {
-        if (this.textareaFc.value != null) {
+        if (this.textareaFc.value != null && this.textareaFc.value.trim() != '') {
             let content = this.textareaFc.value.trim();
             let isValid = this._validatorService.validateTS(content);
             if (isValid.valid) {
                 this.processSourceChange(content, false)
             } else {
-                alert("The file your are trying to upload is not valid\nMessage:\n" + isValid.message)
+                alert("Your input is not valid\nMessage:\n" + isValid.message)
             }
         } else {
-            alert("Your input is empty\nThis is not allowed!")
+            alert("Your input is empty!\nPlease click on \"Default\" to get a default input")
         }
 
     }
