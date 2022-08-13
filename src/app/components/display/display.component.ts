@@ -81,7 +81,7 @@ export class DisplayComponent implements OnDestroy {
         this.draggedElement = this._model.getDraggedElement();
         if (this.draggedElement?.isNode() && this.springEmbedderModus) {
             let node: TsNode = <TsNode>this.draggedElement;
-            //TODO this.mouseMoveReferencePoint = node.position;
+            //TODO this.mouseMoveReferencePoint = node.position; geht anscheinend nicht weil mousedown-event während der ganzen Maus-Bewegung erzeugt wird
         }
     }
 
@@ -89,7 +89,7 @@ export class DisplayComponent implements OnDestroy {
         this._model.removeAllDragedMarker()
         if (this.draggedElement?.isNode() && this.springEmbedderModus) {
             let node: TsNode = <TsNode>this.draggedElement;
-            this._model.layoutBySpringEmbedderAndFixedNode(false, node.id);
+            this._model.refreshSpringEmbedderLayout(node.id);
             //this._model.layoutBySpringEmbedder(false);
         }
         this.draggedElement = undefined;
@@ -112,7 +112,7 @@ export class DisplayComponent implements OnDestroy {
                         TODO Hier sollte die Anzahl an Iterationen kleiner sein als bei der initialen Anzeige - z.B. 10.
                          Dadurch wird das Layout dynamischer.
                          */
-                        this._model.layoutBySpringEmbedderAndFixedNode(false, node.id);
+                        this._model.refreshSpringEmbedderLayout(node.id);
                         this.mouseMoveReferencePoint = mousePosition;
                     }
                 } else {
