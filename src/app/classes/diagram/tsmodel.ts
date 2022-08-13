@@ -3,8 +3,6 @@ import {TsEdge} from "./tsedge";
 import {TsElement} from "./tselement";
 import {TsGraphProperties} from "./tsgraphproperties";
 import {FRSpringEmbedder} from "../spring_embedder/frspringembedder";
-import {SVGElementWithLabel} from "./SVGElementWithLabel";
-import {Vector} from "../spring_embedder/models/vector";
 import {RandomGraphCalculator} from "../graph/random-graph-calculator";
 import {FRSpringEmbedder1} from "../spring_embedder/frspring-embedder1";
 
@@ -16,14 +14,22 @@ export class TsModel {
     private _startNode!: TsNode;
     private _propertiesHighlighted: boolean;
     private randomGraphCalculator: RandomGraphCalculator = new RandomGraphCalculator;
-    private springEmbederlayout: FRSpringEmbedder1;
+    private springEmbedderlayout1: FRSpringEmbedder1;
+    private springEmbedderlayout: FRSpringEmbedder;
 
     constructor() {
         this._nodes = new Array<TsNode>();
         this._edges = new Array<TsEdge>();
         this._propertiesHighlighted = false
-        this.springEmbederlayout = new FRSpringEmbedder1(this);
+        this.springEmbedderlayout1 = new FRSpringEmbedder1(this);
+        const embedder = new FRSpringEmbedder(this);
+        embedder.cooling = (iteration: number) => 1.0 / (50 * iteration);
+        embedder.springLength = 180;
+        embedder.fromRandomPositions = false;
+        embedder.run(1000, 10);
+        this.springEmbedderlayout = embedder;
     }
+
     get nodes(): Array<TsNode> {
         return this._nodes;
     }
@@ -360,44 +366,21 @@ export class TsModel {
         return svgNodeLabel.concat(svgNodes).concat(svgEdges).concat(svgEdgeLabel);
     }
 
-    /**
-     * Computes the embedding of the TS using the SpringEmbedder algorithmn.
-     */
-    //TODO Layout sollte nicht im Modell erfolgen
-    public computeEmbedding(useRandomPositions: Boolean): void {
-        if(useRandomPositions){
-            this.randomGraphCalculator.calculateAndSetPositions(this);
-        }
-        this.springEmbederlayout.layoutGraph();
-        // const embedder = new FRSpringEmbedder(this);
-        //     embedder.cooling = (iteration: number) => 1.0 / (50 * iteration) ;
-        //     //TODO Die Spring-length muss an die Zeichenebene angepasst sein
-        //     embedder.springLength = 180;
-        //     embedder.fromRandomPositions = useRandomPositions;
-        //     embedder.run(1000, 10);
-    }
-
     //TODO Layout sollte nicht im Modell erfolgen
     public layoutBySpringEmbedder(fromRandomPositions: Boolean) {
-        this.computeEmbedding(fromRandomPositions);
-        //TODO Sollte hier eine Anpassung der Positionen erfolgen?
-        //-> Kontrollieren, ob diese Anpassung das Spring-Embedder-Ergebnis nicht zerstört
-        //this.centerToScreen();
-        this.updateSVG();
+        if (fromRandomPositions) {
+            this.randomGraphCalculator.calculateAndSetPositions(this);
+        }
+        this.refreshSpringEmbedderLayout();
     }
 
     //TODO Layout sollte nicht im Modell erfolgen
-    //TODO Methode(-name) anpassen, da fixNodeId optional ist
     /**
-     *
-     * @param fromRandomPositions
+     * Refreshes an already initialized spring-embedder-graph.
      * @param fixNodeId Id of a node whose position should not be changed.
      */
-    public layoutBySpringEmbedderAndFixedNode(fromRandomPositions: Boolean, fixNodeId?: string) {
-        if(fromRandomPositions){
-            this.randomGraphCalculator.calculateAndSetPositions(this);
-        }
-        this.springEmbederlayout.layoutGraph(fixNodeId);
+    public refreshSpringEmbedderLayout(fixNodeId?: string) {
+        this.springEmbedderlayout1.layoutGraph(fixNodeId);
         this.updateSVG();
     }
 
@@ -451,18 +434,6 @@ export class TsModel {
     makeStartNodeBold() {
         if (this._startNode)
             this.startNode.makeStartNodeBold()
-    }
-
-    private centerToScreen() {
-        let max_x = Vector.getMaxX(this.nodes.map(e => e.position));
-        let min_x = Vector.getMinX(this.nodes.map(e => e.position));
-        let max_y = Vector.getMaxY(this.nodes.map(e => e.position));
-        let min_y = Vector.getMinY(this.nodes.map(e => e.position));
-        let shift_x = ((SVGElementWithLabel.FULL_X - min_x - max_x) / 2);
-        let shift_y = ((SVGElementWithLabel.FULL_Y - min_y - max_y) / 2);
-        for (let each of this.nodes) {
-            each.position = each.position.add(new Vector(shift_x, shift_y));
-        }
     }
 
     highlightProperties(): void {
