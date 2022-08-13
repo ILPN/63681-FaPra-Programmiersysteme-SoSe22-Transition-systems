@@ -13,17 +13,23 @@ export class FRSpringEmbedder1 {
         * FRSpringEmbedder1.DRAWING_AREA_HEIGHT_IN_PIXELS;
 
     //TODO Idealen Wert festlegen
-    private static NUMBER_OF_ITERATIONS: number = 50;
+    private static DEFAULT_NUMBER_OF_ITERATIONS: number = 50;
 
     private static COOLING_START_VALUE: number = FRSpringEmbedder1.DRAWING_AREA_WIDTH_IN_PIXELS / 50;
 
     private graph: TsModel;
 
-    constructor(graph: TsModel) {
+    public constructor(graph: TsModel) {
         this.graph = graph;
+        //TODO set initial positions here? => maybe pass initialization-function as parameter
     }
 
-    public layoutGraph(fixedNodeId?: string) {
+    /**
+     * Layouts a graph with previously initialized node-positions.
+     * @param fixedNodeId
+     * @param overallNumberOfIterations
+     */
+    public layoutGraph(fixedNodeId?: string, overallNumberOfIterations: number = FRSpringEmbedder1.DEFAULT_NUMBER_OF_ITERATIONS) {
         //TODO Make function in model?
         const numberOfNodes: number = this.graph.nodes.length;
         //TODO choose an approprate value
@@ -33,7 +39,7 @@ export class FRSpringEmbedder1 {
         //TODO Node-Ids müssen eindeutig sein!
         const nodeIdToDispacementVectorMap = new Map<string, Vector>();
 
-        for (var i = 1; i <= FRSpringEmbedder1.NUMBER_OF_ITERATIONS; i++) {
+        for (var i = 1; i <= overallNumberOfIterations; i++) {
             // foreach v ∈ V do
             for (let actualNode of this.graph.nodes) {
                 //v.disp := 0;
@@ -84,7 +90,7 @@ export class FRSpringEmbedder1 {
                     nodeToDisplacementVector.subtractFromThisVector(displacementAdjustment);
                 }
             }
-            let coolingValue: number = this.coolingValue(i);
+            let coolingValue: number = this.coolingValue(i, overallNumberOfIterations);
             //foreach v ∈ V do
             for (let actualNode of this.graph.nodes) {
                 // Anpassen der Knoten-Positionen mit Cooling: v.pos ← v.pos + (v.disp/|v.disp|) ∗ min(v.disp, t);
@@ -99,6 +105,7 @@ export class FRSpringEmbedder1 {
                 // Auf Zeichenebene begrenzen:
                 LayoutUtils.limitPositionToDrawingArea(actualNode);
             }
+            //TODO Nach jeder Iteration zeichnen, damit die Darstellung flüssiger ist?
         }
         //TODO Graph zeichnen
     }
@@ -109,10 +116,10 @@ export class FRSpringEmbedder1 {
      * @param iteration The number of iteration. Pass number 1 for the first iteration.
      * @private
      */
-    private coolingValue(iteration: number): number {
+    private coolingValue(iteration: number, overallNumberOfIterations: number): number {
         // The start-value is approximated to COOLING_START_VALUE here
         return FRSpringEmbedder1.COOLING_START_VALUE -
-            FRSpringEmbedder1.COOLING_START_VALUE / (FRSpringEmbedder1.NUMBER_OF_ITERATIONS) * iteration;
+            FRSpringEmbedder1.COOLING_START_VALUE / (overallNumberOfIterations) * iteration;
     }
 
 
