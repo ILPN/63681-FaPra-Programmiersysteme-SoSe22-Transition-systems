@@ -90,7 +90,6 @@ export class DisplayComponent implements OnDestroy {
         if (this.draggedElement?.isNode() && this.springEmbedderModus) {
             let node: TsNode = <TsNode>this.draggedElement;
             this._model.refreshSpringEmbedderLayout(node.id);
-            //this._model.layoutBySpringEmbedder(false);
         }
         this.draggedElement = undefined;
         this.mouseMoveReferencePoint = undefined;
