@@ -1,6 +1,7 @@
 import {Vector} from './models/vector';
 import {TsNode} from '../diagram/tsnode';
 import { TsModel } from '../diagram/tsmodel';
+import {SVGElementWithLabel} from "../diagram/SVGElementWithLabel";
 
 /**
  * The colling is applied after each iteration as a weight for the displacement
@@ -111,6 +112,7 @@ export class FRSpringEmbedder {
             ? console.log(`Computed embedding after ${iteration} iterations`)
             : console.log(`Max number of iterations reached: ${maxIterations}`);
         console.groupEnd();
+        this.centerToScreen();
     }
 
     private computeCoolingFactor(node: TsNode, iteration: number): number {
@@ -286,5 +288,17 @@ export class FRSpringEmbedder {
             }
         }
         return minDistnace;
+    }
+
+    private centerToScreen() {
+        let max_x = Vector.getMaxX(this._model.nodes.map(e => e.position));
+        let min_x = Vector.getMinX(this._model.nodes.map(e => e.position));
+        let max_y = Vector.getMaxY(this._model.nodes.map(e => e.position));
+        let min_y = Vector.getMinY(this._model.nodes.map(e => e.position));
+        let shift_x = ((SVGElementWithLabel.FULL_X - min_x - max_x) / 2);
+        let shift_y = ((SVGElementWithLabel.FULL_Y - min_y - max_y) / 2);
+        for (let each of this._model.nodes) {
+            each.position = each.position.add(new Vector(shift_x, shift_y));
+        }
     }
 }
