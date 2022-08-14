@@ -1,6 +1,8 @@
 import {TsModel} from "../diagram/tsmodel";
 import {Vector} from "./models/vector";
 import {LayoutUtils} from "../graph/layout/layout-utils";
+import {LinearCooling} from "./cooling/linear-cooling";
+import {RandomGraphCalculator} from "../graph/random-graph-calculator";
 
 export class FRSpringEmbedder1 {
 
@@ -12,24 +14,56 @@ export class FRSpringEmbedder1 {
     private static DRAWING_AREA_IN_PIXELS: number = FRSpringEmbedder1.DRAWING_AREA_WIDTH_IN_PIXELS
         * FRSpringEmbedder1.DRAWING_AREA_HEIGHT_IN_PIXELS;
 
-    //TODO Idealen Wert festlegen
-    private static DEFAULT_NUMBER_OF_ITERATIONS: number = 50;
+    private static OPTIMAL_INIT_NUMBER_OF_ITERATIONS: number = 50;
 
-    private static COOLING_START_VALUE: number = FRSpringEmbedder1.DRAWING_AREA_WIDTH_IN_PIXELS / 50;
+    private static OPTIMAL_NODE_MOVE_NUMBER_OF_ITERATIONS: number = 10;
+
+    private static OPTIMAL_INIT_COOLING_START_VALUE: number = FRSpringEmbedder1.DRAWING_AREA_WIDTH_IN_PIXELS / 50;
+
+    // Je kleiner der Wert, desto elastischer ist der Graph beim verschieben von Knoten
+    private static OPTIMAL_NODE_MOVE_COOLING_START_VALUE: number = FRSpringEmbedder1.DRAWING_AREA_WIDTH_IN_PIXELS / 800;
+
+    private randomGraphCalculator: RandomGraphCalculator = new RandomGraphCalculator;
 
     private graph: TsModel;
 
+    private cooling: LinearCooling;
+
+    private _overallNumberOfIterations: number;
+
     public constructor(graph: TsModel) {
         this.graph = graph;
+        this._overallNumberOfIterations = FRSpringEmbedder1.OPTIMAL_INIT_NUMBER_OF_ITERATIONS;
+        this.cooling = new LinearCooling(FRSpringEmbedder1.OPTIMAL_INIT_COOLING_START_VALUE, this._overallNumberOfIterations);
         //TODO set initial positions here? => maybe pass initialization-function as parameter
+    }
+
+    public initPositions(): void {
+        this.randomGraphCalculator.calculateAndSetPositions(this.graph);
+    }
+
+    public setInitLayoutProperties(): void {
+        this._overallNumberOfIterations = FRSpringEmbedder1.OPTIMAL_INIT_NUMBER_OF_ITERATIONS;
+        this.cooling.startValue = FRSpringEmbedder1.OPTIMAL_INIT_COOLING_START_VALUE;
+        this.cooling.overallNumberOfIterations = FRSpringEmbedder1.OPTIMAL_INIT_NUMBER_OF_ITERATIONS;
+    }
+
+    public setNodeMoveLayoutProperties(): void {
+        this._overallNumberOfIterations = FRSpringEmbedder1.OPTIMAL_NODE_MOVE_NUMBER_OF_ITERATIONS;
+        this.cooling.startValue = FRSpringEmbedder1.OPTIMAL_NODE_MOVE_COOLING_START_VALUE;
+        this.cooling.overallNumberOfIterations = FRSpringEmbedder1.OPTIMAL_NODE_MOVE_NUMBER_OF_ITERATIONS;
+    }
+
+    set overallNumberOfIterations(value: number) {
+        this._overallNumberOfIterations = value;
+        this.cooling.overallNumberOfIterations = value;
     }
 
     /**
      * Layouts a graph with previously initialized node-positions.
      * @param fixedNodeId
-     * @param overallNumberOfIterations
      */
-    public layoutGraph(fixedNodeId?: string, overallNumberOfIterations: number = FRSpringEmbedder1.DEFAULT_NUMBER_OF_ITERATIONS) {
+    public layoutGraph(fixedNodeId?: string) {
         //TODO Make function in model?
         const numberOfNodes: number = this.graph.nodes.length;
         //TODO choose an approprate value
@@ -39,7 +73,7 @@ export class FRSpringEmbedder1 {
         //TODO Node-Ids müssen eindeutig sein!
         const nodeIdToDispacementVectorMap = new Map<string, Vector>();
 
-        for (var i = 1; i <= overallNumberOfIterations; i++) {
+        for (var i = 1; i <= this._overallNumberOfIterations; i++) {
             // foreach v ∈ V do
             for (let actualNode of this.graph.nodes) {
                 //v.disp := 0;
@@ -90,7 +124,7 @@ export class FRSpringEmbedder1 {
                     nodeToDisplacementVector.subtractFromThisVector(displacementAdjustment);
                 }
             }
-            let coolingValue: number = this.coolingValue(i, overallNumberOfIterations);
+            let coolingValue: number = this.cooling.cool(i);
             //foreach v ∈ V do
             for (let actualNode of this.graph.nodes) {
                 // Anpassen der Knoten-Positionen mit Cooling: v.pos ← v.pos + (v.disp/|v.disp|) ∗ min(v.disp, t);
@@ -109,18 +143,5 @@ export class FRSpringEmbedder1 {
         }
         //TODO Graph zeichnen
     }
-
-    /**
-     *  "the temperature could start at an initial value (say one tenth the width of the frame) and decay to 0
-     *  in an inverse linear fashion.”
-     * @param iteration The number of iteration. Pass number 1 for the first iteration.
-     * @private
-     */
-    private coolingValue(iteration: number, overallNumberOfIterations: number): number {
-        // The start-value is approximated to COOLING_START_VALUE here
-        return FRSpringEmbedder1.COOLING_START_VALUE -
-            FRSpringEmbedder1.COOLING_START_VALUE / (overallNumberOfIterations) * iteration;
-    }
-
 
 }
