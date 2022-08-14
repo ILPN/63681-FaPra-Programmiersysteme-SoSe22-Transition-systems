@@ -3,8 +3,8 @@ import {TsEdge} from "./tsedge";
 import {TsElement} from "./tselement";
 import {TsGraphProperties} from "./tsgraphproperties";
 import {FRSpringEmbedder} from "../spring_embedder/frspringembedder";
-import {RandomGraphCalculator} from "../graph/random-graph-calculator";
 import {FRSpringEmbedder1} from "../spring_embedder/frspring-embedder1";
+import {SpringEmbedderLayoutController} from "../graph/controller/spring-embedder-layout-controller";
 
 
 export class TsModel {
@@ -13,15 +13,14 @@ export class TsModel {
     private readonly _edges: Array<TsEdge>;
     private _startNode!: TsNode;
     private _propertiesHighlighted: boolean;
-    private randomGraphCalculator: RandomGraphCalculator = new RandomGraphCalculator;
-    private springEmbedderlayout1: FRSpringEmbedder1;
+    private springEmbedderLayoutController: SpringEmbedderLayoutController;
     private springEmbedderlayout: FRSpringEmbedder;
 
     constructor() {
         this._nodes = new Array<TsNode>();
         this._edges = new Array<TsEdge>();
         this._propertiesHighlighted = false
-        this.springEmbedderlayout1 = new FRSpringEmbedder1(this);
+        this.springEmbedderLayoutController = new SpringEmbedderLayoutController(new FRSpringEmbedder1(this));
         const embedder = new FRSpringEmbedder(this);
         embedder.cooling = (iteration: number) => 1.0 / (50 * iteration);
         embedder.springLength = 180;
@@ -369,18 +368,21 @@ export class TsModel {
     //TODO Layout sollte nicht im Modell erfolgen
     public layoutBySpringEmbedder(fromRandomPositions: Boolean) {
         if (fromRandomPositions) {
-            this.randomGraphCalculator.calculateAndSetPositions(this);
+            this.springEmbedderLayoutController.drawInitialGraph();
+        } else {
+            this.springEmbedderLayoutController.redrawGraph();
         }
-        this.refreshSpringEmbedderLayout();
+        this.updateSVG();
     }
 
     //TODO Layout sollte nicht im Modell erfolgen
+    //TODO Rename method
     /**
      * Refreshes an already initialized spring-embedder-graph.
      * @param fixNodeId Id of a node whose position should not be changed.
      */
-    public refreshSpringEmbedderLayout(fixNodeId?: string) {
-        this.springEmbedderlayout1.layoutGraph(fixNodeId);
+    public refreshSpringEmbedderLayout(fixNodeId: string) {
+        this.springEmbedderLayoutController.moveNode(fixNodeId);
         this.updateSVG();
     }
 
