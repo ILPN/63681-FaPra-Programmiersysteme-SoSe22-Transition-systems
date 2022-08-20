@@ -1,5 +1,6 @@
 import {SVGElementWithLabel} from "./SVGElementWithLabel";
 import {TsEdge} from "./tsedge";
+import {TsTransition} from "./tsTransition";
 
 export class CurvedPathElementWithLabel extends SVGElementWithLabel {
 
@@ -72,6 +73,9 @@ export class CurvedPathElementWithLabel extends SVGElementWithLabel {
         return (0.8 * SVGElementWithLabel.circleRadius);
     }
 
+    getTextElement(transition: TsTransition) {
+        return this._labelElements.find(e => e.textContent === transition.label || e.textContent === ', '.concat(transition.label));
+    }
     get labelElements(): SVGElement[] {
         return this._labelElements;
     }

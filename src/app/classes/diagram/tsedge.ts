@@ -68,12 +68,13 @@ export class TsEdge extends TsElement {
     }
 
     highlightMortalTransition(text: String) {
-        let transitionsElements: SVGElement[] = this.getSvgLabelElements();
-        for (let t of transitionsElements) {
-            if (t.textContent === text) {
-                t.setAttribute('fill', 'orange');
+        let transition = this._transitions.find(e => e.label === text);
+        if (transition) {
+            if (this._svgElement instanceof CurvedPathElementWithLabel) {
+                this._svgElement.getTextElement(transition)?.setAttribute('fill', 'orange');
             }
         }
+
     }
 
     writeOn(result: string): string {
