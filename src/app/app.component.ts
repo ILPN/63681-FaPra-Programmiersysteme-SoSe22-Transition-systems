@@ -31,8 +31,7 @@ export class AppComponent implements AfterViewInit {
         this.model = new TsModel();
         this.tsParserUtil = new TSParserUtil();
         let tsText = this.getLastState();
-        if (tsText != null && !(tsText === '')) {
-            //this.textareaFc.setValue(AppComponent.defaultText());
+        if (tsText != null && !(tsText === '') && this._validatorService.validateTS(tsText).valid) {
            this.textareaFc.setValue(this.tsParserUtil.getTSContentToDisplay(tsText));
         } else {
             this.textareaFc.setValue(AppComponent.defaultText());
@@ -132,10 +131,6 @@ export class AppComponent implements AfterViewInit {
 
     private getLastState(): string | null {
         return localStorage.getItem('tsText');
-    }
-
-    private removeState() {
-        localStorage.removeItem('tsText');
     }
 
     private getFileType(file: File): FileType {
