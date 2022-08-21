@@ -18,7 +18,7 @@ export class ValidatorService {
 
     validateTS(text: string): IsValid {
 
-        let isValid: IsValid = new IsValid(true, "");
+        let isValid: IsValid;
 
         let currentLineType = TSLineType.UNDEFINED;
         this.nodeIDs = new Array<string>()
@@ -69,7 +69,7 @@ export class ValidatorService {
         let doc = parser.parseFromString(content, "application/xml");
         let errorNode = doc.querySelector("parsererror");
         if (errorNode) {
-            let message = "File content is not a valid XML";
+            let message = "the file content is not a valid XML";
             isValid = new IsValid(false, message);
             return isValid;
         } else {
@@ -84,6 +84,18 @@ export class ValidatorService {
             let sources = this.toArray(arcs, "source")
             let targets = this.toArray(arcs, "target")
             let transitionIds = this.toArray(transitions, "id")
+            let placeIds = this.toArray(places, "id")
+            let placeIDsArray = new Array<string>()
+            for (let id of placeIds) {
+                if(placeIDsArray.indexOf(id) > -1){
+                    let message = "The place ID " + id + " already exists! Place IDs must be unique";
+                    isValid = new IsValid(false, message);
+                    return isValid;
+                }else{
+                    placeIDsArray.push(id);
+                }
+            }
+
             for (let id of transitionIds) {
                 if (targets.indexOf(id) < 0) {
                     let message = "The transition " + id + " has no outgoing edge\nThis is not allowed";

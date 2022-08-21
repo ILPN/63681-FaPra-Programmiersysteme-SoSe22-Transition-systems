@@ -25,6 +25,11 @@ export class TSValidatorUtil {
             case TSLineType.NODE: {
                 let nodeLineParser = new NodeLineParser(line);
                 let elems = line.trim().split(" ");
+                if(nodeIDs.indexOf(nodeLineParser.getID()) > -1){
+                    let message = "Line \"" + line + "\" not valid\nThe node ID " + nodeLineParser.getID()+ " already exists! Node IDs must be unique";
+                    isValid = new IsValid(false, message);
+                    break
+                }
                 nodeIDs.push(nodeLineParser.getID());
                 if (elems.length != 2 && elems.length != 3) {
                     let message = "Line \"" + line + "\" not valid\nThe number of elements should be 2 or 3 but was " + elems.length;
