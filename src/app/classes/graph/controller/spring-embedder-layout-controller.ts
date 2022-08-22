@@ -1,6 +1,8 @@
 import {FRSpringEmbedder1} from "../../spring_embedder/frspring-embedder1";
+import {LayoutController} from "./layout-controller";
 
-export class SpringEmbedderLayoutController {
+//TODO replaced by SpringEmbedderControllerService -> remove this class?
+export class SpringEmbedderLayoutController implements LayoutController {
 
     private springEmbedderLayout: FRSpringEmbedder1;
 
