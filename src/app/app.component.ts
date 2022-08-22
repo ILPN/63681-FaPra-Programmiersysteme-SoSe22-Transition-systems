@@ -94,9 +94,13 @@ export class AppComponent implements AfterViewInit {
     }
 
     private async processFile(file: File) {
-        if (this.getFileType(file) == FileType.PNML) {
+        if (this.getFileType(file) == FileType.UNKNOWN) {
+            alert('Unknown file type. Please use either .ts or .pnml');
+        }
+        else if (this.getFileType(file) == FileType.PNML) {
             await this.processPNMLFile(file);
-        } else {
+        }
+        else {
             await this.processTSFile(file);
         }
     }
@@ -137,10 +141,15 @@ export class AppComponent implements AfterViewInit {
     }
 
     private getFileType(file: File): FileType {
-        if (file.name.toUpperCase().endsWith("PNML")) {
+        const fileType = file.name.toUpperCase();
+        if (fileType.endsWith("PNML")) {
             return FileType.PNML;
-        } else {
+        }
+        else if (fileType.endsWith('TS')){
             return FileType.TS;
+        }
+        else {
+            return FileType.UNKNOWN;
         }
     }
 
