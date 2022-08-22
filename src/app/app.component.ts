@@ -128,12 +128,12 @@ export class AppComponent implements AfterViewInit {
 
     private saveCurrentState() {
         let tsText = this._exportService.exportTS(this.model);
-        localStorage.removeItem('tsText');
-        localStorage.setItem('tsText', tsText);
+        sessionStorage.removeItem('tsText');
+        sessionStorage.setItem('tsText', tsText);
     }
 
     private getLastState(): string | null {
-        return localStorage.getItem('tsText');
+        return sessionStorage.getItem('tsText');
     }
 
     private getFileType(file: File): FileType {
