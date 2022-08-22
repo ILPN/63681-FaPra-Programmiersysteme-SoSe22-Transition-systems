@@ -3,7 +3,7 @@ import {DisplayService} from "../../../services/display.service";
 import {Subscription} from "rxjs";
 import {TsModel} from "../../diagram/tsmodel";
 import {RandomGraphCalculator} from "../random-graph-calculator";
-import {LinearCooling} from "../../spring_embedder/cooling/linear-cooling";
+import {LinearCooling} from "./cooling/linear-cooling";
 import {Vector} from "../../spring_embedder/models/vector";
 import {LayoutUtils} from "./layout-utils";
 
@@ -12,23 +12,18 @@ import {LayoutUtils} from "./layout-utils";
 })
 export class FRSpringEmbedder1Service {
 
-    //TODO Sollte nur an einer Stelle im Programm festgelegt sein
-    private static DRAWING_AREA_WIDTH_IN_PIXELS: number = window.innerWidth / 1.1;
-
-    private static DRAWING_AREA_HEIGHT_IN_PIXELS: number = 400;
-
-    private static DRAWING_AREA_IN_PIXELS: number = FRSpringEmbedder1Service.DRAWING_AREA_WIDTH_IN_PIXELS
-        * FRSpringEmbedder1Service.DRAWING_AREA_HEIGHT_IN_PIXELS;
-
     private static OPTIMAL_INIT_NUMBER_OF_ITERATIONS: number = 100;
 
     // Je kleiner der Wert, desto elastischer ist der Graph beim verschieben von Knoten. Sollte jedoch nicht 1 sein
     private static OPTIMAL_NODE_MOVE_NUMBER_OF_ITERATIONS: number = 10;
 
-    private static OPTIMAL_INIT_COOLING_START_VALUE: number = FRSpringEmbedder1Service.DRAWING_AREA_WIDTH_IN_PIXELS / 50;
+    private readonly drawingAreaInPixels: number = LayoutUtils.getDrawingAreaWidthPx()
+        * LayoutUtils.getDrawingAreaHeightPx();
+
+    private readonly optimalInitCoolingStartValue: number = LayoutUtils.getDrawingAreaWidthPx() / 50;
 
     // Je kleiner der Wert, desto elastischer ist der Graph beim verschieben von Knoten
-    private static OPTIMAL_NODE_MOVE_COOLING_START_VALUE: number = FRSpringEmbedder1Service.DRAWING_AREA_WIDTH_IN_PIXELS / 800;
+    private readonly optimalNodeMoveCoolingStartValue: number = LayoutUtils.getDrawingAreaWidthPx() / 800;
 
     private randomGraphCalculator: RandomGraphCalculator = new RandomGraphCalculator;
 
@@ -36,17 +31,17 @@ export class FRSpringEmbedder1Service {
 
     private _overallNumberOfIterations: number;
 
+    //TODO unsubscribe
     private displayServiceSubscription: Subscription;
 
     private graph!: TsModel;
 
     constructor(private _displayService: DisplayService) {
         this.displayServiceSubscription = this._displayService.model$.subscribe((graph: TsModel) => {
-            console.log("FRSpringEmbedder1Service: Calling next-callback-function with graph-parameter ...");
             this.graph = graph;
         });
         this._overallNumberOfIterations = FRSpringEmbedder1Service.OPTIMAL_INIT_NUMBER_OF_ITERATIONS;
-        this.cooling = new LinearCooling(FRSpringEmbedder1Service.OPTIMAL_INIT_COOLING_START_VALUE, this._overallNumberOfIterations);
+        this.cooling = new LinearCooling(this.optimalInitCoolingStartValue, this._overallNumberOfIterations);
         //TODO set initial positions here? => maybe pass initialization-function as parameter
     }
 
@@ -56,13 +51,13 @@ export class FRSpringEmbedder1Service {
 
     public setInitLayoutProperties(): void {
         this._overallNumberOfIterations = FRSpringEmbedder1Service.OPTIMAL_INIT_NUMBER_OF_ITERATIONS;
-        this.cooling.startValue = FRSpringEmbedder1Service.OPTIMAL_INIT_COOLING_START_VALUE;
+        this.cooling.startValue = this.optimalInitCoolingStartValue;
         this.cooling.overallNumberOfIterations = FRSpringEmbedder1Service.OPTIMAL_INIT_NUMBER_OF_ITERATIONS;
     }
 
     public setNodeMoveLayoutProperties(): void {
         this._overallNumberOfIterations = FRSpringEmbedder1Service.OPTIMAL_NODE_MOVE_NUMBER_OF_ITERATIONS;
-        this.cooling.startValue = FRSpringEmbedder1Service.OPTIMAL_NODE_MOVE_COOLING_START_VALUE;
+        this.cooling.startValue = this.optimalNodeMoveCoolingStartValue;
         this.cooling.overallNumberOfIterations = FRSpringEmbedder1Service.OPTIMAL_NODE_MOVE_NUMBER_OF_ITERATIONS;
     }
 
@@ -82,7 +77,7 @@ export class FRSpringEmbedder1Service {
         //TODO choose an approprate value
         const optimalEdgeLengthFactor: number = 0.5;
         const optimalEdgeLength: number = optimalEdgeLengthFactor *
-            Math.sqrt(FRSpringEmbedder1Service.DRAWING_AREA_IN_PIXELS / numberOfNodes);
+            Math.sqrt(this.drawingAreaInPixels / numberOfNodes);
         //TODO Node-Ids müssen eindeutig sein!
         const nodeIdToDispacementVectorMap = new Map<string, Vector>();
 
