@@ -1,4 +1,4 @@
-import {SVGElementWithLabel} from "../../diagram/SVGElementWithLabel";
+import {LayoutUtils} from "../../graph/layout/layout-utils";
 
 export class Vector {
     x: number;
@@ -71,9 +71,6 @@ export class Vector {
             Math.random()
         );
     }
-
-    //TODO: take FULL_X from .canvas how does that work?
-
 
     /**
      * Adds a given vector to the vector. This is applied to every coordinate.
@@ -216,7 +213,7 @@ export class Vector {
 
     static atCircularPosition(anInteger: number): Array<Vector> {
         let result = new Array<Vector>();
-        let start = new Vector(SVGElementWithLabel.FULL_X / 2, SVGElementWithLabel.FULL_Y / 2);
+        let start = new Vector(LayoutUtils.getDrawingAreaWidthPx() / 2, LayoutUtils.getDrawingAreaHeightPx() / 2);
         let radius = 200;
         for (let i = 0; i < anInteger; i++) {
             result.push(start.add(Vector.byAngle(2 * Math.PI * i / anInteger, radius)))
