@@ -5,7 +5,7 @@ export class RandomGraphLayout {
 
     private randomGraphCalculator: RandomGraphCalculator = new RandomGraphCalculator;
 
-    private graph: TsModel;
+    private readonly graph: TsModel;
 
     constructor(graph: TsModel) {
         this.graph = graph;
@@ -13,6 +13,7 @@ export class RandomGraphLayout {
 
     public layoutGraph() {
         this.randomGraphCalculator.calculateAndSetPositions(this.graph);
-        //TODO Graph zeichnen
+        // Graph zeichnen
+        this.graph.updateSVG();
     }
 }
