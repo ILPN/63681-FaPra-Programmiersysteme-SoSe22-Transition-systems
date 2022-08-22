@@ -96,14 +96,6 @@ export class TsNode extends TsElement {
         return this._connectedEdges;
     }
 
-    limitPostionToScreen() {
-        let x = Math.min(Math.max(SVGElementWithLabel.circleRadius, this.x),
-            SVGElementWithLabel.FULL_X - SVGElementWithLabel.circleRadius);
-        let y = Math.min(Math.max(SVGElementWithLabel.circleRadius, this.y),
-            SVGElementWithLabel.FULL_Y - SVGElementWithLabel.circleRadius);
-        this.position = new Vector(x,y);
-    }
-
     highlightStartNode() {
         this._svgElement.setAttribute('stroke', 'yellow');
     }
