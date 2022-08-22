@@ -11,8 +11,8 @@ export class RandomGraphCalculator {
      */
     public calculateAndSetPositions(graph: TsModel){
         for (const node of graph.nodes) {
-            node.position = new Vector(Math.random() * LayoutUtils.DRAWING_AREA_WIDTH_IN_PIXELS,
-                Math.random() * LayoutUtils.DRAWING_AREA_HEIGHT_IN_PIXELS);
+            node.position = new Vector(Math.random() * LayoutUtils.getDrawingAreaWidthPx(),
+                Math.random() * LayoutUtils.getDrawingAreaHeightPx());
             LayoutUtils.limitPositionToDrawingArea(node);
         }
     }
