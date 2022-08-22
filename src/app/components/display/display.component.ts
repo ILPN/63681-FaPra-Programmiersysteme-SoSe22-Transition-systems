@@ -15,6 +15,12 @@ import {SpringEmbedderControllerService} from "../../classes/graph/controller/sp
 })
 export class DisplayComponent implements OnDestroy {
 
+    public static readonly DRAWING_AREA_ID: string = "drawingAreaSvg";
+
+    public static readonly DRAWING_AREA_WIDTH_PX_FALLBACK_VALUE: number = window.innerWidth/1.1;
+
+    public static readonly DRAWING_AREA_HEIGHT_PX_FALLBACK_VALUE: number = 400;
+
     // Repräsentiert die Zeichenebene des Graphen in Form eines Haupt-SVG-Elements
     @ViewChild('drawingArea') drawingArea: ElementRef<SVGElement> | undefined;
 
