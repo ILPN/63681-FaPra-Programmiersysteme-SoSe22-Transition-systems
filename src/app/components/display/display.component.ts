@@ -6,6 +6,7 @@ import {TsModel} from '../../classes/diagram/tsmodel';
 import {TsEdge} from "../../classes/diagram/tsedge";
 import {TsNode} from "../../classes/diagram/tsnode";
 import {Vector} from "../../classes/spring_embedder/models/vector";
+import {SpringEmbedderControllerService} from "../../classes/graph/controller/spring-embedder-controller.service";
 
 @Component({
     selector: 'app-display',
@@ -23,7 +24,7 @@ export class DisplayComponent implements OnDestroy {
     private springEmbedderModus: Boolean;
     private mouseMoveReferencePoint: Vector | undefined;
 
-    constructor(private _displayService: DisplayService) {
+    constructor(private _displayService: DisplayService, private _springEmbedderControllerService: SpringEmbedderControllerService) {
         this.springEmbedderModus = true;
         this._sub = this._displayService.model$.subscribe(model => {
             this._model = model;
@@ -89,7 +90,7 @@ export class DisplayComponent implements OnDestroy {
         this._model.removeAllDragedMarker()
         if (this.draggedElement?.isNode() && this.springEmbedderModus) {
             let node: TsNode = <TsNode>this.draggedElement;
-            this._model.refreshSpringEmbedderLayout(node.id);
+            this._springEmbedderControllerService.moveNode(node.id);
         }
         this.draggedElement = undefined;
         this.mouseMoveReferencePoint = undefined;
@@ -119,7 +120,7 @@ export class DisplayComponent implements OnDestroy {
                         TODO Hier sollte die Anzahl an Iterationen kleiner sein als bei der initialen Anzeige - z.B. 10.
                          Dadurch wird das Layout dynamischer.
                          */
-                        this._model.refreshSpringEmbedderLayout(node.id);
+                        this._springEmbedderControllerService.moveNode(node.id);
                         this.mouseMoveReferencePoint = mousePosition;
                     }
                 } else {
