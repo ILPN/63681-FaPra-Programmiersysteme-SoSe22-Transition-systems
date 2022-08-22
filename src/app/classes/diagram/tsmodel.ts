@@ -3,9 +3,6 @@ import {TsEdge} from "./tsedge";
 import {TsElement} from "./tselement";
 import {TsGraphProperties} from "./tsgraphproperties";
 import {FRSpringEmbedder} from "../spring_embedder/frspringembedder";
-import {FRSpringEmbedder1} from "../spring_embedder/frspring-embedder1";
-import {SpringEmbedderLayoutController} from "../graph/controller/spring-embedder-layout-controller";
-
 
 export class TsModel {
 
@@ -13,19 +10,18 @@ export class TsModel {
     private readonly _edges: Array<TsEdge>;
     private _startNode!: TsNode;
     private _propertiesHighlighted: boolean;
-    private springEmbedderLayoutController: SpringEmbedderLayoutController;
     private springEmbedderlayout: FRSpringEmbedder;
 
     constructor() {
         this._nodes = new Array<TsNode>();
         this._edges = new Array<TsEdge>();
         this._propertiesHighlighted = false
-        this.springEmbedderLayoutController = new SpringEmbedderLayoutController(new FRSpringEmbedder1(this));
+        //TODO remove - calling methods moved to display-component
         const embedder = new FRSpringEmbedder(this);
-        embedder.cooling = (iteration: number) => 1.0 / (50 * iteration);
-        embedder.springLength = 180;
-        embedder.fromRandomPositions = false;
-        embedder.run(1000, 10);
+        // embedder.cooling = (iteration: number) => 1.0 / (50 * iteration);
+        // embedder.springLength = 180;
+        // embedder.fromRandomPositions = false;
+        // embedder.run(1000, 10);
         this.springEmbedderlayout = embedder;
     }
 
@@ -365,28 +361,7 @@ export class TsModel {
         return svgNodeLabel.concat(svgNodes).concat(svgEdges).concat(svgEdgeLabel);
     }
 
-    //TODO Layout sollte nicht im Modell erfolgen
-    public layoutBySpringEmbedder(fromRandomPositions: Boolean) {
-        if (fromRandomPositions) {
-            this.springEmbedderLayoutController.drawInitialGraph();
-        } else {
-            this.springEmbedderLayoutController.redrawGraph();
-        }
-        this.updateSVG();
-    }
-
-    //TODO Layout sollte nicht im Modell erfolgen
-    //TODO Rename method
-    /**
-     * Refreshes an already initialized spring-embedder-graph.
-     * @param fixNodeId Id of a node whose position should not be changed.
-     */
-    public refreshSpringEmbedderLayout(fixNodeId: string) {
-        this.springEmbedderLayoutController.moveNode(fixNodeId);
-        this.updateSVG();
-    }
-
-    private updateSVG() {
+    public updateSVG() {
         for (const node of this._nodes) {
             node.updateSVG();
         }
