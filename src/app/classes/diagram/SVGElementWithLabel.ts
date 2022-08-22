@@ -1,26 +1,14 @@
+
 export abstract class SVGElementWithLabel {
     //TODO wieso befindet sich diese Eigenschaft nicht in CircleElementWithLabel?
     public static circleRadius: number = 25;
-    public static  FULL_X = window.innerWidth/1.1;
-    public static  FULL_Y = 400;
     protected _dragged!: boolean;
     private _svgElement: SVGElement;
 
 
     constructor(qualifiedName: string) {
         this._svgElement = <SVGElement>document.createElementNS(SVGElementWithLabel.svgNamespace(), qualifiedName);
-        this.getScreenSizeFromCanvas();
     }
-
-    private getScreenSizeFromCanvas() {
-        let xSize = document.getElementById('canvasDisplay')?.children[1].clientWidth;
-        let ySize = document.getElementById('canvasDisplay')?.children[1].clientHeight;
-        if (xSize != null && ySize != null) {
-            SVGElementWithLabel.FULL_X = xSize;
-            SVGElementWithLabel.FULL_Y = ySize;
-        }
-    }
-
 
     protected static svgNamespace(): string {
         return 'http://www.w3.org/2000/svg';
