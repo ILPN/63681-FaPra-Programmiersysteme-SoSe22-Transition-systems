@@ -8,6 +8,7 @@ import {ValidatorService} from "./services/validator.service";
 import {PNMLService} from './services/pnml.service';
 import {TSParserUtil} from "./util/tsparser-util";
 import {FileType} from "./util/file-type";
+import {SpringEmbedderControllerService} from "./classes/graph/controller/spring-embedder-controller.service";
 
 @Component({
     selector: 'app-root',
@@ -25,7 +26,8 @@ export class AppComponent implements AfterViewInit {
                 private _displayService: DisplayService,
                 private _exportService: ExportService,
                 private _validatorService: ValidatorService,
-                private _pnmlImporter: PNMLService
+                private _pnmlImporter: PNMLService,
+                private _springEmbedderControllerService: SpringEmbedderControllerService
                 ) {
         this.textareaFc = new FormControl();
         this.model = new TsModel();
@@ -84,9 +86,10 @@ export class AppComponent implements AfterViewInit {
 
     private processSourceChange(newSource: string, fromFile: boolean) {
         this.model = this._parserService.parse(newSource.trim());
-        if(!fromFile || !this.model.nodePositionsOK)
-            this.model.layoutBySpringEmbedder(true);
         this._displayService.display(this.model);
+        if(!fromFile || !this.model.nodePositionsOK) {
+            this._springEmbedderControllerService.drawInitialGraph();
+        }
         this.saveCurrentState();
     }
 
