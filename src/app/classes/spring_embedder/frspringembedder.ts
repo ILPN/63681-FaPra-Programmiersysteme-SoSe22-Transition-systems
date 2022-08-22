@@ -1,7 +1,7 @@
 import {Vector} from './models/vector';
 import {TsNode} from '../diagram/tsnode';
 import { TsModel } from '../diagram/tsmodel';
-import {SVGElementWithLabel} from "../diagram/SVGElementWithLabel";
+import {LayoutUtils} from "../graph/layout/layout-utils";
 
 /**
  * The colling is applied after each iteration as a weight for the displacement
@@ -150,7 +150,7 @@ export class FRSpringEmbedder {
             // Apply the displacement vector to the position
             force.multiplyWith(coolingFactor);
             node.position = node.position.add(force);
-            node.limitPostionToScreen();
+            LayoutUtils.limitPositionToDrawingArea(node);
             index++;
         }
     }
@@ -295,8 +295,8 @@ export class FRSpringEmbedder {
         let min_x = Vector.getMinX(this._model.nodes.map(e => e.position));
         let max_y = Vector.getMaxY(this._model.nodes.map(e => e.position));
         let min_y = Vector.getMinY(this._model.nodes.map(e => e.position));
-        let shift_x = ((SVGElementWithLabel.FULL_X - min_x - max_x) / 2);
-        let shift_y = ((SVGElementWithLabel.FULL_Y - min_y - max_y) / 2);
+        let shift_x = ((LayoutUtils.getDrawingAreaWidthPx() - min_x - max_x) / 2);
+        let shift_y = ((LayoutUtils.getDrawingAreaHeightPx() - min_y - max_y) / 2);
         for (let each of this._model.nodes) {
             each.position = each.position.add(new Vector(shift_x, shift_y));
         }
