@@ -8,7 +8,6 @@ import {LayoutController} from "./layout-controller";
 export class SpringEmbedderControllerService implements LayoutController {
 
     constructor(private _springEmbedder1Service: FRSpringEmbedder1Service) {
-        console.log("SpringEmbedderControllerService constructor ...");
     }
 
     public drawInitialGraph(): void {
