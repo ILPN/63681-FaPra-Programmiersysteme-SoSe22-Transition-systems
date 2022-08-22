@@ -4,6 +4,7 @@ import {LayoutUtils} from "../graph/layout/layout-utils";
 import {LinearCooling} from "./cooling/linear-cooling";
 import {RandomGraphCalculator} from "../graph/random-graph-calculator";
 
+//TODO replaced by SpringEmbedder1Service-class -> remove this class?
 export class FRSpringEmbedder1 {
 
     //TODO Sollte nur an einer Stelle im Programm festgelegt sein
@@ -14,18 +15,19 @@ export class FRSpringEmbedder1 {
     private static DRAWING_AREA_IN_PIXELS: number = FRSpringEmbedder1.DRAWING_AREA_WIDTH_IN_PIXELS
         * FRSpringEmbedder1.DRAWING_AREA_HEIGHT_IN_PIXELS;
 
-    private static OPTIMAL_INIT_NUMBER_OF_ITERATIONS: number = 50;
+    private static OPTIMAL_INIT_NUMBER_OF_ITERATIONS: number = 100;
 
+    // Je kleiner der Wert, desto elastischer ist der Graph beim verschieben von Knoten. Sollte jedoch nicht 1 sein
     private static OPTIMAL_NODE_MOVE_NUMBER_OF_ITERATIONS: number = 10;
 
     private static OPTIMAL_INIT_COOLING_START_VALUE: number = FRSpringEmbedder1.DRAWING_AREA_WIDTH_IN_PIXELS / 50;
 
     // Je kleiner der Wert, desto elastischer ist der Graph beim verschieben von Knoten
-    private static OPTIMAL_NODE_MOVE_COOLING_START_VALUE: number = FRSpringEmbedder1.DRAWING_AREA_WIDTH_IN_PIXELS / 800;
+    private static OPTIMAL_NODE_MOVE_COOLING_START_VALUE: number = FRSpringEmbedder1.DRAWING_AREA_WIDTH_IN_PIXELS / 700;
 
     private randomGraphCalculator: RandomGraphCalculator = new RandomGraphCalculator;
 
-    private graph: TsModel;
+    private readonly graph: TsModel;
 
     private cooling: LinearCooling;
 
@@ -141,7 +143,8 @@ export class FRSpringEmbedder1 {
             }
             //TODO Nach jeder Iteration zeichnen, damit die Darstellung flüssiger ist?
         }
-        //TODO Graph zeichnen
+        // Graph zeichnen
+        this.graph.updateSVG();
     }
 
 }
