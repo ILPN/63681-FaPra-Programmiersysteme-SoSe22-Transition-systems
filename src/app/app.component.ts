@@ -89,6 +89,8 @@ export class AppComponent implements AfterViewInit {
         this._displayService.display(this.model);
         if(!fromFile || !this.model.nodePositionsOK) {
             this._springEmbedderControllerService.drawInitialGraph();
+        } else {
+            this.model.updateSVG();
         }
         this.saveCurrentState();
     }

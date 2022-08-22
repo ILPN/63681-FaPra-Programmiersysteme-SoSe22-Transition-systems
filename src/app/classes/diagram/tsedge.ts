@@ -155,10 +155,10 @@ export class TsEdge extends TsElement {
         return this._dragpoint ?? this.defaultDragPoint();
     }
 
-    private defaultDragPoint() {
-        if (this.isSelfLoop())
+    private defaultDragPoint(): Vector {
+        if (this.isSelfLoop()) {
             return Vector.midOf(this.position_from, this.position_to).add(this.selfLoopShift());
-        else {
+        } else {
             // Check if edge is bidirectional
             let otherBiDirEdge: TsEdge | null = this.getBidirectionalEdge();
             if (otherBiDirEdge) {
