@@ -97,12 +97,10 @@ export class TsEdge extends TsElement {
         return this._transitions;
     }
 
-    //TODO Warum ist die Position des Dragpoints gleich der Position der Kante?
     setPosition(x: number, y: number): void {
         this.setDragpoint(new Vector(x, y));
     }
 
-    //TODO Warum ist die Position des Dragpoints gleich der Position der Kante?
     setPositionAndUpdateView(x: number, y: number): void {
         this.setDragpoint(new Vector(x, y));
     }
@@ -116,8 +114,6 @@ export class TsEdge extends TsElement {
             return null;
         let result: TsEdge | null = null;
         for (let edgeOfNodeFrom of this._nodeFrom.connectedEdges) {
-            //TODO: Zur Optimierung könnte man noch ausschließen, die aktuelle Kante zu untersuchen.
-            // TODO Prüfe auf Objekt-Identität statt auf Id?
             if (edgeOfNodeFrom._nodeTo.id === this._nodeFrom.id && edgeOfNodeFrom._nodeFrom.id === this._nodeTo.id) {
                 result = edgeOfNodeFrom;
                 break;
