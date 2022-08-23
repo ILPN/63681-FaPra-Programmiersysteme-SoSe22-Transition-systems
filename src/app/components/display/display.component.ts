@@ -86,10 +86,6 @@ export class DisplayComponent implements OnDestroy {
 
     private processMouseDown() {
         this.draggedElement = this._model.getDraggedElement();
-        if (this.draggedElement?.isNode() && this.springEmbedderModus) {
-            let node: TsNode = <TsNode>this.draggedElement;
-            //TODO this.mouseMoveReferencePoint = node.position; geht anscheinend nicht weil mousedown-event während der ganzen Maus-Bewegung erzeugt wird
-        }
     }
 
     private processMouseUp() {
@@ -103,35 +99,10 @@ export class DisplayComponent implements OnDestroy {
     }
 
     private processMouseMoving(event: MouseEvent) {
-        //TODO decide for one implementation
-        // if (this.draggedElement) {
-        //     if (this.draggedElement?.isNode() && this.springEmbedderModus) {
-        //         let node: TsNode = <TsNode>this.draggedElement;
-        //         this._model.refreshSpringEmbedderLayout(node.id, 10);
-        //     }
-        //     this.draggedElement.setPositionAndUpdateView(event.offsetX, event.offsetY)
-        // }
         if (this.draggedElement) {
-            //TODO Bei einer flüssigen Spring-Embedder-Darstellung sollte hier auch per Spring-Embedder gerendert werden
             if (this.draggedElement?.isNode() && this.springEmbedderModus) {
                 let node: TsNode = <TsNode>this.draggedElement;
-                let mousePosition: Vector = new Vector(event.offsetX, event.offsetY);
-                if (this.mouseMoveReferencePoint) {
-                    let distToRefPoint = mousePosition.distanceTo(this.mouseMoveReferencePoint);
-                    //console.log("distToRefPoint: " + distToRefPoint);
-                    //TODO choose appropriate value
-                    if (distToRefPoint > 3) {
-                        //TODO Der bewegte Knoten sollte durch diesen Aufruf nicht gerendert werden, da er fixiert wird.
-                        /*
-                        TODO Hier sollte die Anzahl an Iterationen kleiner sein als bei der initialen Anzeige - z.B. 10.
-                         Dadurch wird das Layout dynamischer.
-                         */
-                        this._springEmbedderControllerService.moveNode(node.id);
-                        this.mouseMoveReferencePoint = mousePosition;
-                    }
-                } else {
-                    this.mouseMoveReferencePoint = mousePosition;
-                }
+                this._springEmbedderControllerService.moveNode(node.id);
             }
             this.draggedElement.setPositionAndUpdateView(event.offsetX, event.offsetY)
         }
