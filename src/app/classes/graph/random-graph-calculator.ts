@@ -1,5 +1,5 @@
 import {TsModel} from "../diagram/tsmodel";
-import {Vector} from "../spring_embedder/models/vector";
+import {Vector} from "../diagram/vector/vector";
 import {LayoutUtils} from "./layout/layout-utils";
 
 export class RandomGraphCalculator {

@@ -3,7 +3,7 @@ import {DisplayService} from "../../../services/display.service";
 import {TsModel} from "../../diagram/tsmodel";
 import {RandomGraphCalculator} from "../random-graph-calculator";
 import {LinearCooling} from "./cooling/linear-cooling";
-import {Vector} from "../../spring_embedder/models/vector";
+import {Vector} from "../../diagram/vector/vector";
 import {LayoutUtils} from "./layout-utils";
 
 @Injectable({

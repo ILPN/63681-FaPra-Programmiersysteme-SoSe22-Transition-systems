@@ -1,6 +1,6 @@
 import {TsElement} from "./tselement";
 import {TsEdge} from "./tsedge";
-import {Vector} from "../spring_embedder/models/vector";
+import {Vector} from "./vector/vector";
 import {SVGElementWithLabel} from "./SVGElementWithLabel";
 import {CircleElementWithLabel} from "./CircleElementWithLabel";
 

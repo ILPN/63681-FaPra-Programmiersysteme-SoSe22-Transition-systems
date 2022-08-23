@@ -1,4 +1,4 @@
-import {Vector} from "../classes/spring_embedder/models/vector";
+import {Vector} from "../classes/diagram/vector/vector";
 import {TsTransition} from "../classes/diagram/tsTransition";
 
 export class EdgeLineParser {

@@ -2,7 +2,6 @@ import {TsNode} from "./tsnode";
 import {TsEdge} from "./tsedge";
 import {TsElement} from "./tselement";
 import {TsGraphProperties} from "./tsgraphproperties";
-import {FRSpringEmbedder} from "../spring_embedder/frspringembedder";
 
 export class TsModel {
 
@@ -10,19 +9,11 @@ export class TsModel {
     private readonly _edges: Array<TsEdge>;
     private _startNode!: TsNode;
     private _propertiesHighlighted: boolean;
-    private springEmbedderlayout: FRSpringEmbedder;
 
     constructor() {
         this._nodes = new Array<TsNode>();
         this._edges = new Array<TsEdge>();
         this._propertiesHighlighted = false
-        //TODO remove - calling methods moved to display-component
-        const embedder = new FRSpringEmbedder(this);
-        // embedder.cooling = (iteration: number) => 1.0 / (50 * iteration);
-        // embedder.springLength = 180;
-        // embedder.fromRandomPositions = false;
-        // embedder.run(1000, 10);
-        this.springEmbedderlayout = embedder;
     }
 
     get nodes(): Array<TsNode> {

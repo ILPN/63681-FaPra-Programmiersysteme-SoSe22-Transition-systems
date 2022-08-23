@@ -1,4 +1,4 @@
-import {Vector} from "../spring_embedder/models/vector";
+import {Vector} from "./vector/vector";
 
 export class TsTransition {
     get position(): Vector {

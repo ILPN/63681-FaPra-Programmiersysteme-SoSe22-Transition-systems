@@ -1,6 +1,6 @@
 import {TsElement} from "./tselement";
 import {TsNode} from "./tsnode";
-import {Vector} from "../spring_embedder/models/vector";
+import {Vector} from "./vector/vector";
 import {CurvedPathElementWithLabel} from "./CurvedPathElementWithLabel";
 import {TsTransition} from "./tsTransition";
 import {SVGElementWithLabel} from "./SVGElementWithLabel";

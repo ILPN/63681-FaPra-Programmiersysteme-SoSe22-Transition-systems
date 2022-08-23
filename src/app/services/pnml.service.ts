@@ -3,7 +3,7 @@ import {Injectable} from '@angular/core';
 import {TsModel} from '../classes/diagram/tsmodel';
 import {TsEdge} from '../classes/diagram/tsedge';
 import {TsNode} from '../classes/diagram/tsnode';
-import {Vector} from '../classes/spring_embedder/models/vector';
+import {Vector} from '../classes/diagram/vector/vector';
 import {TsTransition} from "../classes/diagram/tsTransition";
 
 interface PNMLPlace {

@@ -2,7 +2,6 @@ import {Injectable} from '@angular/core';
 import {TsModel} from "../classes/diagram/tsmodel";
 import {TsNode} from "../classes/diagram/tsnode";
 import {TsEdge} from "../classes/diagram/tsedge";
-import {Vector} from "../classes/spring_embedder/models/vector";
 import {TsTransition} from "../classes/diagram/tsTransition";
 
 @Injectable({

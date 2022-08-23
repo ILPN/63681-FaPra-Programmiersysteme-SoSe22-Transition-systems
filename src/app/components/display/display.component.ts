@@ -5,7 +5,7 @@ import {SvgService} from '../../services/svg.service';
 import {TsModel} from '../../classes/diagram/tsmodel';
 import {TsEdge} from "../../classes/diagram/tsedge";
 import {TsNode} from "../../classes/diagram/tsnode";
-import {Vector} from "../../classes/spring_embedder/models/vector";
+import {Vector} from "../../classes/diagram/vector/vector";
 import {SpringEmbedderControllerService} from "../../classes/graph/controller/spring-embedder-controller.service";
 
 @Component({
