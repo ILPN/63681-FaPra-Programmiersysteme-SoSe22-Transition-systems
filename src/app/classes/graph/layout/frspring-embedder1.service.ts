@@ -1,6 +1,5 @@
 import {Injectable} from '@angular/core';
 import {DisplayService} from "../../../services/display.service";
-import {Subscription} from "rxjs";
 import {TsModel} from "../../diagram/tsmodel";
 import {RandomGraphCalculator} from "../random-graph-calculator";
 import {LinearCooling} from "./cooling/linear-cooling";
@@ -10,6 +9,9 @@ import {LayoutUtils} from "./layout-utils";
 @Injectable({
     providedIn: 'root'
 })
+/**
+ * Renders a graph by the Fruchterman-Reingold-Spring-Embedder-algorithm.
+ */
 export class FRSpringEmbedder1Service {
 
     private static OPTIMAL_INIT_NUMBER_OF_ITERATIONS: number = 100;
@@ -31,18 +33,18 @@ export class FRSpringEmbedder1Service {
 
     private _overallNumberOfIterations: number;
 
-    //TODO unsubscribe
-    private displayServiceSubscription: Subscription;
-
     private graph!: TsModel;
 
+    private optimalEdgeLength!: number;
+
     constructor(private _displayService: DisplayService) {
-        this.displayServiceSubscription = this._displayService.model$.subscribe((graph: TsModel) => {
+        this._displayService.model$.subscribe((graph: TsModel) => {
             this.graph = graph;
+            const numberOfNodes: number = this.graph.nodes.length;
+            this.optimalEdgeLength = 0.5 * Math.sqrt(this.drawingAreaInPixels / numberOfNodes);
         });
         this._overallNumberOfIterations = FRSpringEmbedder1Service.OPTIMAL_INIT_NUMBER_OF_ITERATIONS;
         this.cooling = new LinearCooling(this.optimalInitCoolingStartValue, this._overallNumberOfIterations);
-        //TODO set initial positions here? => maybe pass initialization-function as parameter
     }
 
     public initPositions(): void {
@@ -68,27 +70,16 @@ export class FRSpringEmbedder1Service {
 
     /**
      * Layouts a graph with previously initialized node-positions.
-     * @param fixedNodeId
+     * @param fixedNodeId Denotes a node whose position should not be adjusted.
      */
     public layoutGraph(fixedNodeId?: string) {
-        //console.log("run spring-embedder with iterations: " + this._overallNumberOfIterations);
-        //TODO Make function in model?
-        const numberOfNodes: number = this.graph.nodes.length;
-        //TODO choose an approprate value
-        const optimalEdgeLengthFactor: number = 0.5;
-        const optimalEdgeLength: number = optimalEdgeLengthFactor *
-            Math.sqrt(this.drawingAreaInPixels / numberOfNodes);
-        //TODO Node-Ids müssen eindeutig sein!
         const nodeIdToDispacementVectorMap = new Map<string, Vector>();
-
         for (var i = 1; i <= this._overallNumberOfIterations; i++) {
             // foreach v ∈ V do
             for (let actualNode of this.graph.nodes) {
                 //v.disp := 0;
                 let displacementVector: Vector = new Vector(0, 0);
                 // for u ∈ V do
-                //TODO Use forEach-function?
-                // Geht doppelte Iteration über gleiches Objekt?
                 for (let node of this.graph.nodes) {
                     //if (u 6 = v) then
                     if (actualNode.id !== node.id && actualNode.id !== fixedNodeId) {
@@ -98,9 +89,7 @@ export class FRSpringEmbedder1Service {
                         let distanceVectorLength: number = distanceVector.norm();
                         if (distanceVectorLength !== 0) {
                             // Repulsive Function
-                            // TODO Unter Umständen ein Minus-Zeichen vor Repulsive Function (siehe S. 4)
-                            let repulsiveForceFactor: number = Math.pow(optimalEdgeLength, 2) / distanceVectorLength;
-                            //TODO Prüfe, ob die Veränderung des distanceVector-Objekts ok ist!
+                            let repulsiveForceFactor: number = Math.pow(this.optimalEdgeLength, 2) / distanceVectorLength;
                             displacementVector.addToThisVector(distanceVector.divideBy(distanceVectorLength).multiplyWith(repulsiveForceFactor));
                         }
                     }
@@ -114,8 +103,7 @@ export class FRSpringEmbedder1Service {
                 let distanceVector: Vector = Vector.subtract(edge.position_from, edge.position_to);
                 let distanceVectorLength: number = distanceVector.norm();
                 //Attractive function: f a (x) = x 2 /k
-                let attractiveForceFactor: number = Math.pow(distanceVectorLength, 2) / optimalEdgeLength;
-                //TODO Wie den Fall distanceVectorLength === 0 korrekt behandeln?
+                let attractiveForceFactor: number = Math.pow(distanceVectorLength, 2) / this.optimalEdgeLength;
                 let displacementAdjustment: Vector = distanceVectorLength === 0 ? distanceVector :
                     distanceVector.divideBy(distanceVectorLength).multiplyWith(attractiveForceFactor);
 
@@ -147,7 +135,6 @@ export class FRSpringEmbedder1Service {
                 // Auf Zeichenebene begrenzen:
                 LayoutUtils.limitPositionToDrawingArea(actualNode);
             }
-            //TODO Nach jeder Iteration zeichnen, damit die Darstellung flüssiger ist?
         }
         // Graph zeichnen
         this.graph.updateSVG();
