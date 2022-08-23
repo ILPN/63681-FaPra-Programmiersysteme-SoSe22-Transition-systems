@@ -1,6 +1,5 @@
 
 export abstract class SVGElementWithLabel {
-    //TODO wieso befindet sich diese Eigenschaft nicht in CircleElementWithLabel?
     public static circleRadius: number = 25;
     protected _dragged!: boolean;
     private _svgElement: SVGElement;
