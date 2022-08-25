@@ -42,7 +42,7 @@ export class PNMLService {
     constructor() {
     }
 
-    public parsePlaces(places: HTMLCollectionOf<Element>): PNMLPlace[] {
+    private parsePlaces(places: HTMLCollectionOf<Element>): PNMLPlace[] {
         const parsedPlaces: PNMLPlace[] = []
         for (let i = 0; i < places.length; i++) {
             const place = places[i];
@@ -64,7 +64,7 @@ export class PNMLService {
         return parsedPlaces;
     }
 
-    public parseTransitions(transitions: HTMLCollectionOf<Element>): PNMLTransition[] {
+    private parseTransitions(transitions: HTMLCollectionOf<Element>): PNMLTransition[] {
         const parsedTransitions: PNMLTransition[] = [];
         for (let i = 0; i < transitions.length; i++) {
             const trans = transitions[i];
@@ -84,7 +84,7 @@ export class PNMLService {
         return parsedTransitions;
     }
 
-    public parseArcs(arcs: HTMLCollectionOf<Element>): PNMLArc[] {
+    private parseArcs(arcs: HTMLCollectionOf<Element>): PNMLArc[] {
         const parsedArcs: PNMLArc[] = [];
         for (let i = 0; i < arcs.length; i++) {
             const arc = arcs[i];
@@ -97,7 +97,7 @@ export class PNMLService {
         return parsedArcs;
     }
 
-    import(pnml_str: string): TsModel {
+    public import(pnml_str: string): TsModel {
         // Extract fragments for parsing from the XML data
         pnml_str = pnml_str.trim();
         const xmlDoc = this.parser.parseFromString(pnml_str, 'text/xml');
