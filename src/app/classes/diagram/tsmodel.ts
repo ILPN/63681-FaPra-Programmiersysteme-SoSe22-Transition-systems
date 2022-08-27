@@ -267,9 +267,12 @@ export class TsModel {
                     // check if currentReachableEdges is a cycle
                     let isCycle = this.isCycle(currentReachableEdges, e);
                     if (isCycle) {
-                        noExitCycleCounter++;
-                        currentCycleWithNoExitEdges = [...currentReachableEdges];
-                        cyclesWithNoExitEdges.push(currentCycleWithNoExitEdges);
+                        let isCycleWithNoExit = this.isCycleWithNoExit(currentReachableEdges);
+                        if (isCycleWithNoExit) {
+                            noExitCycleCounter++;
+                            currentCycleWithNoExitEdges = [...currentReachableEdges];
+                            cyclesWithNoExitEdges.push(currentCycleWithNoExitEdges);
+                        }
                     }
                 }
             }
@@ -442,5 +445,19 @@ export class TsModel {
                 result.push(edge);
         }
         return result;
+    }
+
+    private static isCycleWithNoExit(edgeArray: TsEdge[]) {
+        let result = true;
+        for (let e of edgeArray) {
+            // search all edges that are reachable from e (current start)
+            let currentReachableEdges: TsEdge[] = [];
+            currentReachableEdges.push(e);
+            TsModel.searchEdgesReachableFromDefinedEdges(currentReachableEdges, edgeArray);
+            if (currentReachableEdges.length < edgeArray.length) {
+                result = false
+            }
+        }
+        return result
     }
 }
