@@ -82,6 +82,7 @@ export class AppComponent implements AfterViewInit {
             let file = fileList[0];
             await this.processFile(file)
         }
+        element.value = '';
     }
 
     private processSourceChange(newSource: string, fromFile: boolean) {
