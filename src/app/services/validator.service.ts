@@ -98,22 +98,22 @@ export class ValidatorService {
 
             for (let id of transitionIds) {
                 if (targets.indexOf(id) < 0) {
-                    let message = "The transition " + id + " has no outgoing edge\nThis is not allowed";
-                    isValid = new IsValid(false, message);
-                    return isValid;
-                }
-                if (targets.indexOf(id) != targets.lastIndexOf(id)) {
-                    let message = "The transition " + id + " has more than one outgoing edge\nOnly one is allowed";
-                    isValid = new IsValid(false, message);
-                    return isValid;
-                }
-                if (sources.indexOf(id) < 0) {
                     let message = "The transition " + id + " has no incoming edge\nThis is not allowed";
                     isValid = new IsValid(false, message);
                     return isValid;
                 }
-                if (sources.indexOf(id) != sources.lastIndexOf(id)) {
+                if (targets.indexOf(id) != targets.lastIndexOf(id)) {
                     let message = "The transition " + id + " has more than one incoming edge\nOnly one is allowed";
+                    isValid = new IsValid(false, message);
+                    return isValid;
+                }
+                if (sources.indexOf(id) < 0) {
+                    let message = "The transition " + id + " has no outgoing edge\nThis is not allowed";
+                    isValid = new IsValid(false, message);
+                    return isValid;
+                }
+                if (sources.indexOf(id) != sources.lastIndexOf(id)) {
+                    let message = "The transition " + id + " has more than one outgoing edge\nOnly one is allowed";
                     isValid = new IsValid(false, message);
                     return isValid;
                 }
