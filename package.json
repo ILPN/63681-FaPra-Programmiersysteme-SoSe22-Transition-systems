@@ -5,6 +5,7 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
+    "build-prod": "ng build --base-href /ilovepetrinets/transitionsystems/",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "lint": "ng lint"
