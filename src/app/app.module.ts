@@ -15,6 +15,7 @@ import { DownloadButtonComponent } from './components/download-button/download-b
 import { GraphPropertiesButtonComponent } from './components/graph-properties-button/graph-properties-button.component';
 import { DndDirective } from './directives/dnd.directive';
 import {MatTooltipModule} from "@angular/material/tooltip";
+import {APP_BASE_HREF, PlatformLocation} from '@angular/common';
 
 @NgModule({
     declarations: [
@@ -37,7 +38,13 @@ import {MatTooltipModule} from "@angular/material/tooltip";
         ReactiveFormsModule,
         MatTooltipModule,
     ],
-    providers: [],
+    providers: [
+        {
+            provide: APP_BASE_HREF,
+            useFactory: (s: PlatformLocation) => s.getBaseHrefFromDOM(),
+            deps: [PlatformLocation]
+        }
+    ],
     bootstrap: [AppComponent]
 })
 export class AppModule {
